@@ -11,3 +11,23 @@ My experience after reading the OCA study guide is positive and has encourage me
 # This notes
 This notes are taken in order to help me learn all the topics covered in the book and to keep them somewhere safe and with a nice formating. There might be code snippets and solutions to arbitrary questions. Please bear in mind the notes are mainly for miself and that there will be typos.   
 
+# Content
+Chapter 1 - Advanded Class Design
+
+Chapter 2 - Design Pattern and Principles
+
+Chapter 3 - Generics and Collections
+
+Chapter 4 - Functional Programming
+
+Chapter 5 - Dates, Strings, and Localization
+
+Chapter 6 - Exceptions and Assertions
+
+Chapter 7 - Concurrency
+
+Chapter 8 - IO
+
+Chapter 9 - NIO.2
+
+Chapter 10 - JDBC
