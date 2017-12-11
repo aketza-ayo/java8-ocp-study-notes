@@ -60,7 +60,34 @@ Things to remember about abstract classes are:
 - Using ```final``` on a class means that it cannot be subclassed.
 - As with methods, a class cannot be both ```abstract``` and ```final```.
 - In the Java core classes, String is ```final``` which means that it cannot be sub-typed 
+
 ## Imports
+
+Oracle no longer list imports and packages in the objectives for OCP 8 exam. They include visibility modifiers, which means you still need to understand packages and imports.
+Remeber that you can add static in the imports section if referencing a static method such as sort() from the Collections framework library.
+
+For example, in the following code which imports do we need to include in order to compile the code below?
+```java
+public class ListHelper{
+  public List <String> copyAndSortList(List <String> original){
+    List<String> list = new ArrayList<String>(original);
+    sort(list);
+    return list;
+  }
+}
+```
+By looking at the code, we don't need to worry about the String class because that is included by default as part of the ```java.lang.*``` import. Although we need to import libraries for List, ArrayList and sort() method. There are several ways to achieve this. For adding the sort() method either of these two will do:
+```import static java.utils.Collections.sort;
+import static java.utils.Collections.*```
+
+For the other part, that is List and ArrayList classes. There are two ways, either using the wildcard or importing each class individually.
+
+```import java.util.*;```
+
+The other way is
+
+```import java.util.List;
+import java.util.ArrayList;```
 
 # Using InstanceOf
 
