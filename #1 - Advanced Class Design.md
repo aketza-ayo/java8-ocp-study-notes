@@ -92,7 +92,52 @@ The other way is to list them individually:
 
 ```import java.util.ArrayList;```
 
-# Using InstanceOf
+# Using instanceof
+- The ```instanceof``` operator is used to test whether the object is an instance of the specified type (class or subclass or interface). The instanceof is also known as type comparison operator because it compares the instance with type. It returns either true or false.
+
+Let's see a few examples:
+```java
+class HeavyAnimal { }
+class Hippo extends HeaveAnimal{ }
+class Elephant extends HeavyAnimal { }
+
+HeavyAnimal hippo = new Hippo();
+booelan b1 = hippo instanceof Hippo;          //true
+boolean b2 = hippo instanceof HeavyAnimal;    //true
+boolean b3 = hippo instanceof Elephant;       //false
+```
+- All Java classes inherit from Object, which means that ``` x instanceof Object``` is usually ```true```, except for one case where is ```false```. It the literal ```null``` or a variable reference pointing to ```null``` is used to check instanceof, the result is ```false``` because ```null``` is not an Object. See below:
+
+```java
+HeavyAnimal hippo = new Hippo();
+boolean b4 = hippo intanceof Object;        //true
+Hippo nullHippo = null;
+boolean b5 = nullHippo instanceof Object;   //false 
+```
+
+- Sometimes the comparison might not even compile if the compiler knows that there is no possible way for a Hippo variable reference to be an Elephant for example, since Hippo doesn't extend Elephant directly or indirectly. See below:
+
+```java 
+Hippo anotherHippo = new Hippo();
+boolean b5 = anotherHippo instanceof Elephant;    //DOES NOT COMPILE
+boolean b6 = anotherHippo instanceof Cat;         //DOES NOT COMPILE
+```
+
+- The compilation check above only applies when instanceof is called on a class. When checking whether an object is an instanceof an interface, Java waits until runtime to do the check. Subclass could implement that interface and the compiler wouldn't know it. There is no way for Hippo to be subclass of Elephant in our hierarchy by now.
+
+- When the class type is an interface, the compiler allows the statement because there could later be a class that implements it. 
+
+```java
+public interface Mother{}
+class Hippo extends HeavyAnimal
+```
+
+This code below compiles even though hippo is not a sub type or implement the Mother interface
+
+```java 
+HeavyAnimal hippo = new Hippo();
+boolean b6 = hippo instanceof Mother;
+```
 
 # Understanding Virtual Method Invocation
 
