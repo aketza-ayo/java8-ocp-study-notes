@@ -32,6 +32,25 @@ These are ```private```, no modifier(the default or aka package-private), ```pro
   - The methods must not be static. If they are the method is hidden and not overriden
 
 ## Abstract Classes
+For example, check the snippet below. What are three ways that you can fill in the blank to make this code compile? Try to think of ways that use the clean() method rather than just putting a comment there:
+
+```java
+abstract class Cat{
+  -------------------
+}
+
+class Lios extends Cat{
+  void clean();
+}
+```
+One of them is tricky and that is that you can leave it blank. An abstract class is not required to have any methods in it. A second answer is ``` abstract void clean(); ``` this one is the actual abstract method. It has the abstract keyword and a semicolon instead of a method body. A third answer is the default implementation ``` void clean(){} ``` notice that this time there is no abstract keyword in the method and the body is implemented even though it is empty. Furthermore, there are plenty of other ways. For example, ``` void clean() throw RuntimeException {} ```
+
+Things to remember about abstract classes are:
+- An *abstract class* may contain any number of methods including zero. 
+- The methods can be abstract or concrete.
+- Abstract methods may not appear in a class that is not abstract.
+- The first concrete subclass of an abstract class is required to implement all abstract methods that are not implemented by a superclass.
+
 
 ## Static and Final
 
