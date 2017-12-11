@@ -225,10 +225,53 @@ The correct answer is ```toss in meat```.
   - Overriding a method declared in Object, such as ```hashCode, equals``` or ```toString```
 
 # Coding equals, hashCode, and toString
+- All classes in java inherit from ```java.lang.Object```
+- Three of these methods are common for subclasses to override with a custom implemetation
 
 ## toString 
+- Java automatically calls the toString() method when you try to print out the object.
 
+Following lines show how to do it
+
+```java
+public class Hippo{
+  private String name;
+  private double weight;
+
+  public Hippo(String name, double weight){
+    this.name = name;
+    this.weight = weight;
+  }
+  
+  @Override
+  public String toString(){
+    return "Name: " + name + ", Weight: " + weight; 
+  }
+}
+```
 ## equals
+- Java uses == to compare primitives and for checking if two variables refer to the same object. 
+- Checking if two objects are equivalent uses the ```equals()``` method.
+- String has an ```equals()``` method and it checks the values are the same.
+- StringBuilder uses the implementation of ```equals()``` provided by ```Object```, which check if the objects are the same location ==
+
+
+The exam expects you to recognize the correct and incorrect usage of the equals() method. The contract for equals() method is:
+- It is *reflexive*: For any non-null reference value x, x.equals(x) should return ```true```.
+- It is *symmetric*: For any non-null reference values x and y, x.equals(y) should return ```true``` iff y.equals(x) returns ```true```.
+- It is *transitive*: For any non-null reference values x, y and z, if x.equals(y) returns ```true``` and y.equals(z) returns ```true```, then x.equals(z) should return ```true```.
+- It is *consistent*:  multiple invocations of x.equals(y) consistenly returns ```true``` or consistenly returns ```false```.
+- For any non-null reference value x, x.equals(null) should return ```false```.
+
+For practice, can you see what's wrong with the following equals() method?
+
+```java 
+public boolean equals(Lion obj){
+  if(obj == null) return false;
+  return this.idNumber == obj.idNumber;
+}
+```
+Actually, there is nothing wrong, but it does not override but overload the equals method because the method signature of the Object's equals method takes an Object as parameter.
 
 ## hashCode
 
