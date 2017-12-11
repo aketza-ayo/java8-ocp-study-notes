@@ -76,9 +76,10 @@ public class ListHelper{
   }
 }
 ```
-By looking at the code, we don't need to worry about the String class because that is included by default as part of the ```java.lang.*``` import. Although we need to import libraries for List, ArrayList and sort() method. There are several ways to achieve this. For adding the sort() method either of these two will do:
-```import static java.utils.Collections.sort;
-import static java.utils.Collections.*```
+By looking at the code, we don't need to worry about the String class because that is included by default as part of the ```java.lang.*;``` import. Although we need to import libraries for List, ArrayList and sort() method. There are several ways to achieve this. For adding the sort() method either of these two will do:
+
+```import static java.utils.Collections.sort; ```
+```import static java.utils.Collections.*; ```
 
 For the other part, that is List and ArrayList classes. There are two ways, either using the wildcard or importing each class individually.
 
@@ -86,8 +87,8 @@ For the other part, that is List and ArrayList classes. There are two ways, eith
 
 The other way is
 
-```import java.util.List;
-import java.util.ArrayList;```
+```import java.util.List;```
+```import java.util.ArrayList;```
 
 # Using InstanceOf
 
