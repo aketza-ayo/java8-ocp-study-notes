@@ -216,7 +216,13 @@ public class PlayWithAnimal{
 
 The correct answer is ```toss in meat```. 
 
-# Annotating Overriddden Methods
+# Annotating Overridden Methods
+- When you see code that begins with @ symbol, it is an annotation. 
+- Annotation is extra information about the program, and it is a type of *metadata*.
+- When you see ```@Override``` in the exam, you must check carefully that the method is doing one of three things:
+  - Implementing a method for an interface
+  - Overriding a superclass method of a class
+  - Overriding a method declared in Object, such as ```hashCode, equals``` or ```toString```
 
 # Coding equals, hashCode, and toString
 
