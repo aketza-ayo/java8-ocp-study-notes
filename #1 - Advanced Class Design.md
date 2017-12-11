@@ -53,7 +53,13 @@ Things to remember about abstract classes are:
 
 
 ## Static and Final
-
+- ```final``` prevents a variable from changing or a method from beign overriden.
+- ```static``` makes a variable shared at the class level and uses the class name to refer to a method.
+- ```static``` and ```final``` are allowed to be added on the class level too.
+- You will see ```static``` classes in the section about nested classes.
+- Using ```final``` on a class means that it cannot be subclassed.
+- As with methods, a class cannot be both ```abstract``` and ```final```.
+- In the Java core classes, String is ```final``` which means that it cannot be sub-typed 
 ## Imports
 
 # Using InstanceOf
