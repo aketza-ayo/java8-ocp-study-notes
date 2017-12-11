@@ -140,6 +140,81 @@ boolean b6 = hippo instanceof Mother;
 ```
 
 # Understanding Virtual Method Invocation
+Consider the following example:
+```java 
+class A{
+  public String getName(){
+    return "A";
+  } 
+}
+
+class B extends A{
+  public String getName(){
+    return "B"
+  }
+}
+
+class Driver{
+  public static void main(String[] args){
+    A foo = new B();
+    System.out.println(foo.getName());
+  }
+}
+```
+We get the result ``` B ``` 
+
+- If Java didn't have virtual method invocation, it would determine at compile time that the getName() to be called is the one that belongs to the A class. Since it doesn't, but determines this at runtime depending on the actual class that foo points to, we get the result above, ```B```.
+
+- Notice that instance variables don't work the same way. In this example, the Animal class refers to name. It uses the one in the super class and not the subclass. That is because these type of Animals 
+
+```java
+class Animal{
+  String name = "unknown";
+  public void printName(){
+    System.out.println(name);
+  }
+}
+
+class Lion extends Animal{
+  String name = "Leo";
+}
+
+class Driver{
+  public static void main(String[] args){
+    Animal foo = new Lion();
+    foo.printName();
+  }
+}
+```
+And the output is ```unknown```. The name declared in Lion would only be used if name was referred to from Lion (or a subclass of Lion). 
+
+- One more example to make sure that the exam is not going to trick you. What does the following print?
+```java
+abstract class Animal{
+  public void careFor(){
+    play();
+  }
+  
+  public void play(){
+    System.out.println("pet animal");
+  }
+}
+
+class Lion extends Animal{
+  public void play(){
+    System.out.println("toss in meat");
+  }
+}
+
+public class PlayWithAnimal{
+  public static void main(String[] args){
+    Animal animal = new Lion();
+    animal.careFor();
+  }
+}
+```
+
+The correct answer is ```toss in meat```. 
 
 # Annotating Overriddden Methods
 
