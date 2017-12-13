@@ -274,6 +274,19 @@ public boolean equals(Lion obj){
 Actually, there is nothing wrong, but it does not override but overload the equals method because the method signature of the Object's equals method takes an Object as parameter.
 
 ## hashCode
+- Whenever you override equals(0 method you also need to override the hashCode() method.
+- A *hash code* is a number that puts instances of a class into a finite number of categories.
+- The hash code is just a number.
+- On the exam, you can use a primitive number as is or divide to get a smaller int.
+- Not all the instance variable need to be used in the hashCode() method. In fact, it is common not to include boolean and chars.
+- The hashCode contract boils down to the following:
+  - Within the same program, the result of hashCode must not change.For example, including a weight of our hippo example is not correct because the weight changes.
+  - If equals() return true for two objects, calling hashCode() on each of those objects must return the same result.
+  - If equals() returns false when called with two objects, calling hashCode() on each of those objects does not have to return a different result. This means that hash code does not need to be unique when called on unequal objects.
+- The signature of the method is the following ```public int hashCode()```
+- Deck of cards example is very useful to understand the concept of hash codes.
+### Deck of cards example
+Imagine I gave you a deck of cards and told you that I am going to ask you for a specific set of cards and I want to get the right card as quick as possible. You have as long as you want to prepare, you might make 13 piles of cards: All of the aces oin one pile, twos in another pile and so forth. That way when I ask for a particular card, 5 of hearts, you go to the fives pile and pull out the right card out of the four rather than going through the 52 cards.
 
 # Working With Enums
 
