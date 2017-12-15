@@ -274,7 +274,7 @@ public boolean equals(Lion obj){
 Actually, there is nothing wrong, but it does not override but overload the equals method because the method signature of the Object's equals method takes an Object as parameter.
 
 ## hashCode
-- Whenever you override equals(0 method you also need to override the hashCode() method.
+- Whenever you override equals() method you also need to override the hashCode() method.
 - A *hash code* is a number that puts instances of a class into a finite number of categories.
 - The hash code is just a number.
 - On the exam, you can use a primitive number as is or divide to get a smaller int.
