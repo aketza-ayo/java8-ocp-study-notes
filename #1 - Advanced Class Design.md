@@ -289,9 +289,71 @@ Actually, there is nothing wrong, but it does not override but overload the equa
 Imagine I gave you a deck of cards and told you that I am going to ask you for a specific set of cards and I want to get the right card as quick as possible. You have as long as you want to prepare, you might make 13 piles of cards: All of the aces in one pile, twos in another pile and so forth. That way when I ask for a particular card, 5 of hearts, you go to the fives pile and pull out the right card out of the four rather than going through the 52 cards.
 
 # Working With Enums
+- An *enumeration* is like a fixed set of constants.
+- It is better than a bunch of constants because it provides type-safe checking.
+- Any finite set of items would be a valid example, ie: Days of the week, months ...
+
+```java
+public enum Season{
+  WINTER, SPRING, SUMMER, FALL
+}
+```
+- Use uppercase to list the elements that are part of the enum by convention.
+- It contains mainly static members.
+
+```java
+Season s = Season.SUMMER;
+System.out.println(Season.SUMMER);        //SUMMEWR
+System.out.println(s == Season.SUMMER);   //true
+```
+- When toString() method is called it displayes the value of the enum.
+- Enums are comparable using == because they are like ``` static final``` constants.
+- It provides a method to get an array of all of the values.
+```java
+for(Season season : Season.values()){
+  System.out.println(season.name + " " + season.ordinal());
+}
+```
+- You cannot compare an int and enum value directly. Enum is a type and not an int
+
+```if(Season.SUMMER == 2){}```    //DOES NOT COMPILE
+- You can create an enum from a String. see below
+```java
+Season s1 = Season.valueOf("SUMMER");     //SUMMER
+Season s2 = Season.valueOf("summer");     //Throws IllegalArgumentException
+```
+- You cannot extend and Enum
+``` public enum ExtededSeason extends Season{ }```  // DOES NOT COMPILE
 
 ## Using Enums in Switch Statements
+- Enums may be used in switch statements. See the case statements below
+```java
+Season summer = Season.SUMMER;
+switch(summer){
+  case WINTER:
+    System.out.println("Get out the sled");
+    break;
+    
+  case SUMMER:
+    System.out.println("Time for the pool!");
+    break;
+    
+  default;
+    System.out.println("Is it summer yet!");
+}
+```
+The code above prints "Time for the pool!" since it matches SUMMER. Notice that we just typed the value of the enum rather than writing Season.WINTER and that it because Java knows that the only possible values are enums. Java treats the enum type as implied in fact if you were to type Season.WINTER it would not compile.
 
+- You cannot compare an int with an enum. Keep in mind that the enum type is not an int. See below 
+```java
+switch(summer){
+  case 0:   // DOES NOT COMPILE
+    System.out.println("Get ot the sled!");
+    break;
+}
+```
+
+- Pay especial attention when working with enums that they are used only as enums
 ## Adding Constructors, Fields and Methods
 
 # Creating Nested Classes
