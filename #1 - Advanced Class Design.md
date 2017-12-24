@@ -434,7 +434,11 @@ public enum Season3{
 - In the code above, we only coded the especial cases and let the others use the enum provided implementation. Notice how we still have the semicolon after FALL. This is needed when we have other than just the values and in this case we have the default method implementation.
 
 # Creating Nested Classes
-
+A *nested class* is a class that is defined within another class. A nested class that is not static is called *inner class*. There are 4 types of nested classes:
+- A *member inner class* is a class defined at the same level as the instance variables. It is not static and often referred as just inner class.
+- A *local inner class* is defined within a method.
+- An *anonymous inner class* is a special type of a local inner class that does not have a name.
+- A *static nested class* is a static class that is defined at the same level as static variables
 ## Member Inner Classes
 
 ## Local Inner Classes
