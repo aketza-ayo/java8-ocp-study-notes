@@ -355,6 +355,83 @@ switch(summer){
 
 - Pay especial attention when working with enums that they are used only as enums
 ## Adding Constructors, Fields and Methods
+- *Enums* can have constructors, fields and methods. It is common to give state to each enum by using a constructor. To do that we also need to have a member variable. See below the code snippet:
+```java
+public enum Season{
+  WINTER("Low"), SPRING("Medium"), SUMMER("High"), FALL("Medium");
+  private String visitors;
+  private Season(String visitors){
+    this.visitors = visitors;
+  }
+  
+  public void printVisitors(){
+    System.out.println(visitors);
+  }
+
+}
+```
+- In the code above notice that line two finishes with a semicolon. This is required if there is anything in the *enum* besides the values. On the other hand, the semicolon is optional only if the only thing in the *enum* is that list of values.
+
+- The rest of the lines in the snippet are regular Java code. There is a instance variable, a constructor, and a method. The constructor is **private** because it can only be called from within the *enum*. The code will not compile with a public constructor. 
+
+- Calling the method is like the following: Season.SUMMER.printVisitors();
+
+- In the method calling above notice that we don't seem to call the constructor. We just say that we want the *enum* value. The first time we call the method Java constructs all of the *enum* values. Given that explanation, you can see why the code below calls constructor only once:
+
+```java 
+  public enum OnlyOnce{
+    ONCE(true);
+    private OnlyOnce(boolean value){
+      System.out.println("constructing");
+    }
+    
+    public static void main(String[] args){
+      OnlyOnce firstCall = OnlyOnce.ONCE      //prints constructing
+      OnlyOnce secondCall = OnlyOnce.ONCE     //doesn't print anything
+    }
+  }
+```
+
+- This technique of a constructor and a state apart from beign a pain for the exam, allows you to combine logic with the benefit of a list of values. Sometimes, you want to do more. For example, our zoo example has different seasonal hours. It is cold and gets dark early in the winter. We could keep track of the opening hours through instance variables, or we could let each enum value manage hours itself.
+
+```java
+  public enum Season2{
+    WINTER{
+      public void printHours{ System.out.println("9am-3pm");}
+      
+    },SPRING{
+      public void printHours{ System.out.println("9am-5pm");}
+    
+    },SUMMER{
+      public void printHours(){ System.out.println("9am-7pm"); }
+    
+    },FALL{ 
+      public void printHours(){ System.out.println("9am-5pm");}
+    };
+    
+    public abstract void printHours();
+    
+  }
+```
+
+- In the code above it seems that we have created an abstract class abd a bunch of tiny subclasses. The enum class itself has an abstract method and this means that each of the enum values are required to implement this method. If we forget one, we get a compiler error. If we don't want each and every compiler to have a method, we can create a default implementation and override it only for the especial cases:
+
+```java
+public enum Season3{
+  WINTER{
+    public void printHours(){ System.out.println("short hours"); }
+  
+  }, SUMMER{
+    public void printHours(){ System.out.println("long hours"); }
+  
+  },SPRING, FALL;
+  
+  public void printHours(){ System.out.println("default hours"); }
+
+}
+```
+
+- In the code above, we only coded the especial cases and let the others use the enum provided implementation. Notice how we still have the semicolon after FALL. This is needed when we have other than just the values and in this case we have the default method implementation.
 
 # Creating Nested Classes
 
