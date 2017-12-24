@@ -440,8 +440,50 @@ A *nested class* is a class that is defined within another class. A nested class
 - An *anonymous inner class* is a special type of a local inner class that does not have a name.
 - A *static nested class* is a static class that is defined at the same level as static variables
 ## Member Inner Classes
+This classe are defined at the same level as the instance variables, methods and constructors. These are its properties:
+- Can be declared public, private or protected or use default access (no-modifier)
+- Can extend any class or implements any interface.
+- Can be abstract of final.
+- Cannot declare static fields or methods.
+- Can access members of the outer class inlcuding private members.
 
-## Local Inner Classes
+The last property is pretty cool, see an example to illustrate:
+```java 
+public class Outer{
+  private String greeting = "Hi";
+  
+  protected class Inner{
+    public int repeat = 3;
+    pulic void go(){
+      for(int i = 0; i < repeat; i++){
+        System.out.println(greeting);
+      }
+    }
+  }
+  
+  public void callInner(){
+    Inner inner = new Inner();
+    inner.go();
+  }
+  
+  public static void main(String[] args){
+    Outer outer = new Outer();
+    outer.callInner()
+  }
+  
+}
+```
+The inner class looks just another class declarion expect that it is located inside another class. It can also use the instance variables declared in the outer class even though they are private. Since the class is not static it has to be used with an instance of a class as per ```Inner inner = new Inner(); inner.go()``` this works because *callInner();* is an instance method of Outer. Both Inner and callInner() are members of Outer.
+
+There is another way to instantiate Inner that looks odd. The syntax isn't used very often but that's the way it is:
+```
+public static void main(String[] args){
+  Outer outer = new Outer();
+  Inner inner = outer.new Inner();   //create the inner class
+  inner.go();
+}
+```
+In the code above we need an instace of Outer in order to create Inner. We can't just call new Inner() because Java does not know with which instance of Outer it is associated and Java solves this by caling new as if it were a method on the outer variable.
 
 ## Anonymous Inner Classes
 
