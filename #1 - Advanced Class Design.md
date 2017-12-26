@@ -532,7 +532,67 @@ The following code looks weird but is legal for inner classes:
     }
   }
 ```
-in the code above, the rule that all interface methods must be public still applies. The interface itself does not need to be public though. Just like any inner class the inner interface can be private. This means that the interface can only be referred from within the current outer class.
+In the code above, the rule that all interface methods must be public still applies. The interface itself does not need to be public though. Just like any inner class the inner interface can be private. This means that the interface can only be referred from within the current outer class.
+
+## Local Inner Classes
+A local inner class is a nested classes defined inside a method. Like the local variables, the local inner class declaration does not exist until the method is invoked, and it goes out of scope when the method returns, **which means that you can only create instances from within the method** Local inner classes has the following properties:
+- They do not have access modifier (public, protected or private).
+- They cannot be declared ```static``` and cannot declare ```static``` fields or methods.
+- They have access to all fields and methods of the enclosing class.
+- They do not have access to local variables of a method unless those variables are final or effectively final. 
+
+See example below:
+
+```java
+public class Outer{
+  
+  private int length = 5;
+  
+  public void calculate(){
+    final int width 20;
+  
+    class Inner{
+      public void multiply(){
+        System.out.println(length * width);
+      }
+    }   
+    Inner inner = new Inner();
+    inner.multiply();
+  }
+  
+  public static void main(String[] args){
+    Outer outer = new Outer();
+    outer.calculate();
+  }
+}
+
+```
+
+Notice in the code above, the inner class is accessing the final variable of the method (width variable) as long as the variable once assign does not change (effective final concept introduced in Java 8) it can be accessed from within the local inner class.
+
+For example, in the code below which variables do you think are effectively final in this code?
+
+```java
+public void isItFinal(){
+  int one = 20;
+  int two = one;
+  two++;
+  int three;
+  
+  if(one == 4) three = 3;
+  else three = 4;
+ 
+  int four = 4;
+  class Inner{ }
+  
+  four = 5;
+}
+
+```
+
+So you probably guessed it. one is effectively final because its value does not change once assigned. Two is not effectively final because its value increments after it has been declared. three hovewer, it is effectively final because there is an if condition which is going to be assign the value of either 3 or 4 but not both. and once assigned it is not reassigned any more. four however, it is not final because eventhough the assigned happens after the inner class, it is not allowed.  
+
 ## Anonymous Inner Classes
+
 
 ## Static Nested Classes
