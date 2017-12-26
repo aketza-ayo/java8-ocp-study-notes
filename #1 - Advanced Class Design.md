@@ -485,6 +485,37 @@ public static void main(String[] args){
 ```
 In the code above we need an instace of Outer in order to create Inner. We can't just call new Inner() because Java does not know with which instance of Outer it is associated and Java solves this by caling new as if it were a method on the outer variable.
 
+Another thing to remember is that inner classes can have the same variable names as the outer classes. Since you can nest multiple inner classes and create multiple variables of the same name within the class, although it is not recommended to do so, you must know it for the exam. In addition, there is a special way of calling ```this``` to say which class you want to access. See the code below:
+
+```java
+public class A{
+  private int x = 10;
+  
+  class B{
+    private int x = 20;
+    
+    class C{
+      private int x = 30;
+      
+      public void allTheX(){
+        System.out.println(x);          //30
+        System.out.println(this.x);     //30
+        System.out.println(B.this.x);   //20
+        System.out.println(A.this.x);   //10
+      }
+    }
+  }is 
+  
+  public static void main(String[] args){
+    A a = new A();
+    A.B b = a.new B();
+    A.B.C c = b.new C();
+    c.allTheX();
+  }
+}
+
+```
+This code is a fuck head. Not recommed to do it this way but you must know how it works for the exam. Note C class is to deep for Java to know where to look. On the other hand the type for class B is A.B, we could have used only B but the code in this example is A.B. Java knows where to look either way because B is available at the member level of A but it is not the case for C. 
 ## Anonymous Inner Classes
 
 ## Static Nested Classes
