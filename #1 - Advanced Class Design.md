@@ -515,7 +515,24 @@ public class A{
 }
 
 ```
-This code is a fuck head. Not recommed to do it this way but you must know how it works for the exam. Note C class is to deep for Java to know where to look. On the other hand the type for class B is A.B, we could have used only B but the code in this example is A.B. Java knows where to look either way because B is available at the member level of A but it is not the case for C. 
+This code is a fuck head. Not recommed to do it this way but you must know how it works for the exam. Note C class is too deep for Java to know where to look. On the other hand the type for class B is A.B, we could have used only B but the code in this example is A.B. Java knows where to look either way because B is available at the member level of A but it is not the case for C. ```this``` keyword refers to the instance variable in the current class. In this case is class C because the method is within class C. The other two references of ```this``` are a special case to the instance of classes B and A respectively.
+
+### Private interface
+The following code looks weird but is legal for inner classes:
+```java
+  public class CaseOfThePrivateInterface{
+    private interface Secret{
+      public void Shh();
+    }
+    
+    class Anything implements Secret{
+      public void Shh(){
+        System.out.println("Shhh");
+      }
+    }
+  }
+```
+in the code above, the rule that all interface methods must be public still applies. The interface itself does not need to be public though. Just like any inner class the inner interface can be private. This means that the interface can only be referred from within the current outer class.
 ## Anonymous Inner Classes
 
 ## Static Nested Classes
