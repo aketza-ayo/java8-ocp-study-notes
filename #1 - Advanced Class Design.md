@@ -658,3 +658,42 @@ As you may see we don't store the anonymous inner class in a local variable, we 
 :yin_yang: Functional programming uses a shorter way of coding them, more in Chapter 4
 
 ## Static Nested Classes
+This final type is not an inner class. A statoc nested class is a static class defined at the memeber level. It can instantiated without an object of the enclosing class, so it cannot access the instance variables without an explicit object of the enclosing class. For example, new OuterClass().var allows access to the instance variable var.
+
+In other words, is like a regular class except for the following:
+- The nesting creates a namespace because the enclosing class name must be used to refer to it.
+- It can be made private or use one of the other access modifiers to encapsulate it.
+- The enclosing class can refer to the fields and methods of the static nested class.
+
+```java
+public class Enclosing{
+  static class Nested{
+    private int price = 6;
+  }
+  
+  public static void main(String[] args){
+    Nested nested = new Nested();
+    System.out.println(nested.price);
+  }
+}
+```
+
+In the code above, since the class is static, you do not need an instance of Enclosing in order to use it. You are allowed to access private instance variables as shown in the main mathod.
+
+Another intersting thing is importing static nested classes. You can import using a regular import or since it is static you can use a static import. See example code:
+
+```java
+  package mamal;
+  public class Panda{
+    public static class EyeBag{}
+  }
+  
+  package zoo;
+  import mamal.Panda.EyeBag;          //regular import
+  or
+  import static mamal.Panda.EyeBag;   //static import
+  
+  public class LondonZoo{
+    EyeBag eyeBag;
+  }
+```
