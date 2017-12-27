@@ -31,3 +31,11 @@ Chapter 8 - IO
 Chapter 9 - NIO.2
 
 Chapter 10 - JDBC
+
+# Review Questions
+
+At the end of each chapter I am going to take the test and pulish the results. You may notice that the attached picture show some colour coding:
+- Green if I answerd correctly
+- Red if I answered wrong
+- Pink if I found the question interesting, tricky, worth to refer back.
+
