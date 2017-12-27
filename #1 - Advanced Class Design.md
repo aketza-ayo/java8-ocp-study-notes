@@ -700,3 +700,7 @@ Another intersting thing is importing static nested classes. You can import usin
 To review the 4 types of nested classes, make sure you know the info in the table below
 
 ![table types of nested classes](img/tableTypesOfNestedClasses.png)
+
+# Review Questions
+
+![Chapter one review questions](img/testChapterOne.png)
