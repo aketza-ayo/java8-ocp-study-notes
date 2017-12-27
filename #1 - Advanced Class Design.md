@@ -590,9 +590,71 @@ public void isItFinal(){
 
 ```
 
-So you probably guessed it. one is effectively final because its value does not change once assigned. Two is not effectively final because its value increments after it has been declared. three hovewer, it is effectively final because there is an if condition which is going to be assign the value of either 3 or 4 but not both. and once assigned it is not reassigned any more. four however, it is not final because eventhough the assigned happens after the inner class, it is not allowed.  
+So you probably guessed it. *one* is effectively final because its value does not change once assigned. *two* is not effectively final because its value increments after it has been declared. *three* hovewer, it is effectively final because there is an if condition which is going to be assign the value of either 3 or 4 but not both. And once assigned it is not reassigned any more. *four* however, it is not final because eventhough the assignment happens after the inner class, it is not allowed.  
 
 ## Anonymous Inner Classes
+An anonymous inner class is a local inner class that does not have a name. It is declared and instantiated all in one statement using the new keyword. They are useful when you have a short implementation that will not be used anywhere else. See example:
 
+```java
+public class AnonymousInner{
+  abstratc class SaleTodayOnly{
+    abstract int dollarsOff();
+  }
+  
+  public int admission(int basePrice){
+    SaleTodayOnly sale = new SaleTodayOnly(){
+      int dollarsOff(){ return 3;}
+    };
+    return basePrice - sale.dolarsOff();
+  }
+}
+```
+
+In admission method the code says to instantiate a new  SaleTodayOnly object. But SaleTodayOnly is abstract. This is OK because we provide the class body right there anonymously. Pay attention to the semicolon inside admission() method. We are declaring a local variable on these lines (local variables in Java are required to end with semicolon, just like any other Java statement)
+
+Now, we convert the example above to implement an ```interface``` instead of extending an ```abstract``` class:
+
+```java
+public class AnonymousInner{
+  interface SaleTodayOnly{
+    int dollarsOff();
+  }
+
+  public int admission(int basePrice){
+    SaleTodayOnly sale = new SaleTodayOnly(){
+      public int dollarsOff(){ return 3;}
+    };
+    return basePrice - sale.dollarsOff();
+  }
+}
+
+```
+As you can see it doesn't change much other than declaring an interface instead of an abstract class. The anonymous inner class is the same, regarless you are declaring an interface or an abstract class. 
+
+But, what happens if we want to extend an abstract class and implement an interface? You cannot do that with an anonymous inner class, unless the class to extend is ```java.lang.Object``` What you can do is to write a local inner class and give it a name if you have this problem.
+
+There is one more thing that you can do with anonymous inner classes. Define them right where they are needed, even if there is an argument to another method. See below:
+```java
+  public class AnonymousInner{
+    interface SaleTodayOnly{
+      int dollarsOff();
+    }
+    
+    public int pay(){
+      return admission(5, new SaleTodayOnly(){
+        public int dollarOff(){
+          return 3;
+        }
+      });
+    }
+    
+    public int admission(int basePrice, SaleTodayOnly sale){
+      return basePrice - sale.dollarsOff();
+    }
+  }
+```
+As you may see we don't store the anonymous inner class in a local variable, we pass it directly to the methood that needs it. This is a concise way to create a class that you will use only once. 
+
+:yin_yang: Functional programming uses a shorter way of coding them, more in Chapter 4
 
 ## Static Nested Classes
