@@ -702,5 +702,10 @@ To review the 4 types of nested classes, make sure you know the info in the tabl
 ![table types of nested classes](img/tableTypesOfNestedClasses.png)
 
 # Review Questions
+Overall the questions where not hard to go through. Completed them in about 30 minutes. Some of the questions I failed was because the sentence specified "Chose all that apply..." but there was just a single correct answer.  
 
 ![Chapter one review questions](img/testChapterOne.png)
+
+## Points to remember:
+- Virtual method invokation is determined at runtime by the actual object type that is pointing to in memory not the reference type. On the other hand however, an instance variable is determined by the reference type.
+- It is important to know about abstract mehods within enums. Abstract enum methods require each enum type to implement the method, otherwise it will not compile.
