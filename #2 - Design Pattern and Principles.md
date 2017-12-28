@@ -166,6 +166,110 @@ Since this interface's method takes an Animal, it means the lambda parameter has
 :yin_yang: *Deferred execution* means that code is specified now but runs later. In this case, later is when print() method calls it. Even though the execution is deferred, the compiler will still validate that the code synytax is properly formed
 
 ## Understanding Lambda Syntax
+The syntax of lambda expression is tricky because many ooptions are optional. For example the following two lines are equivalent:
+```a -> a.canHop()``` and ```(Animal a) -> {return a.canHop();}```.
+Let's see. Left side of the arrow operator -> indicates the input parameter for the lambda expression. It can be comsumed by the functional interface whose abstract method has the same number of parameters and compatible data types. The right side is referred to as body of the lambda expression. It can be consumed by the functional interface whose abstract method returns a compatible data type.
+
+The differences between these two is that the second example uses parentheses (), while the first one does not. The () parentheses can be omitted in a lambda expression if there is exactly one input parameter and the type is not explicitly stated in the expression. this means that expressions that have zero or more than one input parameter will still require parentheses. For example, the following are all valid lambda expressions, assuming that are valid functional interfaces:
+
+```java
+() -> new Duck()
+
+d -> {return d.quack();}
+
+(Duck d) -> d.quack()
+
+(Animal a, Duck d) -> d.quack()
+
+```
+
+## Spotting Invalid Lambdas
+Can you figure out why each of the following lambda expressions is invalid and will not compile when used as an argument to a method?
+
+```java
+Duck d -> d.quack()                     // DOES NOT COMPILE
+
+a,d -> d.quack()                        // DOES NOT COMPILE 
+
+Animal a, Duck d -> d.quack()           // DOES NOT COMPILE
+
+```
+
+They all require parentheses ()! Parentheses can only be omitted if there is exactly one parameter and the data type is not specified. Next the {} allows you to write multiple lines of code in the body of the lambda. What's tricky here is that when you add {} you must terminate each statement in the body with a semicolon ; In the examples earlier we were able to omitt the braces {}, the semicolon ; and return keyword becaus there was a single-line lambda body.
+When using {} you must also include the return keyword if that functional interface returns a value. Alternatively, the return keyword is optional when the return type of the method is void. See some examples:
+
+```java
+() -> true                                      // 0 parameters
+  
+a -> {return a.startsWith("test");}             // 1 parameter
+
+(String a) -> a.startsWith()                    // 1 parameter
+
+(int x) -> {}                                   // 1 parameter
+
+(int y) -> {return;}                            // 1 parameter
+
+```
+The first example takes no arguments and always returns true. The second and third examples both takes single String value, using different syntax to accomplish the same thing. 
+
+Now let's look at some lambda that take more than one argument:
+
+```java
+(a,b) -> a.startsWith("test")                             // 2 parameters
+
+(String a, String b) -> a.startsWith("test")              // 2 parameters
+
+```
+These examples both take two params and ignore one of them, but there is no rule that says it must use all of the input parameters.
+
+More examples:
+
+```java
+a,b -> a.startsWith("test")                 //DOES NOT COMPILE
+
+c -> return 10;                             //DOES NOT COMPILE
+
+a -> {return a.startsWith("test") }         //DOES NOT COMPILE
+
+```
+ 
+ The first lambda needs parentheses () around the paremeter list. Remember that the parentheses are optional only when there is one parameter and it doesn't have a type declared. The second uses return without using braces {}. The last line is missing the semicolon after the return statement. The following rewritten lambda expressions are each valid:
+
+```java
+(a,b) -> a.startsWith("test")                 
+
+c -> {return 10;}                            
+
+a -> {return a.startsWith("test"); }        
+
+```
+
+As mentioned, the data types for the input parameters of a lambda expression are optional. When one parameter has a data type listed, though, all parameters must provide a data type. The following lamda expressions are each invalid for this reason:
+
+```java
+(int y, z) -> { int x = 1; return y + 10; }        //DOES NOT COMPILE
+
+(String s, z) -> { return s.length() + z; }        //DOES NOT COMPILE
+
+(a, Animal b, c) -> a.getName()                    //DOES NOT COMPILE
+
+```
+
+If we add or remove all the data types then this lambda expressions do compile. 
+
+There is one more issue you might see with lambdas. We've been defining an argument list in our lambda expressions. Since Java doesn't allow us to re-declare a local variable, the following is an issue:
+
+```java
+(a,b) -> {int a = 0; return 5;}                     //DOES NOT COMPILE
+```
+We tries to redeclare a, which is not allowed. By contrast the following line is permitted because it uses a different vaiable name:
+
+```java
+(a,b) -> {int c = 0; return 5;}
+
+```
+
+
 
 ## Applying the Predicate Interface
 # Implementing Polymorphism
