@@ -67,7 +67,7 @@ Let's take a look at an example of a functional interface and a class that imple
 ```
 In this example, the String class is a functional interface, because it contains exactly one abstract method, and the Tiger class is a valid class that implements te interface.
 
-:white_check_mark: Applying the @FunctionalInterface annotation while it is good pratice to do so for clarity, it is not required with functional programming. Java compiler implicitly assumes that any interface that contains only one abstract method is a functional interface. Hovewer, if a class is marked with the annotation and contains more than one abstract method, or no abstract methods at all, it is not going to compile. It is a good approach to mark the interface with the annotation because it tells other developers to treat it as a functional interface
+:yin_yang: Applying the @FunctionalInterface annotation while it is good pratice to do so for clarity, it is not required with functional programming. Java compiler implicitly assumes that any interface that contains only one abstract method is a functional interface. Hovewer, if a class is marked with the annotation and contains more than one abstract method, or no abstract methods at all, it is not going to compile. It is a good approach to mark the interface with the annotation because it tells other developers to treat it as a functional interface
 
 For example see the code below:
 
@@ -110,6 +110,63 @@ public interface Crawl{
 Although all of this will compile none of these is a funtional interface. In this example, applying the @funtionalInterface annotation to any of these interfaces will result in a compiler error, same as trying to make use of it in a lambda expression.
 
 ## Implementing Functional Interfaces with Lambdas
+In this section we are going to see how to implement lambda expressions. A lambda expression is a block of code that gets passed around, like an anonymous method. Let's start with a simple CheckTrait functional interface, which has a single method test(). Definion of the class and the functional interface as follows:
+
+```java
+public class Animal{
+  private String species;
+  private boolean canHop;
+  private boolean canSwim;
+  
+  public Animal(String speciesName, boolean hopper, boolean swimmer){
+    species = speciesName;
+    canHop = hopper;
+    canSwim = swimmer;
+  }
+  
+  public boolean canHop(){
+    return canHop;
+  }
+  
+  public boolean canSwim(){
+    return canSwim;
+  }
+  
+  public String toString(){
+    return species;
+  }
+}
+
+public interface CheckTrait{
+  public boolean test(Animal animal);
+}
+```
+Now that we have a structure let's do something with it. The code below uses a lambda expression to determine if some sample animal match the specific criteria:
+
+```java
+public class FindMatchingAnimals{
+  private static void print(Animal animal, CheckTrait trait){
+    if(trait.test(animal)){
+      System.out.println(animal)
+    }
+  }
+  
+  public static void main(String[] args){
+    print(new Animal("fish", false, true), a -> a.canHop());
+    print(new Animal("kangaroo", true, false), a -> a.canHop());
+  }
+}
+```
+The lambda expression ``` a -> a.canHop() ``` means that Java should call a method with an Animal parameter that returns a boolean value that's the result a.canHop(). We know all this because we wrote the code. But how does Java know? Java relies on context when figuring out what lambda expressions mean. We are passing this lambda as the second parameter of the print() method. That method expects a CheckTrait as second parameter. Since we are passing a lambda instead, Java treats CheckTrait as a funtional interface and tries to map it the the single abstract method.
+
+```boolean test(Animal animal);```
+
+Since this interface's method takes an Animal, it means the lambda parameter has to be an Animal. And since that interface's method returns a boolean, we know that the lambda returns a boolean.
+
+:yin_yang: *Deferred execution* means that code is specified now but runs later. In this case, later is when print() method calls it. Even though the execution is deferred, the compiler will still validate that the code synytax is properly formed
+
+## Understanding Lambda Syntax
+
 ## Applying the Predicate Interface
 # Implementing Polymorphism
 ## Distinguishing between an Object and a Reference
