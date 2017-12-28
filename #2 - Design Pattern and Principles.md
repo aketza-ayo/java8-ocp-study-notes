@@ -269,9 +269,45 @@ We tries to redeclare a, which is not allowed. By contrast the following line is
 
 ```
 
-
-
 ## Applying the Predicate Interface
+In the earlier example we created a simple functional interface to test Animal trait:
+
+```java
+public interface CheckTrait{
+  public boolean test(Animal animal);
+}
+```
+
+You can imagine that we'd have to create lots of functional interfaces like this to use lambdas. Luckily, Java sees that as common problem and provides such an interface for us. It's in the package ```java.util.function``` and the gist of it is as follows:
+
+```java
+public interface Predicate<T>{
+  public boolean test(T t);
+}
+```
+
+it is very similar to CheckTrait interface apart from the the type T instead of Animal. This is a generic type. The result of using ```Predicate``` is that we longer need our own functional interface. The following is rewrite of our program:
+
+```java
+import java.util.function.Predicate;
+
+public class FindMatchingAnimals{
+  private static void print(Animal animal, Predicate<Animal> trait){
+    if(trait.test(animal)){
+      System.out.println(animal)
+    }
+  }
+  
+  public static void main(String[] args){
+    print(new Animal("fish", false, true), a -> a.canHop());
+    print(new Animal("kangaroo", true, false), a -> a.canHop());
+  }
+}
+```
+
+
+
+
 # Implementing Polymorphism
 ## Distinguishing between an Object and a Reference
 ## Casting Object References
