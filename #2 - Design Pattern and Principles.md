@@ -379,9 +379,9 @@ The underlying idea of encapsulation is that no actor other than the class itsel
 Encapsulation is so prevalent in Java that there is a standard for creating classes that store data, called JavaBeans. A *JavaBean* is a design principle for encapsulating data in an object in Java. It boils down to variables are marked private. A mutation method begin with set, non-boolean properties begin with get to retrieve the data. Getter for boolean property may begin with is or get. So the nethod name nust have a prefix of set/get/is followed by the first letter of the property in uppercase and followed by the rest of the property name. 
 
 ## Applying the Is-a Relationship
-In object-oriented design, we describe the property of an object beign an instance of a data type as having an *is-a relationship*. The is a relationship is also known as the inheritance test. For example, imagine that we have a class Cat that extends a class Pet, as shown below
+In object-oriented design, we describe the property of an object being an instance of a data type as having an *is-a relationship*. The is a relationship is also known as the inheritance test. For example, imagine that we have a class Cat that extends a class Pet, as shown below. So a Cat is-a Pet, because Cat extends Pet. 
 
-
+![is a relationship](img/isA.png)
 
 ## Applying the Has-a Relationship
 ## Composing Objects
