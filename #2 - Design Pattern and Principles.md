@@ -383,7 +383,27 @@ In object-oriented design, we describe the property of an object being an instan
 
 ![is a relationship](img/isA1.png)
 
+The parent class, Pet, has commonly used fields such as ```name``` and ```age```. As a developer, you might also design a class Tiger, and since tigers also have a name and age, you might be inclined to reuse the parent Pet class for the purposes of saving time and lines of code, as below:
+
+![is a relationship](img/isA2.png)
+
+Unfortunately, Pet also has a cuddle() method, with the result being that you are ecouraging people to cuddle tigers. You are conceptually stating that Tiger is-a Pet and that is not true. A tiger is a wild animal. Although the example is funtionally correct, you have created a relationship that violates the is-a relationship.
+
+![is a relationship](img/isA3.png)
+
+Our class structure now works and is consisten. however if we add the child Dog to Pet we encounter a problem with the is-a test. A Dog is a Pet but is not a Feline. As you saw in this example, the is-a relationship test helps avoid creating objects models that contain contradictions. On solution in this example is to not combine Tiger and Pet in the same model preferring to write duplicate code rather than create incosistent data. Another solution is to use multi-inheritance properties of interfaces and declare Pet an interface rather than a parent class. 
+
+![is a relationship](img/isA4.png)
+
+Now, the object model is now correct using the is-a test. For example, Cat is-a Animal, Tiger is-a Feline, Dog is-a Animal and so forth. Pet is now separate from the class inheritance model, but by using interfaces, we preserve the relationship that Cat is-a Pet and Dog is-a Pet. 
+
 ## Applying the Has-a Relationship
+We refer *has-a relationship* as the property of an object having a named data object or primitive as a memeber. The *has-a* relationship is also known as the object composition test. 
+
+For example in the picture below the diagram shows that the Bird has-a Beak:
+
+
+
 ## Composing Objects
 # Working with Design Patterns
 ## Applying the Singleton Pattern
