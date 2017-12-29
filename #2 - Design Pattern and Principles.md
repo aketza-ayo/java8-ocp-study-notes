@@ -381,7 +381,7 @@ Encapsulation is so prevalent in Java that there is a standard for creating clas
 ## Applying the Is-a Relationship
 In object-oriented design, we describe the property of an object being an instance of a data type as having an *is-a relationship*. The is a relationship is also known as the inheritance test. For example, imagine that we have a class Cat that extends a class Pet, as shown below. So a Cat is-a Pet, because Cat extends Pet. 
 
-![is a relationship](img/isA.png)
+![is a relationship](img/isA1.png)
 
 ## Applying the Has-a Relationship
 ## Composing Objects
