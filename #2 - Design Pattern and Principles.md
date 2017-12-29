@@ -305,12 +305,68 @@ public class FindMatchingAnimals{
 }
 ```
 
-
-
-
 # Implementing Polymorphism
+*Polymorphism* is the ability of a single interface to support multiple underlying forms. In Java this allows multiple types  pof objects to be passed to a single method or class. It also allows one object to take on many different forms. **A Java object may be accessed using a reference with the same type as the object, a reference that is a superclass of the object or a reference that defines an interface that the object implements, either directly or through a superclass. Furthermore, a cast is not required if the object is beign reassigned to a supertype or interface of the object.**
+
+If you use a variable to refer to an object, then only the mehods or variables that are part of the variable's reference type can be called without explicit cast.
+
 ## Distinguishing between an Object and a Reference
+In Java, all objects are accessed by reference, so as a developer ypou never have direct access to the memory of the object itself. Conceptually, you should think of an object as the entity that exists in memory.
+
+All objects can be reassigned to ```java.lang.Object```
+
+```java
+Lemur lemur = new Lemur();
+
+Object lemurAsObject = lemur;
+
+```
+Eventhough the Lemur object has been assigned a reference with a different type, the object itself has not changed and still exists a Lemur object in memory. What has changed is our ability to access methods within the Lemur class with the lemurAsObject reference. Unless we do an explicit cast back to Lemur (you see more about this in the next section), we no longer have access to the Lemur properties of the object.
+
+We can summarize this principle with the following two rules:
+1- The type of the object determines which properties exist within the object in memory
+2- The type of the reference to the object determines which methods and variables are accessible to the Java program.
+
 ## Casting Object References
+As mentioned earlier, once changed the reference type we lost access to more specific methods defined in the subclass that still exists within the object. But we can reclaim those references by casting the object back to the specific subclass it came from:
+```java
+Primate primate = lemur;
+
+Lemur lemur2 = primate;       // DOES NOT COMPILE
+
+Lemur lemur3 = (Lemur) primate;
+System.out.println(lemur3.age);
+```
+
+In the example of the book, primate is a class on its own with a single method hasHair(). There is also an interface HasTail with the abstract method isTailStripped() and then the Lemur class that extends the Primate class and implements the HasTail interface. In addition, the lemur class also has a int member variable age = 10;
+
+So, in this example above when we try to convert the primate reference back to lemur reference, lemur2, without explicit cast. The result will not compile. In the second example, though, we explicitly cast the object toa subclass of the object Primate, and we gain access to all the methods availoable to the Lemur class.
+
+Here are some basic rules to keep in mind when casting variables:
+1 - Casting an object from a subclass to a superclass doesn't require explicit cast.
+2 - Casting an object from a superclass to a subclass requires an explicit cast.
+3 - The compiler will not allow cast to unrelated types.
+4 - Even when the code compiles without issue, an exception may be thrown at runtime if the object beign cast is not actually an instance of that class.
+
+One example for point 4 will be. Casting is not without limitations. Even though two classes share related hierarchy, that doesn't mean an instance of one can automatically be cast to another. The example is:
+
+```java
+public class Rodent{}
+
+public class Capybara extends Rodent{
+  public static void main(String[] args){
+    Rodent rodent = new Rodent();
+    Capybara capybara = (Capybara) rodent;   // Throws ClassCastException at Runtime
+  }
+}
+```
+The code above creates an instance of Rodent and then tries to cast it to a subclass of Rodent, Capybara. Although this code compiles without issue, it will throw a ClassCastException at runtime since the object beign referenced is not an instance Capybara class. You can use ```instanceof``` operator to avoid throwing ClassCastException at runtime:
+
+```java
+if(rodent instanceof Capybara){
+  Capybara capybara = (Capybara) rodent;
+}
+```
 # Understanding Design Principles
 ## Encapsulating Data
 ## Creating JavaBeans
