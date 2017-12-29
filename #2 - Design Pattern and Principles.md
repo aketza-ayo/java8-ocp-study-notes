@@ -402,7 +402,7 @@ We refer *has-a relationship* as the property of an object having a named data o
 
 For example in the picture below the diagram shows that the Bird has-a Beak:
 
-
+![has a relationship](img/hasA.png)
 
 ## Composing Objects
 # Working with Design Patterns
