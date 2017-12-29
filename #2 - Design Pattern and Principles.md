@@ -412,7 +412,73 @@ inheritance goes one step further by allowing us to say that any child of Bird m
 In software design, we refer to ```object composition``` as the proterty of constructing a class using references to other classes in order to reuse the functionality of the other classes. One of the benefit of using composition over inheritance is that it tends to promote greater code reuse. By using composition, you gain access to other classes and methods that would be difficult to obtein via Java's single inheritance model. Composition might seem more attractive than inheritance because of its reusable neture.
 
 # Working with Design Patterns
+A *desing pattern* is a established general solution to a commonly occurring software development problem. My suggestion is to stop what you are doing and go and learn them all. It will take you to the next level. 
+
+For the OCP exam you are only required to know Singleton and Inmutable Object patterns. The other two are not required for the exam.
+
 ## Applying the Singleton Pattern
+**Problem:** How do we create an object in memory only once in an application and have it shared by multiple classes?
+**Motivation:** There are times when we want only one instance of a particular type of objects in memory. For example, we might want to manage the amount of hay available for food to the zoo animals across all classes that use it. We could pass the same HayManager to every class and methods that uses it. This will create a lot of pointers and extra costs and could be dificult to manage if the object is used throughout the application. By creating a singleton HayManager object, we centralize the data and remove the need to pass it around the application.
+**Solution:** The ```singleton pattern``` is a creational pattern focused on creating only one instance of an object in memory within an application sharable by all classes and threads within the application. 
+
+The represeantation of a implementation of HayManager class as a singleton as follows:
+
+```java
+public class HayStorage{
+   
+   private int quantity = 0;
+   
+   private HayStorage(){}
+   
+   private static final HayStorage instance = new HayStorage();
+   
+   public static HayStorage getInstance(){
+      return instance;
+   }
+   
+   public synchronized void addHay(int amount){
+     quantity += amount;
+   }
+   
+   public synchronized boolean removeHay(int amount){
+      if(quantity < amount) return false;
+      quantity -= amount;
+      return true;
+   }
+   
+   public synchronized int getHayQuantity(){
+      return quantity;
+   }
+
+}
+
+```
+As shown in the example singletons are created in Java as private static variables within the class, often with the name instance. They are accessed via a single public static method, often named getInstance(), which returns the reference to the singleton object. Finally, all constructor in the singleton class are marked as private, which ensures that ensures that no other class is capable of instantiating another version of the class. Marking the constructor private we have implicitly marked the class final. Recall that if we dont add a constructor Java automatically adds the default no-argument constructor if none are provided. Also the first implicit line in a constructor is a call to super() and when all constructors are declared private it is impossible to create a subclass with a valid constructor; therefore the singleton class is effectively final. The synchonized keyword in the methods prevent two processes from running the same method at the exact same time.
+
+Now, let's expand the example further:
+
+```java
+public class ElephantTrainer{
+  public boolean feedElephants(int numberOfElephants){
+      int amountNeeded = 5 * numberOfElephats;
+      HayStorage hayStorage = HayStorage.getInstance();
+      if(hayStorage.gethayQuantity() < amountNeeded){
+        hayStorage.addHay(amountNeeded + 10);
+      }
+      boolean fed = hayStorage.removeHay(amountNeeded);
+      
+      if(fed){
+        System.out.println("Elephants have been fed");
+      }
+      
+      return fed;
+  }
+}
+
+```
+
+Keep in mind that there might be multiple elephant trainers in the zoo but only one food storage.
+
 ## Creating Inmutable Objects
 ## Using a Builder Pattern
 ## Creating Objects with the Factory Pattern
