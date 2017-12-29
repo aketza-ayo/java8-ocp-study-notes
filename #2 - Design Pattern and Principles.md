@@ -404,7 +404,13 @@ For example in the picture below the diagram shows that the Bird has-a Beak:
 
 ![has a relationship](img/hasA.png)
 
+In the example above, the Bird and Beak are both classes with different attributes and values. They do pass the has-a test, as a Bird has-a Beak. 
+
+inheritance goes one step further by allowing us to say that any child of Bird must also have a Beak.Generally, if a parent has-a object as a protected or public member then any child of the parent must also have that object member. Note that this does not hold true for ```private``` members defined in parent classes, because ```private``` members are not inherited in Java.  
+
 ## Composing Objects
+In software design, we refer to ```object composition``` as the proterty of constructing a class using references to other classes in order to reuse the functionality of the other classes. One of the benefit of using composition over inheritance is that it tends to promote greater code reuse. By using composition, you gain access to other classes and methods that would be difficult to obtein via Java's single inheritance model. Composition might seem more attractive than inheritance because of its reusable neture.
+
 # Working with Design Patterns
 ## Applying the Singleton Pattern
 ## Creating Inmutable Objects
