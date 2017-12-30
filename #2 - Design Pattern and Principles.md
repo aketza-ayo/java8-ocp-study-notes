@@ -477,7 +477,96 @@ public class ElephantTrainer{
 
 ```
 
-Keep in mind that there might be multiple elephant trainers in the zoo but only one food storage.
+Keep in mind that there might be multiple elephant trainers in the zoo but only one food storage. In the HaySorage example we instantiated the singleton object directly in the definition of the instance reference. We can instantiate in two other ways. The following example creates a singleton using a static initialization block when the class is loaded. See below:
+
+```java
+public class StaffRegister{
+  private static final StaffRegister instance;
+  
+  static{
+    instance = new StaffRegister();
+  }
+  
+  private StaffRegister(){}
+  
+  public static StaffRegister getInstance(){
+    return instance;
+  }
+
+}
+
+```
+
+Both of our singleton classes, HayStorage and StaffRegister classes instantiate the singleton at the time the class is loaded. Conceptually, these two implementations are equivalent since both create the singleton when the class is loaded.
+
+Singletons are used in situations where we need access to a single set of data throughout an application. Foe example, application configuration data and reusable data caches are commonly implemented using singletons.
+
+## Applying Lazy Instantiation to Singletons
+Another technique is to delay creation of the singleton until the first time the getInstance() method is called.
+
+```java
+public class VisitorTicketTracker{
+  private static VisitorTicketTracker instance;
+  
+  private VisitorTicketTracker(){}
+  
+  public static VisitorTicketTracker getInstance(){
+    if(instance == null){
+      instance = new VisitorTicketTracker();    //NOT THREAD-SAFE
+    }
+    return instance;
+  }
+  
+  // Data access methods ...
+}
+
+```
+The VisitorTicketTracker, like our Singleton classes, declares only private constructors, creates singleton instance, and returns the singleton with a getInstance() method. The VisitorTicketTracker class though does not create the singleton object when the class is loaded but rather the first time it is requested by a client.
+
+Creating a reusable object the first time it is requested is known as ```lazy instantiation``` . Lazy instantiation reduces memory usage and improves peformance when an application starts up. The downside is that users may see a noticeable delay the first time a particular type of resources is needed. 
+
+## Creating Unique Singletons
+We must ensure that only one singleton instance is ever created. 
+- Marking the constructor private as if prevents the singleton from being created by other classes
+- We must ensure that the singleton is only created once within the singleton class itself by making the instance static
+- Because we used lazy initialization the compiler will not let us assign the final modifier to the static reference.
+- The implementation of VisitorTicketTracker is not thread-safe because two threads could call getInstance() at the same time resulting in two objects beign created.
+- *Thread safety* is the property of an object that guarantees safe execution by multiple threads at the same time. For now we present a simple solution to this and more to come in Chapter 7.
+- The code below shows the lazy instantiation using synchronized modifier:
+```java
+public static synchronized VisitorTicketTracker getInstance(){
+  if(instance == null){
+    return new VisitorTicketTracker();
+  }
+  
+  return instance;
+}
+```
+The getInstance() method is now synchronized with means only one thread will be allowed in the method at a time, ensuring that only one object is created.
+
+## Real World Scenario: Singleton with Double-Checked Locking
+The problem with adding synchronized keyword to getInstance() method has lots of downsides. Although sucessfully preventing multiple singleton objects beign created, has the problem that every single call to this method will required synchronization. In practice this can be very constly and can impact performance. Synchronization is only needed the first time that the object is created.
+
+The solution is to use double-checked locking, a design pattern in which we first test if synchronization is needed before actually acquiring any locks. The following is an example rewrite of this method using double-check locking:
+
+```java
+private static volatile VisitorTicketTracker instance;
+
+public static VisitorTicketTracker getInstance(){
+  if(instance == null){
+    synchronized(VisitorTicketTracker.class){
+      if(instance == null){
+        instance = new VisitorTicketTracker();
+      }
+    }
+  }
+}
+
+```
+
+We added ```volatile``` modifier to our singleton object. This keyword prevents a subtle case where the compiler tries to optimize the code such that the objcet is accessed before it is finished beign constructed.
+
+This solutions is better, it performs the synchronization step only when the singleton does not exist
 
 ## Creating Inmutable Objects
 ## Using a Builder Pattern
