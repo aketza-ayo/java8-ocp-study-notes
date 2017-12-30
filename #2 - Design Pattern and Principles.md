@@ -568,6 +568,88 @@ We added ```volatile``` modifier to our singleton object. This keyword prevents 
 
 This solutions is better, it performs the synchronization step only when the singleton does not exist
 
-## Creating Inmutable Objects
+## Creating Inmutable Objectse
+The next creational pattern we will discuss is the inmutablw object pattern.
+
+**Problem:** How do we create read-only objects that can be shared and used by multiple classes?
+**Motivation:** Sometimes we want to create simple objects that can be shared across multiple classes, but for security reason we don't want their value to be modified.
+**Solution** The *inmutable object pattern* is a creational pattern based on the idea of creating objects whose state does not change after they are created and can be easily shared across multiple classes. Inmutable objects go hand and hand with encapsulation, except that no setter method exists that modify the object. Since the state of an inmutable object never changes, they are inherently thread-safe.
+
+:yin_yang: You may remember that the String class was called *inmmutable*. In this section, we will show you how to define your own inmmutable classes.
+
+## Applying an Innmutable Strategy
+Here you can find the steps for making the objects inmmutable:
+1 - Use a constructor to set all properties of the object.
+2 - Mark all of the interface variables ```private``` and ```final```.
+3 - Don't define any setter methods.
+4 - Don't allow referenced mutable objects to be modified or accessed directly.
+5 - Prevent methods from beign overriden.
+
+The forth rules requires a little bit more explanation. Let's say that you have an inmmutable Animal object, which contains a reference to a List of animal's favourite foods, as shown in the following example:
+
+```java
+import java.util.*;
+
+public final class Animal{
+  private final List<String> favouriteFoods;
+  
+  public Animal(List<String> favouriteFoods){
+    if(favouriteFoods == null){
+        throw new RuntimeException("favourite food is required");
+    }
+    this.favouriteFoods = new ArrayList<String>(favouriteFoods);
+  }
+  
+  public List<String> getFavouriteFoods(){        // MAKES CLASS MUTABLE!
+    return favouriteFoods;
+  }
+}
+
+```
+In order to ensure that the favouriteFoods List is not null, we validate it in the constructor and throw an exception if it is not provided. The problem in this example is that the user can alter the list even though there is no setter method by deleteing all items in the list getFavouriteFoods().clear() or could also replace, remove or even sort the List.
+
+The solution then is never to return that List reference to the user. If the user needs access to the data in the List, either create wrapper methods to iterate over the data or create a one-time copy of the data that is returned to the user and never stored as part of the object. Collections API includes Collections.unmodifiableList() method, which does exactly this. The key point here is that none of the methods that you create should modify the mutable object.
+
+The fifth rule, is important because it prevents someone from creating a subclass of your class in which previosuly immutable value now appear mutable. The simplest solution is to mark the class or methods as final. Another option is to make the constructor private and apply the factory pattern.
+
+Here is an example of what it shold be:
+
+```java
+import java.util.*;
+
+public final class Animal{
+  private final String soecies;
+  private final int age;
+  private final List<String> favouriteFoods;
+  
+  public Animal(String species, int age, List<String> favouriteFoods){
+    this.species = species;
+    this.age - age;
+    
+    if(favouriteFoods == null){
+      throw new RuntimeException("favourite foods is required");
+    }
+    this.favouriteFoods = new ArrayList<String>(favouriteFoods);
+  }
+
+  public String getSpecies(){
+    return species;
+  }
+  
+  public int getAge(){
+    return age;
+  }
+  
+  public int getFavouriteFoodsCount(){
+    return this.favouriteFoods.size();
+  }
+  
+  public String getFavouriteFood(int index){
+    return favouriteFoods.get(index)
+  }
+}
+
+```
+
 ## Using a Builder Pattern
 ## Creating Objects with the Factory Pattern
