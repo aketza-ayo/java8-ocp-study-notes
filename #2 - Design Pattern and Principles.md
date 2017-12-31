@@ -655,5 +655,78 @@ The code above follows all five rules. Sets all the variables private and final,
 
 Notice that we created a new ArrayList in the Animal constructor. This is important to prevent the class that initially creates the object from maintaining a reference to the mutable List used by Animal. If we just did ```this.favouriteFoods = favouriteFoods;``` the caller that is using the same reference as the immutable object, which means that it has the ability to change the List! It is important when creating immutable objects that any mutable input arguments are copied to the instance instead of beign used directly.
 
+## "Modifying" an Immutable Object
+How do we modity immutable objects if they are inheritably unmodifiable? the abswer is we can't. What we can do thouh is to create new immutable objects that contain all the same info as the original object plus whatever we wanted to change. What is the principle with String objects underneed the hood.
+
+For example in the Animal class example, imagine that we want to increase the age of an Animal by one. The following creates two Animal instances, the second using a copy of the data from the first instance.
+
+```java
+// create a new Animal instance
+Animal lion = new Animal("lion",5,Arrays.asList("meat","more meat"));
+
+// create a new Animal instance using data from the first instance
+List<String> favouriteFoods = new ArrayList<String>();
+for(int = 0; i < lion.getFavouriteFoodsCount(); i++){
+  favouriteFoods.add(lion.getFavouriteFood(i));
+}
+Animal updatedAnimal = new Animal(lion.getSpecies(), lion.getAge() + 1, favouriteFoods);
+
+```
+Since we did not have access to the favouriteFoods mutable list, we had to copy it using a for loop. We could simplify this by defining a method in Animal that returns a copy of favouriteFoods List.
+
+The next two design patterns are not required for the OCP exam.
+
 ## Using a Builder Pattern
+**Problem:** How do we create an object that requires numerous values to be set at the time the object is instantiated?
+**Motivation:** As our data, fields, of our objects grow in size, the constructor may grow to contain mny attributes. For example in the previous Animal object we had three input parameters: species, age and favouriteFoods. If we need to add five more attributes to the object, we need to add 5 more attributes to the constructor. Everytime we add a field, the constructor grows. Alternatively, we could create a new constructor every time we add a new field but this can be quite difficult to manage in practice. 
+**Solution:** The *builder pattern* is a creational pattern in which parameters are passed to a builder object, often through method chaining, and an object is generated with a final build call. It is often used with immutable objects, since immutable objects do not have setter methods and must be created with all of their parameter set, although it can be used with mutable objects as well. 
+
+The following is an AnimalBuilder class, which uses our immutable Animal class:
+
+```java
+import java.util.*;
+
+public class AnimalBuilder{
+  private String species;
+  private int age;
+  private List<String> favouiteFoods;
+  
+  public AnimalBuilder setAge(int age){
+    this.age = age;
+    return this;
+  }
+  
+  public AnimalBuiler setSpecies(String species){
+    this.species = species;
+    return this;
+  }
+  
+  public AnimalBuilder setFavouriteFoods(List<String> favouriteFoods){
+    this.favouriteFoods = favouriteFoods;
+    return this;
+  }
+  
+  public Animal build(){
+    return new Animal(species,age,favouriteFoods);
+  }
+}
+
+```
+First, the class is mutable, whereas the Animal class is immutable. We can modify this class as we built it, and the result of the build method will be an immutable object. In some ways, using the builder pattern is like taking a mutable object and making it read-only. Next thing, is that all the setter methods return an instance of the builder object this. Builder methods are commonly chained together, often callable in any order. For example, the following two code snippets are both valid uses of the builder:
+
+```java
+AnimalBuilder duckBuilder = new AnimalBuiler();
+duckBuilder.setAge(4).setFavouriteFoods(Arrays.asList("grass","fish")).setSpecies("duck");
+Animal duck = duckBuilder.build();
+
+Animal flamingo = new AnimalBuilder() .setFavouriteFoods(Arrays.asList("algae","insects")).setSpecies(flamingo").setAge(4).build();
+```
+
+The primary advantage of the builder pattern is that, over time, this approach leads to far more mantainable code. If a new optional field is added to the Animal class, then our code that creates objects using the AnimalBuilder class will not need to be changed. In practice, a builder object supports dozens of parameters. When using the builder pattern the class is considered tightly coupled. 
+
+*Tight coupling* is the practice of developing coupled classes that are highly dependent, such that a minor change in one class may greatly impact the other class.
+
+*Loose coupling* is the practice of developing coupled classes with minimum dependencies on one another.
+
+
 ## Creating Objects with the Factory Pattern
