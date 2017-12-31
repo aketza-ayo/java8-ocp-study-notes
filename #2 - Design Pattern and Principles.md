@@ -730,3 +730,89 @@ The primary advantage of the builder pattern is that, over time, this approach l
 
 
 ## Creating Objects with the Factory Pattern
+**Problem** How do we write code that creates objects in which the precise type of the object may not be known until runtime.
+**Motivation** We would like some way of encapsulating objects creation to deal with the complexity pf object creation, including selecting which subclasses to use, as well as loosely coupling the underlying creation implementation.
+**Solution** The *factory pattern* sometimes referred to as factory method is a creational pattern based on the idea of using a factory class to produce instances of objects based on a set of input parameters. 
+
+Factory patterns are often, implemented using static methods that returns objects and do not require a pointer to an instance of the factory class. It is also good coding practice to postfix the class name with the word ```Factory``` such as in ```AnimalFactory, ZooFactory``` and so forth.
+
+For example, imagine the case that a zoo keeper needs to feed a variety of animals in the zoo different types of foods. Some animals eat specialized food, while others share the same type of food. Furthermore, a quantity value is associated with each distribution of food to an animal. See the code below:
+
+```java
+public abstract class Food{
+  private int quantity;
+  
+  public Food(int quantity){
+    this.quantity = quantity;
+  }
+  
+  public int getQuantity(){
+    return quantity;
+  }
+  
+  public abstract void consumed(); 
+}
+
+public class Hay extends Food{
+  public Hay(int quantity){
+    super(quantity)
+  }
+  
+  public void consumed(){
+    System.out.println("Hay eaten: " + getQuantity());
+  }
+}
+
+public class Balls extends Food{
+  public Balls(int quantity){
+    super(quentity);
+  }
+  
+  public void consumed(){
+    System.out.println("Balls eaten: " + getQuantity());
+  }
+}
+
+public class Fish extends Food{
+  public Fish(int quantity){
+    super(quantity);
+  }
+  
+  public void consumed(){
+    System.out.println("Fish eaten: " + getQuantity());
+  }
+}
+
+```
+
+Now, lets define a FoodFactory class. See code below:
+
+```java
+public class FoodFactory{
+
+  public static Food getFood(String animalName){
+    switch(animalName){
+      case "zebra": 
+        return new Hay(100);
+      case "rabbit": 
+        return new Balls(5);
+      case "goat": 
+        return new Balls(30);
+      case "polar bear": 
+        return new Fish(10); 
+    }
+  }
+  // Good practice to throw an exception if no matching if no matching subclass could be found
+  throw new UnsupportedOperationException("Unsupported animal: " + animalName);
+
+}
+
+public class ZooKeeper{
+  public static void main(String[] args){
+    final Food food = FoodFactory.getFood("polar bear");
+    food.consumed();
+  }
+}
+```
+
+Depending a value of animalName, we return different types of food for use in our factory. Different animals can share the same food, such as goat and rabbit both eating balls but with varying quantities. Next, notice in our ZooKeeper method that we don't care about a particular type of food that we get, as long as it implements the Food interface. 
