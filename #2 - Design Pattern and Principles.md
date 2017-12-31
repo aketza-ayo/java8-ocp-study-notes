@@ -651,5 +651,9 @@ public final class Animal{
 
 ```
 
+The code above follows all five rules. Sets all the variables private and final, and the constructor sets them uponobject creation. Next, there are no setter methods and the class itself is marked final so that the methods cannot be overriden by a subclass. The class does contain a mutable object, List, but no references to the object are publically available. We provide two methods for retrieving the total number of favourite foods as well as a method to retrieve a food based on an index value. String is inmmutable, therefore we don't need to worry aboout any of the String object beign modified.
+
+Notice that we created a new ArrayList in the Animal constructor. This is important to prevent the class that initially creates the object from maintaining a reference to the mutable List used by Animal. If we just did ```this.favouriteFoods = favouriteFoods;``` the caller that is using the same reference as the immutable object, which means that it has the ability to change the List! It is important when creating immutable objects that any mutable input arguments are copied to the instance instead of beign used directly.
+
 ## Using a Builder Pattern
 ## Creating Objects with the Factory Pattern
