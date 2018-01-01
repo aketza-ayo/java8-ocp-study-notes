@@ -824,4 +824,4 @@ Completed the questions within 30 minutes. I aim to complete 20 questions within
 
 ## Points to remember:
 - Bear in mind that interfaces can contain more that abstract methods. In fact they can contain constant variables static final and also static and defaul methods.
-- When two interfaces implement the same default method. Annother interface that extend these two interfaces is going to throw a compile time error unless it implements the default method method as well.
+- When two interfaces implement the same default method. Another interface that extend these two interfaces is going to throw a compile time error unless it implements the default method as well.
