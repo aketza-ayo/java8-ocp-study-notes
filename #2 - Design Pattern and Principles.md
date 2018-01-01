@@ -815,4 +815,13 @@ public class ZooKeeper{
 }
 ```
 
-Depending a value of animalName, we return different types of food for use in our factory. Different animals can share the same food, such as goat and rabbit both eating balls but with varying quantities. Next, notice in our ZooKeeper method that we don't care about a particular type of food that we get, as long as it implements the Food interface. 
+Depending a value of animalName, we return different types of food for use in our factory. Different animals can share the same food, such as goat and rabbit both eating balls but with varying quantities. Next, notice in our ZooKeeper method that we don't care about a particular type of food that we get, as long as it implements the Food interface.
+
+# Review Questions
+Completed the questions within 30 minutes. I aim to complete 20 questions within 30 min which is an avarage of one question per one minute and a half.
+
+![Chapter two questions](img/testChapterTwo.png)
+
+## Points to remember:
+- Bear in mind that interfaces can contain more that abstract methods. In fact they can contain constant variables static final and also static and defaul methods.
+- When two interfaces implement the same default method. Annother interface that extend these two interfaces is going to throw a compile time error unless it implements the default method method as well.
