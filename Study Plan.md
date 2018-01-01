@@ -7,9 +7,9 @@ Date Estimated      |                       Task                                
 --------------------|--------------------------------------------------------------------|--------
 December 20 - December 26 | Read Introduction, Appendix B, and Chapter 1    | Took me 10 hours to read and take notes
 December 27               | Answer Chapter 1 Review Questions               | 30 min to answer + another 30 min to revise
-December 28 - January 2   | Read Chapter 2                                  |
-January 3                 | Answer Chapter 2 Review Questions               |
-January 4 - January 7     | Read Chapter 3                                  |
+December 28 - January 1   | Read Chapter 2                                  | 12 hrs to read the material and take notes
+January 1                 | Answer Chapter 2 Review Questions               | 33 min to answer + 15 min to revise
+January 2 - January 7     | Read Chapter 3                                  |
 January 7                 | Answer Chapter 3 Review Questions               |
 January 13 - January 21   | Read Chapter 4                                  |
 January 21                | Answer Chapter 4 Review Questions               |
