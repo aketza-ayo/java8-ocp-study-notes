@@ -238,8 +238,60 @@ class ShippableCrate implements Shippable{
 - *Create a static variables as generic type parameter*. This is not allowed because the type is linked to the instance of the class.
   
 ## Generic Methods
+Up until now you have seen generic types declared in classes and interfaces. It is also possible to declare them at method level. This is often useful for static methods since they aren't part of the instance . However, they are also allowed on non-static methods as well.
+
+```java
+public static <T> Crate<T> ship(T t){
+    System.out.println("Preparing " + t);
+    return new Crate<T>();
+}
+
+```
+The method parameter is the generic type T. The return type is a Crate<T>. Before the return type, we declare the formal type parameter of <T>. Unless a method is obtaining the generic formal type parameter from the class/interface, it is specified immediately before the return type of the method. Observe code below:
+  
+```java
+public static <T> void sink(T t){ }
+public static <T> T indentity(T t){ return t;}
+public static T noGood(T t){ return t; }          //DOES NOT COMPILE        
+```
+
+Line 1 shows the formal param type immediately before the return type of void. Line 2 shows the return the type beign the formal param type. It looks weird, but it is correct. Line 3 ommits the formal param type, and therefore it does not compile.
 
 ## Interacting with Legacy Code
+*Legacy code* is older code. It is usually code that is in a different code that you would normally write today. In this section we are referring to code that was written in version 1.4 and therefore does not use generics. Collections written without generics are also known as *raw collection*. Remember using collections gives us compile time safety. 
+
+```java
+class Dragon{}
+
+class Unicorn{}
+
+public class LegacyDragons{
+  public static void main(String[] args){
+    List unicorns = new ArrayList();
+    unicorns.add(new Unicorn());
+    printDragons(unicorns);
+  }
+  
+  private static void printDragons(List<Dragon> dragons){
+    for(Dragon dragon : dragons){       //ClassCastException
+      System.out.println(dragon);
+    }
+  }
+}
+```
+
+Now, look at the problem with autoboxing:
+```java
+public class LegacyAutoboxing{
+  public static void main(Stirng[] args){
+    List numbers = new ArrayList();
+    numbers.add(5);
+    int result = numbers.get(0);        //DOES NOT COMPILE
+  }
+}
+```
+
+The good news is that unboxing fails with a compiler error rather than a runtime error. On line 3 we create a raw list. Onm line 4 we try to add an int to the list. This works because Java automatically autoboxes to an Integer. On line 5, we have a problem. Since we are not using generics Java does not know the list contains Integers. It just knows about Objcts and an object cannot be unboxed in a primitive int. To review, the lesson is to be careful when you see code that doesn't use generics.
 
 ## Bounds
 
