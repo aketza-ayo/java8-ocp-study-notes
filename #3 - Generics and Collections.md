@@ -433,10 +433,106 @@ addSound(strings);
 addSound(objects);
 ```
 
-The problem is that we want to pass a List<String> and a List<Object> to the same method.First, make sure that you understand why the first 3 options don't work
+The problem is that we want to pass a List<String> and a List<Object> to the same method.First, make sure that you understand why the first 3 options don't work.
+  
+![Why we need lower bound](/img/whyLowerBound.png)
+
+To solve this problem, we need to use lower bounds:
+
+public static void addSound(List<? super String> list){   // lower bound
+  list.add("quack");
+}
+
+witha lower bound, we are telling Java that the list will be a list of String objects or a list of some objects that are  superclass of String. Either way, it is safe to add a String to that list.
+
+### Understanding Generic Supertypes
+when you have subclasses and superclasses, lower bounds can get tricky:
+
+```java
+List<? super IOException > exceptions = new ArrayList<Exception>();
+exceptions.add(new Exception());      //DOES NOT COMPILE
+exceptions.add(new IOException());
+exceptions.add(new FileNotFoundException());
+
+```
+Line 1 reference a List that can be List<IOException> or List<Exception> or List<Object>. Line 2 does not compile because we could have a list<IOException> and and Exception object wouldn't fit in there.
+
+Line 3 and 4 are fine. IOException and FileNotFoundException can be added to any of those types. 
   
 ## Putting It All Together
+Let's see some examples to put what we learnt into practice.
 
+```java
+class A{}
+
+class B extends A{}
+
+class C extends B{}
+```
+
+Can you figure out why the following do or don't compile?
+
+```java
+6:  List<?> list1 = new ArrayList<A>();
+
+7:  List<? extends A> list2 = new ArrayList<A>();
+
+8:  List<? super A> list3 = new ArrayList<A>();
+
+9:  List<? extends B> list4 = new ArrayList<A>();         //DOES NOT COMPILE
+
+10: List<? super A> list5 = new ArrayList<A>();
+
+11: List<?> list6 = new ArrayList<? extends A>();         //DOES NOT COMPILE
+
+```
+Line 6 creates creates an ArrayList that can hold instances of class A. It uses an unbounded wildcard. Any generic can be referenced from an unbounded wildcard, making this OK. 
+
+Line 7 is OK it uses a upper-bounded wildcard. You could have List<A>, List<B>, List<C>.
+  
+Line 8 is also OK. This time is a lower-bounded wildcard. The lowest to can reference is A.
+
+Line 9 has upper bounded wildcard that allows List<B> and List<C>. Since you have List<A> it does not compile.
+  
+Line 10, has a lower-bounded wildcard, which allows a reference to List<A>, List<B> or ArrayList<Object>
+
+Finally, line 11 allows a reference to any generic type since it is unbounded wildcard. The problem is that you need to know what that wildcard will be when instantiating the ArrayList. 
+
+Now, same questions for the following method:
+
+```java
+<T> T method1(List<? extends T> list){
+  return list.get(0);
+}
+
+```
+
+method1() is a normal use of generics. For example you could call it with List<String> param and have it return a String. Or you could call it with a List<Number> param and have it return a Number. 
+  
+Now, what is wring with this code?
+
+```java
+<T> <? extends T> method2(List<? extends T> list){  //DOES NOT COMPILE
+  return list.get(0)
+}
+
+```
+
+method2() does not compile because the return type isn't actually a type. Since you are the one writting the method you should know what method is suppose to return. You don't get to specify this as a wild card
+
+Now this is extra tricky:
+
+```java
+<B extends A> B method3(List<B> list){
+  return new B();             // DOES NOT COMPILE  
+}
+
+```
+
+method3() does not compile <B extends A> says that you want to use B as type param for this method and that it has to extend A. The trick is that B is also the name of a class. Within the scope of the method, B can represent classes A, B or C because all extend A class. Since B no longer refers to B class in the method, you cannot instantiate it.
+  
+Generics bounds are very tricky. Come back tomorrow when you have a fresh mind and re-read.
+  
 # Using Lists, Sets, Maps, and Queues
 
 ## Common Collections Methods
