@@ -33,11 +33,12 @@ int[] numbers = {6,9,1,8};
 Arrays.sort(numbers);                                         //[1,6,8,9]
 System.out.println(Arrays.binarySearch(numbers,6));  //1
 System.out.println(Arrays.binarySearch(numbers,3));  //-2
-
-Line 2 sorts the array because Binary Search assumes the input is sorted. Line 3 prints the index at which match is found. Line 4 prints one less than the negated  of where the requested value would need to be inserted. The number 3 would need to inserted at index 1 (after the number 1 but before the number 6) so index 1. Negating that index give us -1 and substracting 1 gives us -2. 
 ```
 
+Line 2 sorts the array because Binary Search assumes the input is sorted. Line 3 prints the index at which match is found. Line 4 prints one less than the negated  of where the requested value would need to be inserted. The number 3 would need to inserted at index 1 (after the number 1 but before the number 6) so index 1. Negating that index give us -1 and substracting 1 gives us -2. 
+
 ## Wrapper Classes and Autoboxing 
+As shown in the table below each primitive has a correspoding wrapper class. *Autoboxing* automatically converts a primitive  to the corresponding wrapper classes when needed. On the other hand, *Unboxing* converts a wrapper class back to a primitive.
 
 ## The Diamond Operator
 
