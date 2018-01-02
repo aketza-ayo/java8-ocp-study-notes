@@ -197,7 +197,46 @@ Robot r = (Robot) crate.emptyCrate();
 ```
 
 ## Generic Interfaces
+Just like a class, an interface can declare a formal type parameter. For example the interface below uses a generic type as the argument to its ship() method:
 
+```java
+public interface Shippable<T>{
+  void ship(T t);
+}
+```
+There are three ways a class  can approach implementing this interface. The first is to specify the generic type in the class. The following concrete class says it deals only with robots. 
+
+```java
+class ShippableRobotCrate implements Shippable<Robot>{
+  public void ship(Robot r){ }
+}
+
+```
+
+The next way is to create a generic class. The following concrete class allows the caller to specify the type of the generic:
+
+```java
+class ShippableAbstractCrate<U> implements Shippable<U>{
+  public void ship(U t)
+}
+```
+
+The final way, is to not use generics at all. This is the old way of writing code. It generates a compiler warning about Shippable beign a *raw type*, but it does compile. Here the ship() method has an Object parameter since the generic type is not defined:
+
+```java
+class ShippableCrate implements Shippable{
+  public void ship(Object t){ }
+}
+
+```
+
+:yin_yang: **What you can't do with Generic Types** These aren't in the exam.
+- *Call the constructor* new T() is not allowed because at runtime it would be an Object.
+- *Create an array of that static type* this one is the most annoying, but it makes sense because you'd be creating an array of Objects.
+- *Call instanceof*. This is not allowed because at runtime List<Integer> and List<String> look the same to Java thanks to type erasure.
+- *Use a primitive type as a generic type parameter*. This isn't a big deal because you can use the wrapper class instead. If you want a type int, just use Integer
+- *Create a static variables as generic type parameter*. This is not allowed because the type is linked to the instance of the class.
+  
 ## Generic Methods
 
 ## Interacting with Legacy Code
