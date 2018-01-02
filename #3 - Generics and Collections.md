@@ -355,9 +355,86 @@ public static void main(String[] args){
 printList() takes any type of list as a parameter. keywords is of type List<String>. We have a match! List<String> is a list of anything. "Anything" just happens to be a String here
   
 ## Upper-Bounded Wildcards
+Let's try to write a method that adds up the total of a list of numbers. We've established that a generc type cannot use a subclass.
+
+ArrayList<Number> list = new ArrayList<Integer>();        //DOES NOT COMPILE
+  
+Instead, we need to use a wild card:
+
+List<? extends Number> list = new ArrayList<Integer>();
+  
+The upper-bounded wildcard says that any class that extends Numnber of Number itself can be used as the formal parameter type:
+
+```java
+public static long total(List<? extends Number> list){
+  long count = 0;
+  for(Number number : list){
+    count += number.longValue();
+  }
+  return count;
+}
+
+```
+Remember how we kept saying that type erasure makes Java think that a generic type is an Object ? That is still happening here. Java converst the code to something like this:
+
+```java
+public static long total(List list){
+  long count = 0;
+  for(Object obj : list){
+    Number number = (Number) obj;
+    count += number.longValue();
+  }
+  return count;
+}
+
+```
+
+Something interesting happens when we work with upper bounds and unbounded wildcards. The list becomes immutable.
+
+```java
+static class Sparrow extends Bird{ }
+static class Bird{ }
+
+public static void main(String[] args){
+  List<? extends Bird> birds = new ArrayList<Bird>();
+  birds.add(new Sparrow());                 // DOES NOT COMPILE
+  bords.add(new Bird());                    // DOES NOT COMPILE
+}
+```
+The problem comes from the fact that Java does not know what type List<? extends Bird> really is. It could be List<Bird> or List<Sparrow>. Line 6, doesn't compile because we can't add a Sparrow to Lis<Bird> and line 7 doesn't compile because we can't add a Bird to List<Sparrow>. From Java point of view both scenarios are equally possible so netither is allowed.  
+  
+Now let's try an example with an interface. We have an interface and two classes that implement it:
+
+```java
+interface Flyer{ void fly();}
+
+class HangGlider implements Flyer { public void fly(){ }}
+
+class Goose implements Flyer { public void fly(){ }}
+
+```
+We also have two methods that use it. 
+
+```java
+private void anyFlier(List<Flyer> flyer){ }
+
+private void groupOfFlyers(List<? extends Flyer> flyer){}
+```
+Notice that we used keyword extends rather than implements. **Upper bounds are like anonymous classes in that they use extends regardless of whether we are working with a class or an interface.** 
 
 ## Lower-Bounded Wildcards
+Let's try to write code that adds a stirng "quack" to two lists:
 
+```java
+List<String> strings = new ArrayList<String>();
+strings.add("tweet");
+List<Object> objects = new ArrayList<Object>(strings);
+addSound(strings);
+addSound(objects);
+```
+
+The problem is that we want to pass a List<String> and a List<Object> to the same method.First, make sure that you understand why the first 3 options don't work
+  
 ## Putting It All Together
 
 # Using Lists, Sets, Maps, and Queues
