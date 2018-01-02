@@ -300,9 +300,60 @@ A *bounded parameter type* is a generic type that specifies a bound for the gene
 
 A *wildcard generic type* is an unknown generic type represented with a question mark (?). You can use generic wildcards in three ways. See table below 
 
+![Type of bounds](/img/typesOfBounds.png)
+
 
 ## Unbounded Wildcards
+An unbounded wildcard represents any data type you use. You use ? when you want to specify that any type is OK with you. For example:
+```java
+public static void printList(List<Object> list){
+  for(Object o: list) System.out.println(o);
+}
 
+public static void main(String[] args){
+  List<String> keywords = new ArrayList<>();
+  kaywords.add("java");
+  printList(keywords);                // DOES NOT COMPILE
+}
+```
+Why if String is a subtype of Object? However, List<String> cannot be assigned to List<Object>. I know it doesn't sound logical. But imagine if we could write code like this:
+  
+```java
+List<Integer> numbers = new ArrayList<>();
+number.add(new Integer(42));
+List<Object> objects = numbers;           
+objects.add("forty two");
+System.out.println(numbers.get(1));
+```
+
+On line 1, the compiler promises that only Integer objects will appear in numbers. If line 3 were to have compiled, line 4 would break that promise by putting a String in there since numbers and objects are references to the same object. Good thing that the compiler prevents this.
+
+:yin_yang: **Storing wrong Objects - Arrays vs ArrayLists**
+We can't write ```List<Object> l = new ArrayList<String>();``` so you might think that Java is protecting us from doing  
+```java
+Integer[] numbers = { new Integer(42)};
+Object[] objects = numbers;
+objects[0] = "forty two";               //throws ArrayStoreException
+```
+Although the code above comiles, it throws an expection at runtime. With arrays Java knows the type allowed in the array. Just because we've assigned an ```Integer[]``` to an ```Object[]``` doesn't change the fact that Java knows it is really an ```Integer[]```. Due to type erasure there is no such protection for an ArrayList. At runtime the ArrayList does not know what is allowed in it. Therefore Java uses the compiler to prevent this situation from happening. So whay Java doesn't allow this knowledge to ArrayList? the reason is backwards compalibility.
+
+Going back to the example, we cannot assign List<String> to List<Object>. Fine. What we need is a List of "Whatever" that's what List<?> is. The following does what we expect:
+
+```java
+public static void printList(List<?> list){
+  for(Object x: list) System.out.println(x);
+}
+
+public static void main(String[] args){
+  List<String> keywords = new ArrayList<>();
+  keywords.add("java");
+  printList(keywords);
+}
+
+```
+
+printList() takes any type of list as a parameter. keywords is of type List<String>. We have a match! List<String> is a list of anything. "Anything" just happens to be a String here
+  
 ## Upper-Bounded Wildcards
 
 ## Lower-Bounded Wildcards
