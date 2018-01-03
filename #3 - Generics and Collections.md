@@ -534,6 +534,15 @@ method3() does not compile <B extends A> says that you want to use B as type par
 Generics bounds are very tricky. Come back tomorrow when you have a fresh mind and re-read.
   
 # Using Lists, Sets, Maps, and Queues
+A *collection* is a set of objects contained is an single object. The *java collections framework* is a set of subclasses in java.util for storing collections. There are four main interfaces in the Java Collections Framework
+
+- **List**: A list is an ordered collection of elements that allows duplicate entries. Elements in a list can be accessed by an int index.
+- **Set**: A set is a collection that does not allow duplicate entries.
+- **Queue**: A queue is a collection that orders its elements in a specific order for processing. A typical queue process in FIFO order. First-in First-out but other orderings are possible
+- **Map**: A map is a collection that maps keys to values, with no duplicate keys allowed. The elements in a map are key/value pairs.
+
+In the figure below, notice that Map does not implement the Collection interface. It is considered part of the Java Collections Framework even though it doen't implement the Collection interface.
+
 
 ## Common Collections Methods
 
