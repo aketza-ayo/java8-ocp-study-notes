@@ -853,10 +853,124 @@ First figure out whether you are looking for a List, Map, Queue or Set. This all
 ![Collection Framework Diagram](img/collectionFwDiagram.png)
 
 # Comparator vs. Comparable
+For numbers, order is obvious - it is numerical order. For string objects order is in alphabetical order. As far as for the exam is concerned, numbers sort before letters and uppercase letters sort before lowercase letters.
+You can also sort objects that you create. Java provides an interface called *Comparable*. If your class implements Comparable, it can be used in the places that requires comparison. There is also a class called Comparator, which is used to specify that you want to use a different order than the object itself provides.
+
+Comparable and Comparator are similar enough to be tricky. The exam tries to confuse you by mixing them up.  
 
 ## Comparable
+The Comparable interface has only one method. In fact, this is the entire interface:
+```java
+public interface Comparable<T>{
+  public int compareTo(T o);
+}
+```
+
+For example we have a buch of Duck objects and we want to be able to sort them somehow. Let say by name:
+
+```java
+import java.util.*;
+
+public class Duck implements Comparable<Duck>{
+  private String name;
+  
+  public Duck(String name){
+    this.name = name;
+  }
+  
+  public String toString(){
+    return this.name;
+  }
+
+  public int compareTo(Duck d){
+    return name.comapreTo(d.name);
+  }
+  
+  public static void main(String[] args){
+    List<Duck> ducks = new ArrayList<>();
+    ducks.add(new Duck("Quack"));
+    ducks.add(new Duck("Puddles"));
+    Collections.sort(ducks);                //sort by name
+    System.out.println(ducks);              //[Puddles, Quack]
+  }
+}
+
+```
+The Duck class implements Comparable interface by implemeting compareTo() method. The Duck object also override toString() method os that we can see useful information when printing the ducks. As mentioned the Duck implements compareTo() object. Since Duck class is comparing objects of type String and String class already has a compareTo() method, it can just delegate. These are the three rules to know:
+- The number zero is returned when the current object is equal to the argument to compareTo().
+- A number less than zero when the current object is smaller than the argument compareTo().
+- A number greater than zero when the current object is larger than the argument compareTo().
+
+Let's look at an implementation of compareTo() that compares numbers instead of string objects:
+
+```java
+public class Animal implements Comaprable<Animal>{
+  private int id;
+  
+  public int compareTo(Animal a){
+    return id - a.id;
+  }
+  
+  public static void main(String[] args){
+    Animal a1 = new Animal();
+    Animal a2 = new Animal();
+    
+    a1.id = 5;
+    a2.id = 7;
+    
+    System.out.println(a1.compareTo(a2));     // -2
+    System.out.println(a1.compareTo(a1));     // 0
+    System.out.println(a2.compareTo(a1));     // 2
+  }
+
+}
+
+```
+
+The class implements the compareTo() method. Since an int is a primitive, we can't call a method on it. We could create the Integer wrapper class and delegate comapreTo() on that. But it is not neccesary since it is so easy to implement the method on your own. The print methods confirm that we have implemented the methods correctly.
+
+Note that when dealing with legacy code before generics were introduced the compareTo() requires a cast since it is passed an Object. See below:
+
+```java
+public class LegacyDuck implements Comparable{
+  private String name;
+  
+  public int compareTo(Object obj){
+    LegacyDuck d = (LegacyDuck) obj;      //cast because no generics used.
+    return name.compareTo(d.name);
+  }
+}
+```
+
+Since we don't specify the generic type for Comparable Java assumes that we want an Object
+
+:yin_yang: You are strongly encouraged to make your Comparable classes consistent with equals because not all collection classes behave predictanbly if the compareTo() and equals() methods are not consistent. 
+
+For example the following Product class defines a comapreTo() method that is not consistent with equals():
+
+```java
+public class Product implements Comparable<Product>{
+  int id;
+  String name;
+  
+  public boolean equals(Object obj){
+    if(! (obj instanceof Product)){
+      return false;
+    }
+    Product other = (Product) obj;
+    return this.id == other.id;
+  }
+  
+  public int compareTo(Product obj){
+    return this.name.compareTo(obj.name);
+  }
+}
+
+```
+This compareTo() method is not consistent with equals. One way to fix that is to use a Comparator to define the sort elsewhere. Let's see how its done with Comparator in the next section.
 
 ## Comparator
+Sometimes you want to sort an object that did not implement Comparable, or you want to sort object in different ways at different times.
 
 # Searching and Sorting 
 
