@@ -541,10 +541,12 @@ A *collection* is a set of objects contained is an single object. The *java coll
 - **Queue**: A queue is a collection that orders its elements in a specific order for processing. A typical queue process in FIFO order. First-in First-out but other orderings are possible
 - **Map**: A map is a collection that maps keys to values, with no duplicate keys allowed. The elements in a map are key/value pairs.
 
+
 In the figure below, notice that Map does not implement the Collection interface. It is considered part of the Java Collections Framework even though it doen't implement the Collection interface.
 
 
 ![Java Collections Framework](/img/javaCollectionsFramework.png)
+
 
 
 ## Common Collections Methods
@@ -655,10 +657,23 @@ System.out.println(birds.contains("panda"));     //false
 This method calls equals() on each element of the ArrayList to see if there are any matches.
 
 ## Using the List Interface
+You use a list when you want an ordered collection that can contain duplicate entries. Items can be retrieved and inserted at specific position based  on an int index much like an array. List is like the go to data type. The main point about lists is that they are odered and allow duplicates.
 
 ### Comparing List Implementations
+An **ArrayList** is like a resizeable array. When elements are added, the ArrayList automatically grows. The main benefit is that it can look up any elements at constant time. Adding or removing an element is slower than accessing an element.
+
+:yin_yang: **Big O Notation** This is an order of magnitude and it measures the performance of an algorithm. The following are the most common big O notation values:
+- *O(1) - constant time*: It doens't matter how large the collection is, the answer will always take the same time to return. 
+- *O(log n) - logarithmic time*: A logarithm is a mathematical function that grows much more slowly that the data size. Binary Search runs in logarithmic time.
+-*O(n) - Linear time*: The performance will grow linearly with respect to the size of the collection. 
+- *O(n^2) - n square time*: Code that has nested loops where each loop goes through the data takes n square time.
+
+A **LinkedList** is special because it implements both List and Queue. It has all of the methods of List. It also has additional methods to facilitate addding or removing from beginning and/or end of list. The main benefits are that you can access, add or remove from the beginning and end of the list in constant time. 
+
+A **Stack** is a data structure where you add and remove elements from the top of the stack. Stack hasn't been used for ages. If you need a stack, use an **ArrayDeque** instead.
 
 ### Working with List Methods
+The methods in the List interface are for working with indexes.
 
 ## Using the Set Interface
 
