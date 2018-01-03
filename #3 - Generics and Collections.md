@@ -543,36 +543,134 @@ A *collection* is a set of objects contained is an single object. The *java coll
 
 In the figure below, notice that Map does not implement the Collection interface. It is considered part of the Java Collections Framework even though it doen't implement the Collection interface.
 
+
 ![Java Collections Framework](/img/javaCollectionsFramework.png)
 
+
 ## Common Collections Methods
+The Collection interface contains useful methods for working with list, sets and queues. We will also cover maps. In the following sections. 
 
 ### add()
+The add() method inserts a new element into the Collection and returns whether it was successful. The method signature is
+
+```java boolean add(E element)```
+
+Example of usage:
+
+```java
+
+List<String> list = new ArrayList<>();
+System.out.println(list.add("Sparrow"));    //true
+System.out.println(list.add("Sparrow"));    //true
+
+Set<String> set = new HashSet<>();          //true
+System.out.println(set.add("Sparrow"));    //true
+System.out.println(set.add("Sparrow"));    //false
+
+```
+
+A list allows duplicates, making the return value true each time. A Set does not allow duplicates. In the last line, we tried to add a duplicate and it returned false.
 
 ### remove()
+The remove() method removes a single matching value in the Collection and returns whether it was successful. The method signature is:
+
+```java
+boolean remove(Object object)
+```
+
+This time, the boolean return value tells us whether a match was removed. The following shows how to use this method
+
+```java
+List<String> birds = new ArrayList<>();     // 
+birds.add("hawk");                          //[hawk]
+birds.add("hawk");                          //[hawk, hawk]
+
+System.out.println(birds.remove("panda"))   //prints false
+System.out.println(birds.remove("hawk"))    //prints true
+System.out.println(birds)                    //[hawk]
+```
+
+The first remove tries to remove an element that is not in birds. It returns false because no such element is found. The next remove removes hawk and returns true because there is a match. Notice that it only removes a single match.
+
+Since calling remove() with an int uses an index, an index that doesn't exist will throw an exception. For example birds.remove(5); throws an IndexOutOfBoundsException. Remenber there are overloaded remove methods. One takes the element to remove. The other takes the index of the element to remove.
 
 ### isEmpty() and size()
+The isEmpty() and size() methods look at how many elements are in the Collection. The method signature is:
+
+```java
+boolean isEmpty()
+
+int size()
+```
+
+The following shows how to use these methods:
+
+```java
+System.out.println(birds.isEmpty());      //true
+System.out.println(birds.size());         //0
+birds.add("hawk");                        //[hawk]
+birds.add("hawk");                        //[hawk,hawk]
+System.out.println(birds.isEmpty());      //false
+System.out.println(birds.size());         //2
+```
+At the beggining, birds has a size of 0 and is empty. After we add elements, the size becomes positive and it is no longer empty.
 
 ### clear()
+The clear() method provides an easy way to discard all elements of the Collection. The method singature is:
+
+```java
+void clear();
+```
+
+The following shows how to use the method:
+
+```java
+List<String> birds = new ArrayList<>();
+birds.add("hawk");                            //[hawk]
+birds.add("hawk");                            //[hawk,hawk]
+System.out.println(birds.isEmpty());          //false
+System.out.println(birds.size());             //2
+birds.clear();                                //[]
+System.out.println(birds.isEmpty());          //true
+System.out.println(birds.size());             //0
+```
+
+After calling clear(), birds is back to beign an empty ArrayList of size 0.
 
 ### contains()
+The contains() method checks if a certain value is in the Collection. The method signature is:
+
+```java
+boolean contains(Object object)
+```
+
+The following shows how to use this method:
+
+```java
+List<String> birds = new ArrayList<>();
+birds.add("hawk");                               //[hawk]
+System.out.println(birds.contains("hawk"));      //true
+System.out.println(birds.contains("panda"));     //false
+```
+This method calls equals() on each element of the ArrayList to see if there are any matches.
 
 ## Using the List Interface
 
-## Comparing List Implementations
+### Comparing List Implementations
 
-## Working with List Methods
+### Working with List Methods
+
 ## Using the Set Interface
 
-## Comparing Set Implementations
+### Comparing Set Implementations
 
-## Working with Set Methods
+### Working with Set Methods
 
 ## Using the Queue Interface
 
-## Comparing Queue Implementations
+### Comparing Queue Implementations
 
-## Working with Queue Methods
+### Working with Queue Methods
 
 ## Map
 
