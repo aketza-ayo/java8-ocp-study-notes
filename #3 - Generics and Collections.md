@@ -1005,6 +1005,8 @@ There are a number of differences between Comparable and Comparator, see table b
 
 ![Comparison of Comparable and Comparator](img/comparisonComparableComparator.png)
 
+Memororize this table - really because the exam will try to trick you mixing up the both. 
+
 
 # Searching and Sorting 
 
