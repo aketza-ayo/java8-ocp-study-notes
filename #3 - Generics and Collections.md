@@ -713,6 +713,26 @@ A **TreeSet** stores its elements in a sorted tree structure. The main benefit i
 ![Examples of a HashSet and TreeSet](/img/hashSetAndTreeSet.png)
 
 ### Working with Set Methods
+The Set interface doesn't add any extra methods that you need to know for the exam. You need to know how sets behave with respect to the traditional Collection methods. You akso need to know the difference between the types of sets. 
+
+Let's start with HashSet:
+
+```java
+Set<Integer> set = new HashSet<>();
+boolean b1 = set.add(66);                   //true
+boolean b2 = set.add(10);                   //true
+boolean b3 = set.add(66);                   //false
+boolean b4 = set.add(8);                    //true
+for(Integer i: set) System.out.println(i)   //66,8,10
+
+```
+
+The add method should be straight forward. They return true unless the Integer is already in the set. Line 4, returns false because the number is already in the set, it must preserve uniqueness. Notice that when we print the elements they are not in the same order as we inserted them programatically. Remember the equals() method is used to determine equality and the hashCOde() is used to determine which bucket to look inso that Java doesn't need to look through the whole set to find out if an object is there.
+
+If we run the same code as before with a TreeSet the boolean values are the same the only difference is that TreeSet print the values in the natural sorted order.
+
+:yin_yang: **The NavigableSet Interface**  TreeSet implements the NavigableSet interface. This interface provides some interesting methods. Their signature is as follows:
+
 
 ## Using the Queue Interface
 
