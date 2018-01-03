@@ -846,6 +846,10 @@ Next comes ArrayDeque. You can't put null in an ArrayDeque because methods like 
 
 Finally, the exam expects you to be able to choose the right collection type given a problem description of a problem. See table below to give you practice. Pay attention to the Reason column 
 
+![Choosing the right collection type](img/correctCollectionType.png)
+
+First figure out whether you are looking for a List, Map, Queue or Set. This allows you to eliminate a few answers. Then you can figure out which is the best answer
+
 # Comparator vs. Comparable
 
 ## Comparable
