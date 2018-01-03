@@ -850,6 +850,8 @@ Finally, the exam expects you to be able to choose the right collection type giv
 
 First figure out whether you are looking for a List, Map, Queue or Set. This allows you to eliminate a few answers. Then you can figure out which is the best answer
 
+![Collection Framework Diagram](img/collectionFwDiagram.png)
+
 # Comparator vs. Comparable
 
 ## Comparable
