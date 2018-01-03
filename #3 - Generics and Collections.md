@@ -755,11 +755,55 @@ An ArrayDeque is a "pure" double-ended queue. It was introduce in Java 6, and st
 
 ### Working with Queue Methods
 The ArrayDeque contains many methods. Luckily, they are only seven methods that you need to know in addition to the inherited Collection ones. See the table below
+
+![ArrayDeque methods](/img/ArrayDeque.png)
+
+Except for push, all are in the Queue interface as well. push is what makes it a double-ended queue. As you can see there two sets of methods. One set throw an exception when something goes wrong and another set uses a different return value when something goes wrong. The offer/poll/peek methods are more common. This is the standard language people use when working with queues. Let's see some examples:
+
+```java
+Queue<Integer> queue = new ArrayDeque<>();
+System.out.println(queue.offer(10));        //true        [10]
+System.out.println(queue.offer(4));         //true        [10,4]
+System.out.println(queue.peek());           //10          [10,4]
+System.out.println(queue.poll());           //10          [4]
+System.out.println(queue.poll());           //4           []
+System.out.println(queue.peek());           //null        because list is empty
+```
+
+Forst two methods successfyllu add an element to the end of the queue. Some queues are limited in size, which would cause offering an element to the queue to fail. Line 4 looks at the first element in the queue, but it does not remove it. The following two methods actually remove elements from the queue, which result in an empty queue. Last line tries to look at the first element in the queue but since this is emty returns null.
+
+As we said earlier, ArrayDeque is a double ended queue. What if we want to insert an element at the other end? No problem. we just call push() method. It works just like offer() except at the other end of the queue. When talking about LIFO (stack), people say push/poll/peek. When talking about FIFO (single-ended queue) people say offer/poll/peek.
+
+Now let's re-write that example using the stack functionality:
+
+```java
+ArrayDeque<Integer> stack = new ArrayDeque();
+stack.push(10);                                           [10]
+stack.push(4);                                            [4,10]
+System.out.println(stack.peek());         //4             [4,10]
+System.out.println(stack.poll());         //4             [10]
+System.out.println(stack.poll());         //10            []
+System.out.println(queue.peek());         //null          because list is empty
+
+```
+The difference between whether an ArrayDeque is being used as a stack or a queue is really important. To review, a queue is like a line of people or FIFO. A stack is like a stack of plates or LIFO.
+
+A LinkedList works exactly the same way as ArrayDeque, so we will skip this one.
+
 ## Map
+You use a map when you want to indetify values by key. For example, when you use the contanct list in your phone, you look up "Geroge" rather than looking his number. You can envision a Map to achieve this. You also need to know that a TreeMap is sorted and navigable.
 
 ### Comparing Map Implementations
+A **HashMap** stores the keys in a hash table. This means that it uses the hashCode() method of the keys to retrieve their values more efficiently. The main benefit is that adding elements and retrieving element by key both have constant time. The trade off is that you lose the order in which you inserted the elements.Most of the time you are not concerned about the order when using a map but if you were you would use **LinkedHashMap**.
 
+A **TreeMap** stores the keys in a sorted tree structure. The main benefit is that the keys are always in sorted order. The tradeoff is that adding and checking if a key is present are both O(log n).
+
+A **Hashtable** is like Vector in that it is really old and thread-safe and you will not be expected to use it. It contains a lower 't' as a mistake from the olden days. An analogy would be. ArrayList is to Vector as HashMap is to Hashtable.
+ 
 ### Working with Map Methods
+Remeber a Map does not extends the Collection Interface. There are more emthod specified in the Map interface. There are generics, the class use K for key and V for value. See table below
+
+
 
 ## Comparing Collection Types
 
