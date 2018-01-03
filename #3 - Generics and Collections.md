@@ -543,6 +543,7 @@ A *collection* is a set of objects contained is an single object. The *java coll
 
 In the figure below, notice that Map does not implement the Collection interface. It is considered part of the Java Collections Framework even though it doen't implement the Collection interface.
 
+![Java Collections Framework](/img/javaCollectionsFramework.png)
 
 ## Common Collections Methods
 
