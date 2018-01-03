@@ -801,11 +801,37 @@ A **TreeMap** stores the keys in a sorted tree structure. The main benefit is th
 A **Hashtable** is like Vector in that it is really old and thread-safe and you will not be expected to use it. It contains a lower 't' as a mistake from the olden days. An analogy would be. ArrayList is to Vector as HashMap is to Hashtable.
  
 ### Working with Map Methods
-Remeber a Map does not extends the Collection Interface. There are more emthod specified in the Map interface. There are generics, the class use K for key and V for value. See table below
+Remeber a Map does not extends the Collection Interface. There are more emthod specified in the Map interface. There are generics, the class use K for key and V for value. See table below:
 
+![Map methods](/img/mapMethods.png)
 
+Let's see some examples:
+
+```java
+Map<String, String> map = new HashMap<>();
+map.put("koala","bamboo");
+map.put("lion","meat");
+map.put("giraffe","leaf");
+String food = map.get("koala");      //bamboo
+for(String key: map.keySet()){
+  System.out.println(key + ", ");    //koala, giraffe, lion,
+}
+
+```
+Notice it dodn't print the map in the order they were inserted. Now look at the TreeMap.
+
+TreeMap sorts the keys as we would expect. If we were to have called values() instead of keySet(), the order of the values would correspond to the order of the keys. See below:
+
+```java
+System.out.println(map.contains("lion"));               //DOES NOT COMPILE
+System.out.println(map.containsKey("lion"));            //true
+System.out.println(map.containsValue("lion"));          // false  
+System.out.println(map.size());                         // 3
+```
+The first line is a bit tricky, contains() is a method of the Collection interface but not of the Map interface.
 
 ## Comparing Collection Types
+Let's start off with a review of the characteristics of the different types. Make sure you know these two tables from memory
 
 # Comparator vs. Comparable
 
