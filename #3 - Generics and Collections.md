@@ -675,9 +675,40 @@ A **Stack** is a data structure where you add and remove elements from the top o
 ### Working with List Methods
 The methods in the List interface are for working with indexes.
 
+![List Methods](/img/listMethods.png)
+
+The following statements demonstrate these basic methods:
+
+```java
+List<String> list = new ArrayList<>();
+list.add("SD");                         //[SD]
+list.add(0,"NY");                       //[NY,SD]
+list.set(1,"FL");                       //[NY,FL]
+list.remove("NY");                      //[FL]
+list.remove(0);                         //[]
+```
+
+Let's look at one more example that queries the list:
+
+```java
+lis.add("OH");                    //[OH]  
+list.add("CO");                   //[OH,CO]
+list.add("NJ");                   //[OH,CO,NJ]
+String state = list.get(0);       //OH
+int index = list.indexOf("NJ");   //2  
+```
+The output would be the same if you tried these examples with LinkedList, Vector or Stack. Although the code would be less efficient, it wouldn't be noticeable until you have very large lists.
+
 ## Using the Set Interface
+You use a set when you don't want to allow duplicate entries. For example, you might want to keep track of the unique animals that you want to see in the zoo. You are not concerned in the order you want to see the animals but there isn't time to see them more than once.
+
+The main thing that all set have in common is that they do not allow duplicates.
 
 ### Comparing Set Implementations
+A **HashSet** stores its elements in a has table. This means that it uses the hashCode() method to retrieve them more efficiently. The benefit is that adding elements and checking if an element is in the set both have constant time. The trade off is that you lose the order in which they are inserted.
+
+A **TreeSet** stores its elements in a sorted tree structure. The main benefit is that the tree is always in sorted order. The tradeoff is that adding and checking if an element is present are both *O(log n)*. TreeSet implements special interface called NavigableMap.
+
 
 ### Working with Set Methods
 
