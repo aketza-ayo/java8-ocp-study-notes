@@ -1003,6 +1003,7 @@ Comparator<Duck> byWeight = (Duck d1, Duck d2) ->  { return d1.getWeight() - d2.
 
 There are a number of differences between Comparable and Comparator, see table below:
 
+![Comparison of Comparable and Comparator](img/comparisonComparableComparator.png)
 
 
 # Searching and Sorting 
