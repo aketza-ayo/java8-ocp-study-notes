@@ -972,6 +972,39 @@ This compareTo() method is not consistent with equals. One way to fix that is to
 ## Comparator
 Sometimes you want to sort an object that did not implement Comparable, or you want to sort object in different ways at different times.
 
+Suppose we add weight to our Duck class. The Duck class itself can define comapreTo() in only one way. In this case, name was chose. It we want to sort by something else, we have to define that sort order outside the compareTo() method:
+
+```java
+public static void main(String[] args){
+  Comparator<Duck> byWeight = new Comparator<Duck>(){
+    public int compare(Duck d1, Duck 2){
+      return d1.getWeight() - d2.getWeight();
+    }
+  };
+  
+  List<Duck> ducks = new ArrayList<>();
+  ducks.add(new Duck("Quack", 7));
+  ducks.add(new Duck("Puddles", 10));
+  Collections.sort(ducks);
+  System.out.println(ducks);            //[Puddles, Quack]
+  Colections.sort(ducks, byWeight);
+  System.out.println(ducks);            //[Quack, Puddles]
+}
+```
+First we define an inner class with the comparator. Then we sorted without the comparator and with the comparator to see different output. Comparator is a functional interface since there is one abstract methods to implement. That means that we can rewrite it using funtional programming, as any of the following:
+
+```java
+Comparator<Duck> byWeight = (d1,d2) ->  d1.getWeight() - d2.getWeight();
+Comparator<Duck> byWeight = (Duck d1, Duck d2) ->  d1.getWeight() - d2.getWeight();
+Comparator<Duck> byWeight = (d1,d2) ->  { return d1.getWeight() - d2.getWeight(); };
+Comparator<Duck> byWeight = (Duck d1, Duck d2) ->  { return d1.getWeight() - d2.getWeight();};
+
+```
+
+There are a number of differences between Comparable and Comparator, see table below:
+
+
+
 # Searching and Sorting 
 
 # Additions in Java 8
