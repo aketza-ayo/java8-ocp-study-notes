@@ -733,6 +733,17 @@ If we run the same code as before with a TreeSet the boolean values are the same
 
 :yin_yang: **The NavigableSet Interface**  TreeSet implements the NavigableSet interface. This interface provides some interesting methods. Their signature is as follows:
 
+![The NavigableSet interface ](/img/navigableSetInterface.png)
+
+These java methods were added in Java 6, so you are more than likely to come across them
+```java
+NavigableSet<Integer> set = new TreeSet<>();
+for(int i = 1; i <= 20; i++) set.add(i);
+System.out.println(set.lower(10));        //9
+System.out.println(set.floor(10));        //10
+System.out.println(set.ceiling(20));      //20          
+System.out.println(set.higher(20));       //null
+```
 
 ## Using the Queue Interface
 
