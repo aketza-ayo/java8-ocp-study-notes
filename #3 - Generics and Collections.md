@@ -746,11 +746,15 @@ System.out.println(set.higher(20));       //null
 ```
 
 ## Using the Queue Interface
+You use a queue when elements are added and removed in a specific order. Queues are typically used for sorting elements prior to processing them. Unless stated otherwise, a queueu is assumed to be FIFO (First-in First-out). Implementation may change and you can envision LIFO as well (Last-in First-out ).
 
 ### Comparing Queue Implementations
+A double-ended queue is different from a regular queue in that you can insert and remove elements from both the front and back of the queue. The main benefit of using LinkedList is that it implements both List and Queue interfaces. The tradeoff is that it isnet as efficient as a "pure" queue .
+
+An ArrayDeque is a "pure" double-ended queue. It was introduce in Java 6, and stores its elements in a resizable array. The main benefit of ArrayDeque is that it is more efficient than a LinkedList 
 
 ### Working with Queue Methods
-
+The ArrayDeque contains many methods. Luckily, they are only seven methods that you need to know in addition to the inherited Collection ones. See the table below
 ## Map
 
 ### Comparing Map Implementations
