@@ -710,6 +710,8 @@ A **HashSet** stores its elements in a has table. This means that it uses the ha
 A **TreeSet** stores its elements in a sorted tree structure. The main benefit is that the tree is always in sorted order. The tradeoff is that adding and checking if an element is present are both *O(log n)*. TreeSet implements special interface called NavigableMap.
 
 
+![Examples of a HashSet and TreeSet](/img/hashSetAndTreeSet.png)
+
 ### Working with Set Methods
 
 ## Using the Queue Interface
