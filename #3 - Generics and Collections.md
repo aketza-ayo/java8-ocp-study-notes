@@ -1287,3 +1287,7 @@ I struggled quite a bit to diggest all the information. It took me over an hour 
 ![Chapter 3 questions](img/testChapThree.png)
 
 # Points to Remember
+- Need to know about celing() floor() high() and lower().
+- Remember when adding into a map we use put() and when adding into t a list we use add(). These are not interchangable to one another.
+- When using both a class an a type parameter. Cannot mention the class because it is beign used by a type parameter.
+- ForEach() requires a consumer and takes one parameter. Remember local variables cannot be redifined in a lambda.
