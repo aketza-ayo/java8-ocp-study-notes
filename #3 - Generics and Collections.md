@@ -1279,3 +1279,11 @@ Tom was left alone since there was no merge() call for that key. Sam was added s
 
 ## computeIfPresent and computeIfAbsent
 These two method are on the upgrade exam but not on the OCP. In a nutshell, computeIfPresent() calls BiFuntion if the requested key is found.
+
+# Review Questions
+
+I struggled quite a bit to diggest all the information. It took me over an hour to complete the questions. I going to have to read this chapter again. There are a lot of methods, classes, properties, rules and ways of doing things that take time to get used to.
+
+![Chapter 3 questions](img/testChapterThree.png)
+
+# Points to Remember
