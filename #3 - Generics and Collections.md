@@ -1009,8 +1009,74 @@ Memororize this table - really because the exam will try to trick you mixing up 
 
 
 # Searching and Sorting 
+The sort method uses compareTo() method to sort. It expects the object to be sorted to be Comparable, in other words to implements Comparable interface.
+
+```java
+import java.util.*;
+
+public class SortRabbits{
+  static class Rabbit{ int id; }
+  
+  public static void main(String[] args){
+    List<Rabbit> rabbits = new ArrayList<>();
+    rabbits.add(new Rabbit());
+    Collection.sort(rabbits);                     // DOES NOT COMPILE
+  }
+}
+
+```
+
+Java knows that Rabbit class is not Comaprable. It knows Sorting will fail, so it doesn't even let you compile. You can fix this by passign Comparator to sort(). Remember Comparator is useful when you dont want to specify sort order without using a compareTo() mehod:
+
+```java
+import java.util.*;
+
+public class SortRabbits{
+  static class Rabbit{ int id; }
+  
+  public static void main(String[] args){
+    List<Rabbit> rabbits = new ArrayList<>();
+    rabbits.add(new Rabbit());
+    Comparator<Rabbit> c = (r1, r2) -> r1.id - r2.id;
+    Collection.sort(rabbits, c);                     
+  }
+}
+
+```
+
+sort() and binarySearch() allow you to pass in a Comparator object when you don't want to use the natural order. 
+
+Going back to our Duck example that implements a Comparable interface. See the code below where we try to add Duck and Rabbit to a different TreeSet:
+
+```java
+public class UseTreeSet{
+  static class Rabbit{ int id; }
+  
+  public static void main(String[] args){
+    Set<Duck> ducks = new TreeSet<>();
+    ducks.add(new Duck("Puddles"));
+    Set<Rabbit> rabbit = new TreeSet<>();
+    rabbit.add(new Rabbit();                    // throws an exception                    
+  }
+}
+```
+
+Duck is fine because it implements Comparable in the previous examples, so the TreeSet knows how to sort it. The last line is a problem thouh because when TreeSet tries to sort it, Java discovers that Rabbit does not implement Comparable. And therefore Java throws a ClassCastException. It seems weid the exception to be thrown when the first object is added to the set because there is nothing to compare against. But Java does it this way for consistency.
+
+One way to fix this problem, if you don't want to implement Comparable what you can to is to use Cmparator on the go. See below:
+
+```java
+Set<Rabbit> rabbits = new TreeSet<>(new Comparator<Rabbit>(){
+  public int compare(Rabbit r1, Rabbit r2){
+      return r1.id - r2.id;
+  }
+});
+rabbits.add(new Rabbit());
+```
 
 # Additions in Java 8
+
+
 
 ## Using Method References
 
