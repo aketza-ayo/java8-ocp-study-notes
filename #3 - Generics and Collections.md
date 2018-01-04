@@ -1284,6 +1284,6 @@ These two method are on the upgrade exam but not on the OCP. In a nutshell, comp
 
 I struggled quite a bit to diggest all the information. It took me over an hour to complete the questions. I going to have to read this chapter again. There are a lot of methods, classes, properties, rules and ways of doing things that take time to get used to.
 
-![Chapter 3 questions](img/testChapterthree.png)
+![Chapter 3 questions](img/testChapThree.png)
 
 # Points to Remember
