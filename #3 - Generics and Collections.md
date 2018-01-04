@@ -1076,9 +1076,80 @@ rabbits.add(new Rabbit());
 
 # Additions in Java 8
 
-
+In this section we are going to revise some of the new things added in Java 8 like method references to show how to make the code compact. Method references and lambdas are more compact so you should expect to see them in questions about other topics. We will show you how to use ```removeIf(), forEach(), merge(), computeIfPresent(), and computeIfAbsent()``` methods.
 
 ## Using Method References
+*Method reference* are a way to make the code shorter by reducing some of the code that can be inferred and simply mentioning the name of the method. Like lambdas, it takes time to get used to the new syntax.
+
+Suppose that we have a Duck class with name and weight attributes along with this heloer class:
+
+```java
+public class DuckHelper{
+  public static int compareByWeight(Duck d1, Duck d2){
+    return d1.getWeight() - d2.getWeight();
+  }
+  
+  public static int compareByName(Duck d1, Duck d2){
+    return d1.getName().compareTo(d2.getName());
+  }
+}
+```
+Now, using lambdas we will implement Comparator in the following way to sort by weight:
+
+```java
+Comparator<Duck> byWeight = (d1,d2) -> DuckHelper.compareByWeight(d1, d2);
+```
+
+Not bad, although there is a bit of redundancy. The lamda takes two params and does nothing but pass those params to another method. Java 8 lets us remove that redundancy and simply write:
+
+```java
+Comparator<Duck> byWeight = DuckHelper::compareByWeight;
+```
+
+The :: operator tells Java to pass the parameters automatically into compareByWeight.
+
+There are four formats for method references:
+- Static methods
+- Instance methods on a particular instance
+- Instance methods on an instance to be determined at runtime
+- Constructors
+
+Remeber that **Predicate** is a functional interface that takes a single parameter of any type and returns a boolean. Another funtional interface is **Consumer** which takes a single parameter fo any type and has a void return type. Finally **Supplier** doesn't take any parameter and returns any type.
+
+Let's see some examples from the Java API. On each example we also show the lambda equivalent.  Let's start fro static method:
+
+```java
+Consumer<List<Integer>> methodRef1 = Collection::sort;
+Consumer<List<Integer>> lambda1 = l ->  Collection::sort(l);
+```
+
+The first line, we call the method with one param and Java knows it should create a lambda with one param and pass it tothe method. 
+
+Next, is calling an instance method on a specific instance:
+
+```java
+String str = "abc";
+Predicate<String> methodRef2 = str::startsWith;
+Predicate<String> lambda2 = s -> str.startWith(s);
+```
+
+The second line shows that we want to call string.startsWith() and pass a single param tombe supplied at runtime. This is a nice way of filtering data in a list. 
+
+Next we call an instance method without knowing the instance in advance:
+
+```java
+Predicate<String> methodRef3 = String::isEmpty;
+Predicate<String> lambda3 = s -> s.isEmpty(); 
+```
+Line 1, says that the method we want to call is declared in String. It looks, like a static method, but it isn't. Instead, Java knows that isEmpty is an instance method that does not take any param. Java uses the params supplied at runtime as the instance on with the method is called. 
+
+Finally, we have a constructor reference:
+
+```java
+Supplier<ArrayList> methodRef4 = ArrayList::new;
+Supplier<ArrayList> lambda4 = () -> new ArrayList();
+```
+A *construcor reference* is a special type of method reference that uses new instead of a method, and it creates a new object. It expands like the method references you have seen so far 
 
 ## Removing Conditionally 
 
