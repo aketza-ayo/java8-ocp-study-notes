@@ -1149,9 +1149,26 @@ Finally, we have a constructor reference:
 Supplier<ArrayList> methodRef4 = ArrayList::new;
 Supplier<ArrayList> lambda4 = () -> new ArrayList();
 ```
-A *construcor reference* is a special type of method reference that uses new instead of a method, and it creates a new object. It expands like the method references you have seen so far 
+A *construcor reference* is a special type of method reference that uses new instead of a method, and it creates a new object. It expands like the method references you have seen so far. 
 
 ## Removing Conditionally 
+Java 8 introduces a new method called removeIf. See method signature:
+
+```java
+boolean removeIf(Predicate<? super E> filter)
+```
+It uses a predicate which is a lambda that takes on a param and returns a boolean. Since lambdas use deferred execution, this allows specifying logic to run when that point in the code is reached. 
+
+```java
+List<String> list = new ArrayList<>();
+list.add("Magician");
+list.add("Assistant");
+System.out.println(list);                  //[Magician, Assistant]
+list.removeIf(s -> s.startsWith("A"));
+System.out.println(list);                  //[Magician]
+```
+Question here is how to remove line 5 with a method reference? Trick question because you can't. Since startsWith() takes a param that isnt s, it needs to be specified the long way. The most important to remeber about this method is that it is one of the two method that is on a collection and it takes a lambda parameter.
+
 
 ## Updating All Elements
 
