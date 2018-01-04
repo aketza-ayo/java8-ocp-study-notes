@@ -1169,15 +1169,113 @@ System.out.println(list);                  //[Magician]
 ```
 Question here is how to remove line 5 with a method reference? Trick question because you can't. Since startsWith() takes a param that isnt s, it needs to be specified the long way. The most important to remeber about this method is that it is one of the two method that is on a collection and it takes a lambda parameter.
 
-
 ## Updating All Elements
+Another new method introduced on List is replaceAll. Java 8 lets you pass a lambda expression and have it applied eo each element in the list. The method signature looks like:
+
+```java
+void replaceAll(UnaryOperator<E> o)
+```
+
+It uses Unary operator which takes one param and returns a value of the same type. Let's take a look at an example:
+
+```java
+List<Integer> list = Arrays.asList(1,2,3);
+list.replaceAll(x -> x*2);
+System.out.println(list);             //[2,4,6]
+```
 
 ## Looping through a Collection
+This one is very common. Often we want to print out the values. There a few ways to do this. Using a interator, enhanced for loop, while loop or we could use Java 8 lambda. The way to do it is as follows:
+
+```java
+List<String> cats = Arrays.asList("Annie","Ripley");
+cats.forEach(c -> System.out.println(c));
+```
+
+This time we used a Consumer, which takes a single param and doesn't return anything. You don't see this approach because it is common to use a method reference instead:
+
+```java
+cats.forEach(System.out::println);
+```
+This is a very efficient way of printing names. In the next chapter you will be using stream() method to do much more powerful things with lambdas.
 
 # Using New Java 8 Map APIs
+Java 8 added a number of new methods on the map interface. Only merge() is listed in the OCP ojectives. Two others, computeIfPresent() and computeIfAbsent() are added in the upgrade exam objectives. 
+
+Sometimes you need to update the value for a specific key in the map. There are few ways to do this. The first is to replace the exisisting value unconditionally:
+
+```java
+Map<String, String> favourites = new HashMap<>();
+favourites.put("Jenny", "Bus Tour");
+
+favourites.put("Jenny", "Tram");
+System.out.println(favourites);    //{Jenny=Tram}
+```
+
+There is another method, called putIfAbsent() that you can call if you want to set a value in the map, but this method skips it if the value is already set to a non-null value:
+
+
+```java
+Map<String, String> favourites = new HashMap<>();
+favourites.put("Jenny","Bus Tour");
+favourites.put("Tom", null);
+
+favourites.putIfAbsent("Jenny","Tram");
+favourites.putIfAbsent("Sam","Tram");
+favourites.putIfAbsent("Tom","Tram");
+System.out.println(favourites);           //{Tom=Tram, Jenny=Bus Tour, Sam=Tram}
+ ```
+ AS you can see, Jenny's value is not updated because one was already present. Sam wasn't there at all so he was added. Tom was present as a key but had a null value. Therefore, he was added as well. These two methods handle simple replacements. Sometimes you need more logic to determine which value should be used. The following sections show three approaches. 
 
 ## merge
+The merge() method allows adding logic to the problem of what to choose. Suppose our guests agree that the ride with the longest name must be the most fun. We can write code to express this by passing mapping function to merge() method: 
+
+```java
+
+BiFunction<String,String,String> mapper = (v1,v2) -> v1.length() > v2.length() ? v1 : v2;
+
+Map<String,String> favourites = new HashMap<>();
+favourites.put("Jenny","Bus Tour");
+favourites.put("Tom","Tram");
+
+String jenny = favourites.merge("Jenny","Skyride", mapper);
+String tom = favourites.merge("Tom","Skyride", mapper);
+
+System.out.println(favourites);     // {Tom=Skyride, Jenny=Bus Tour}
+System.out.println(jenny);          // Bus Tour
+System.out.println(tom);            // Skyrides
+
+```
+The first line uses a funtional interface called BiFunction. In this case, it takes two param of th same type and returns a value of that type. Our implementation returns the one with the longest name.  Line 7 calls this mapping function, and it sees that "Bus Tour" is longer than "Skyride" so it leaves the value as "Bus Tour". Line 8 calls this mapping function again. This time "Tram" is not longer than "Skyride" so the map is updated. Line 10 prints the new map content. Line 11 and 12 show that the result gets returned from merge(). Merge() method also has logic for what happens if null or missing keys are involved. 
+
+```java
+
+BiFunction<String,String,String> mapper = (v1,v2) -> v1.length() > v2.length() ? v1 : v2;
+
+Map<String,String> favourites = new HashMap<>();
+favourites.put("Sam", null);
+
+favourites.merge("Tom","Skyride", mapper);
+favourites.merge("Sam","Skyride", mapper);
+
+System.out.println(favourites);     // {Tom=Skyride, Sam=Skyride}
+```
+
+Notice that the mapping function isn't called. If it were, we'd have a NullPointerException. The mapping function is used only when there are two actual values to decide between. The final thing to know about merge() is what happens when the mapping function is called and returns null. The key is removed from the map when this happens:
+```java
+
+BiFunction<String,String,String> mapper = (v1,v2) -> null;
+
+Map<String,String> favourites = new HashMap<>();
+favourites.put("Jenny", "Bus Tour");
+favourites.put("Tom", "Bus Tour");
+
+favourites.merge("Jenny", "Skyride", mapper);
+favourites.merge("Sam", "Skyride", mapper);
+
+System.out.println(favourites);     // {Tom=Bus Tour, Sam=Skyride}
+```
+Tom was left alone since there was no merge() call for that key. Sam was added since that key was not in the original list. Jenny was removed because the mapping function returned null.
 
 ## computeIfPresent and computeIfAbsent
-
-
+These two method are on the upgrade exam but not on the OCP. In a nutshell, computeIfPresent() calls BiFuntion if the requested key is found.
