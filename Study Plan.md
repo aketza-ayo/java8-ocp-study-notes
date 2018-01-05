@@ -9,9 +9,9 @@ December 20 - December 26 | Read Introduction, Appendix B, and Chapter 1    | To
 December 27               | Answer Chapter 1 Review Questions               | 30 min to answer + another 30 min to revise
 December 28 - January 1   | Read Chapter 2                                  | 12 hrs to read the material and take notes
 January 1                 | Answer Chapter 2 Review Questions               | 33 min to answer + 15 min to revise
-January 2 - January 7     | Read Chapter 3                                  |
-January 7                 | Answer Chapter 3 Review Questions               |
-January 13 - January 21   | Read Chapter 4                                  |
+January 2 - January 4     | Read Chapter 3                                  | 14 hrs to read and take notes 
+January 4                 | Answer Chapter 3 Review Questions               | 1hr to anwser + 30 min to revise
+January 5 - January 21    | Read Chapter 4                                  |
 January 21                | Answer Chapter 4 Review Questions               |
 January 27 - February 4   | Read Chapter 5                                  |
 February 4                | Answer Chapter 5 Review Questions               |
