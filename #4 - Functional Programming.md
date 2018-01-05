@@ -28,6 +28,10 @@ As you remember, a functional interface has only one abstract method. All of the
 
 ![Common Functional Interface](img/commonFunctionalInterface.png)
 
+There are many other functional interfaces defined in ```java.util.funtion``` for working with primitives. You do need to memorize the table above.
+
+Now let's see how these functional interfaces are implemented.
+
 ## Implementing Supplier
 ## Implementing Consumer and BiConsumer
 ## Implementing Predicate and BiPredicate
