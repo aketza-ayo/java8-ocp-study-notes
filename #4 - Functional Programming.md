@@ -28,11 +28,45 @@ As you remember, a functional interface has only one abstract method. All of the
 
 ![Common Functional Interface](img/commonFunctionalInterface.png)
 
-There are many other functional interfaces defined in ```java.util.funtion``` for working with primitives. You do need to memorize the table above.
+There are many other functional interfaces defined in ```java.util.function``` for working with primitives. You do need to memorize the table above.
 
 Now let's see how these functional interfaces are implemented.
 
 ## Implementing Supplier
+A ```Supplier``` is used when you want to generate or supply values without taking any input. The interface is defined as:
+
+```java
+@FunctionalInterface
+public interface Supplier<T>{
+  public T get();
+}
+```
+You can use the Supplier in the following manner:
+
+```java
+Supplier<LocalDate> s1 = LocalDate::now;
+Supplier<LocalDate> s2 = () -> LocalDate.now();
+
+LocalDate d1 = s1.get();
+LocalDate d2 = s2.get();
+
+System.out.println(d1);
+System.out.println(d2);
+```
+
+
+This example prints a data suck as 2018-01-05 twice. It is also a good opportunity to review static method references. The ```LocalDate::now``` reference is used to create a Supplier to assign to an intermidiate variable s1. A Supplier is often used when constructing new objects. For example, we can print two empty StringBuilders:
+
+```java
+Supplier<StringBuilder> s1 = StringBuilder::new;
+Supplier<StringBuilder> s2 = () -> new StringBuilder();
+
+System.out.println(s1.get());
+System.out.println(s2.get());
+```
+
+This time, we use a constructor refernce to create the object. We've been using generics to declare what type of Suppliers we are using. 
+
 ## Implementing Consumer and BiConsumer
 ## Implementing Predicate and BiPredicate
 ## Implementing Function and BiFunction
