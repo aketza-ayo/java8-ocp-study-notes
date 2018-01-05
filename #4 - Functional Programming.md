@@ -26,6 +26,8 @@ The first play lambda uses an instance variable in the lambda. The secon play la
 # Working with Built-In Functional Interfaces
 As you remember, a functional interface has only one abstract method. All of the funtional interfaces in the table below were introduced in Java 8 and are provided in the ``` java.util.function ``` package. The convention here is to use generic type T for type param. If a second type param is needed, the next letter U, is used. If a distinct return type is needed, R for return is used for generic type.
 
+![Common Functional Interface](img/commonFunctionalInterface.png)
+
 ## Implementing Supplier
 ## Implementing Consumer and BiConsumer
 ## Implementing Predicate and BiPredicate
