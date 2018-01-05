@@ -65,9 +65,87 @@ System.out.println(s1.get());
 System.out.println(s2.get());
 ```
 
-This time, we use a constructor refernce to create the object. We've been using generics to declare what type of Suppliers we are using. 
+This time, we use a constructor reference to create the object. We've been using generics to declare what type of Suppliers we are using. 
+
+Another example of Supplier is as follows:
+
+```java 
+ final AtomicInteger count = new AtomicInteger(10);
+ Supplier<Integer> supplier = () -> count.incrementAndGet();
+ System.out.println(supplier.get());
+```
+
+As you can see in the code above the first line creates an object of AnotmicInteger with value of 10. In the second line we pass a lambda expression that takes no argument, as per Supplier interface takes no arguments, and increment the number. This expression is stored into the Supplier variable called supplier. In order to execute this expression we need to call the get() method of the Supplier Interface. This number then gets printed. 
 
 ## Implementing Consumer and BiConsumer
+You use ```Consumer``` when you want to do something with a parameter but not return anything. ```BiConsumer``` does the same thing except that it takes two parameters. Ommitting the default methods, the interfaces are defined as follow:
+
+```java
+@FunctionalInterface
+public interface Consumer<T>{
+  void accept(T t);
+}
+
+@FunctionalInterface
+public interface Consumer<T, U>{
+  void accept(T t, U u);
+}
+```
+
+Now see how to make use of it:
+
+```java
+Consumer<String> c1 = System.out::println;
+Consumer<String> c2 = x -> System.out.println(x);
+
+c1.accept("Annie");
+c2.accept("Annie");
+
+```
+This example prints Annie twice. 
+
+Another example is to use a forEach() method that takes a Consumer as parameter, so it is perfect to show as example.
+
+```java
+List<Integer> list = Arrays.asList(2,5,3,7,1);
+//list.forEach((x) -> System.out.println(x));
+
+Consumer<Integer> consumer = new Consumer<Integer>() {
+    @Override
+    public void accept(Integer i) {
+      System.out.println(i.intValue());
+    }
+};
+list.forEach(consumer);
+
+```
+In the example above, we can either pass a lambda expression into the forEach() method as per the line that is commented out. Or we can also pass a consumer. Passing a consumer is the long way of doing it but it kind of demostrate the use of the Consumer Interface. 
+
+Now, ```BiConsumer``` is called with two parameters. They don't have to be the same type. For example, we can put a key and a value in a map using this interface.
+
+```java
+Map<String, Integer> map = new HashMap<>();
+BiConsumer<String, Integer> b1 = map::out;
+BiConsumer<String, Integer> b2 = (k,v) -> map.put(k,v);
+
+b1.accept("chicken", 7);
+b2.accept("pollo", 1);
+
+System.out.println(map);
+```
+The output is {chicken = 7, pollo = 1} which shows that both BiConsumer implementations did get called. The code to instantiate b1 is a bit shorter that b2. This might be why the exam is so fond of method references. 
+
+As another example, we use the same type for both generic parameters:
+```java
+Map<String,String> map = new HashMap<>();
+BiConsumer<String,String> b1 = map::put;
+BiConsumer<String,String> b2 = (k,v) -> map.put(k,v) ;
+
+b1.accept("chicken","Cluck");
+
+
+
+```
 ## Implementing Predicate and BiPredicate
 ## Implementing Function and BiFunction
 ## Implementing UnaryOperator and BinaryOperator
