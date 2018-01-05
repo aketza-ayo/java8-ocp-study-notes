@@ -143,11 +143,101 @@ BiConsumer<String,String> b2 = (k,v) -> map.put(k,v) ;
 
 b1.accept("chicken","Cluck");
 
+```
 
+## Implementing Predicate and BiPredicate
+```Predicate``` is often used when filtering or matching. A ```BiPredicate``` is just like a ```Predicate``` except that it takes two parameters instead of one. 
+
+```java
+@FunctionalInterface
+public interface Predicate<T>{
+  boolean test(T t);
+}
+
+@FunctionalInterface
+public interface BiPredicate<T, U>{
+  boolean test(T t, U u);
+}
+```
+
+It should be old news by now that you can use a ```Predicate``` to test a condition. See below:
+
+```java
+Predicate<String> p1 = String::isEmpty;
+Predicate<String> p2 = x -> x.isEmpty();
+
+System.out.println(p1.test(""));
+System.out.println(p2.test(""));
 
 ```
-## Implementing Predicate and BiPredicate
+This prints true twice. More interesting is a BiPredicate. This example also prints true twice:
+
+```java
+BiPredicate<String, String> b1 = String::startsWith;
+BiPredicate<String, String> b2 = str,word -> str.startsWith(word);
+
+System.out.println(b1.test("chicken","chick"));
+System.out.println(b2.test("chicken","chick"));
+```
+
+The method refernce conbines two techniques that you have seen. StartsWith() is an instance method. This means that the first parameter in the lambda is used as the instance on which to call the method. The second parameter in the lambda is passed to the startsWith() method itself. This is another example of how method references save a bit of typing. The downside is that are less explicit, and you really have to understand what is going on.
+
 ## Implementing Function and BiFunction
+A ```Function``` is responsible for turning one parameter into a value of a potentially different type and returning it. Similarly, a ```BiFunction``` is resposible for turning two parameters into a value and returning it. Omitting anu default or static methods, the interface are defined as the following:
+
+```java
+@FunctionalInterface
+public interface Function<T, R>{
+  R apply(T t);
+}
+
+@FunctionalInterface
+public interface BiFunction<T, U, R>{
+  R apply(T t, U u);
+}
+
+```
+For example, this function converts a String to the length of the String:
+
+```java
+Function<String, Integer> f1 = String::length;
+Function<String, Integer> f2 = s -> s.length();
+
+System.out.println(f1.apply("aloha"));       //5
+System.out.println(f2.apply("panda"));       //5
+
+```
+
+This function turns a String into an Integer. Well, it turns String into an int, which is autoboxed into an Integer. The following example combines two string objects and produces another one.
+
+```java
+BiFunction<String, String, String> b1 = String::concat;
+BiFunction<String, String, String> b2 = (str,toAdd) -> str.contact(toAdd);
+
+System.out.println(b1.apply("baby ","panda"));
+System.out.println(b2.apply("baby ", "panda"));
+```
+
+The first two types in the BiFunction are the input types. The third is the return type. For the method reference, the first parameter is the instance that contact() is called on and the second is the param passed to contact();
+
+:yin_yang: **Creating Your Own Functional Intrefaces** Java provides a built-in interface for functions with one or two params. What of you need more? Suppose you want to create a functional interface for the wheel spped of each wheel in a tricycle. The it would look like:
+```java
+@FunctionalInterface
+public interface TriFunction<T,U,V,R>{
+    R apply(T t, U u, V v);
+}
+```
+Now suppose that you want to create for the same but for your quad. Then:
+
+```java
+@FunctionalInterface
+public interface QuadFunction<T,U,V,W,R>{
+    R apply(T t, U u, V v, W w);
+}
+```
+
+Java built in interface are meant to facilitate the most common functional interfaces. But you can add any functional interface you'd like and Java matches them when you use lambdas or method references.
+
 ## Implementing UnaryOperator and BinaryOperator
 ## Checking Functional Interfaces
 
