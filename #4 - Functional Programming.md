@@ -1,5 +1,5 @@
 # Using Variables in Lambda
-In Chapter one we covered the ide of "effectively final". This means this means that if you could add the final modifier to a local variable, it is "effectively final".
+In Chapter one we covered the ide of "effectively final". This means that if you could add the final modifier to a local variable, it is "effectively final".
 Lambda expressions can access static variables, instance variables, effectively final method parameters and effectively final local variables. Let's see how many of those we can find in the example below:
 ```java
 interface Gorilla{ String move();}
