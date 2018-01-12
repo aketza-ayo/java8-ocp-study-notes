@@ -34,7 +34,7 @@ Chapter 10 - JDBC
 
 # Review Questions
 
-At the end of each chapter I am going to take the test and pulish the results. You may notice that the attached pictures show some colour coding:
+At the end of each chapter I am going to take the test and publish the results. You may notice that the attached pictures show some colour coding:
 - Green if I answerd correctly
 - Red if I answered wrong
 - Pink if I found the question interesting, tricky, worth to refer back.
