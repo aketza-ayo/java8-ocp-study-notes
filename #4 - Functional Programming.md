@@ -239,6 +239,42 @@ public interface QuadFunction<T,U,V,W,R>{
 Java built in interface are meant to facilitate the most common functional interfaces. But you can add any functional interface you'd like and Java matches them when you use lambdas or method references.
 
 ## Implementing UnaryOperator and BinaryOperator
+Unary and binary operator are special case of a function. They require all parameters to be of the same type. A ```UnaryOperator``` transforms its value into one of the same type. For example incrementing by one is a UnaryOperator. In fact extends ```Function```. A ```BinaryOperator``` merges two values into one of the same type. Adding two numbers is a binary operation. Similarly, ```BinaryOperator``` extends ```BiFunction```. 
+
+```java
+@FunctionalInterface
+public interface UnaryOperator<T> extends Function<T,T>{
+  T apply(T t);
+}
+
+@FunctionalInterface
+public interface BinaryOperator<T,T> extends BiFunction<T,T,T>{
+  T apply(T t1,T t2);
+}
+
+```
+
+Below you can find an example of usage:
+
+```java
+UnaryOperator<String> u1 = Stirng::toUpperCase;
+UnaryOperator<String> u2 = s -> s.toUpperCase();
+
+System.out.println(u1.apply("chirp"));
+System.out.println(u2.apply("chirp"));
+```
+
+This prints CHIRP twice. We don't have to specify the return type in the generics because ```UnaryOperator``` requires it to be the same type as the parameter. And now for the binary example:
+
+```java
+BinaryOperator<String> b1 = String::concat;
+BinaryOperator<String> b2 = (string, toAdd) -> string.concat(toAdd); 
+
+System.out.println(b1.apply("baby ", "panda"));   //baby panda
+System.out.println(b2.apply("baby ", "panda"));   //baby panda 
+```
+
+
 ## Checking Functional Interfaces
 
 # Returning an Optional
