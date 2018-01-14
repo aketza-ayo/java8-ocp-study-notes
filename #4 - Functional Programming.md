@@ -365,8 +365,53 @@ The following table covers what I need to know for the exam.
 
 ![optional instance methods](img/OptinalInstanceMethods.png)
 
+You've already seen get() and isPresent(). The other methods allow you to write code that uses an Optional in one line without having to the ternay operator. This makes the code easier to read. Instead of using an if statement we can specify a ```Consumer```  to be run when there is a value inside the Optional. When there isn't the method simply skips running the ```Consumer```: 
 
+```java
+Optional<Double> opt = average(90,100);
+opt.ifPresent(System.out::print);
+```
 
+Using ifPresent() better expresses our intent. We want something done if a value is present. The other methods allow you to specify what to do if a value isn't present. There are three choices:
+
+```java
+30: Optional<Double> opt = average();
+31: System.out.println(opt.orElse(Double.NaN));
+32: System.out.println(opt.orElseGet(() -> Math.random()));
+33: System.out.println(opt.orElseThrow(() -> new IllegalStateException()));
+
+```
+and this prints something like this:
+
+```
+NaN
+0.445566787878712
+Exception in  thread "main" java.lang.IllegalStateException
+  at optional.Average.lambda$3(Average.java:56)
+  at optional.Average$$lambda .......
+  at java.util.optional.orElseThrow(Optional.java:290)
+```
+Line 31 shows that you can return a specific value or variable. In our case we print "Not a Number". Line 32 shows using a Supplier to generate a value at runtime. Line 33 shows using a different Supplier to create a exception that should be thrown. 
+
+Notice that the two methods that takes Supplier have different names. Do you see why this code does not compile? 
+
+```
+System.out.println(opt.orElseGet(() -> new IllegalStateException()));   //DOES NOT COMPILE
+```
+
+opt is an Optional<Double>. This means the Supplier must return a Double. Since this supplier returns a exception , the type does not match. The last example with Optional is really easy. What do you think this does?
+  
+  ```java
+  Optional<Double> opt = average(90,100);
+  System.out.println(opt.orElse(Double.NaN));
+  System.out.println(opt.orElseGet(() -> Math.random()));
+  System.out.println(opt.orElseThrow(() -> new IllegalStateException()));
+ ```
+ 
+ In this case it prints out 95 three time. Since the value does exist, there is no need to use the or else logic. 
+ 
+ :yin_yang  **Is Optional the same as null?** before Java 8 programmers would return null instead of Optional. There were a few  shortcomings with these approach. One is that there was a clear way to express that null might be a special case. By contrast, returning an Optional is a clear statement in the API that there might be a value in there. Another advantage of Optional is that you can use functional programming style with isPresent() and the other methods rather than needing an if statement. Finally, you can chain Optional calls.
+ 
 # Using Streams
 ## Creating Stream Sources
 ## Using Common Terminal Operations
