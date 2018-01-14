@@ -419,8 +419,37 @@ A ```stream``` in Java is a sequence of data. A ```stream pipeline```  is the op
 - ```Terminal operations```: Actually produces a result. Since streams can be used only once, the stream is no longer valid after a terminal operation completes. 
 
 ## Creating Stream Sources
-in Java the Stram interface is in java.util.stream
+in Java the Stram interface is in java.util.stream package. There are a few ways to create a finite stream:
+```java
+1:  Stream<String> empty = Stream.empty();            // count = 0
+2:  Stream<Integer> singleElement = Stream.of(1);     // count = 1
+3:  Stream<Integer> fromArray = Stream.of(1,2,3)      // count = 2
+```
+
+Line 1 shows how to create an empty array. Line 2 shows how to create a stream with a single element. Line 3 shows how to create a stream from an array. 
+
+Since streams are new in Java 8, most code that is already written uses lists. Java provides a convenient way to convert from a list to a stream:
+
+```java
+4:  List<String> list = Arrays.asList("a","b","c");
+5:  Stream<String> fromList = list.stream();
+6:  Stream<String> fromListParallel = list.parallelStream();
+```
+
+Line 5 shows that is a simple method to create a stream from a list. Line 6 does the same except that it creates a stream that is allowed to process elements in parallel. Just keep in mind that it isn't worth working in parallel for small streams. There is an overhead cost in coordinating the work among all of the workers operating in parallel. For small amounts of work is faster to do it sequentially.
+
+```java
+7:  Stream<Double>  randoms = Stream.generate(Math::random);
+8:  Stream<Integer> oddNumbers = Stream.iterate(1, n -> n + 2); 
+```
+Line 7 generates a stream of random numbers. As meny as you need. Line 8 takes a starting value as first parameter. The other param is the lambda expression that gets passed the previous value and generates the next value. As with the random numbers example, it will keep producing odd numbers as long as you need them.
+
+
 ## Using Common Terminal Operations
+You can perfom terminal operations without any intermidiate operations but not the other way around. ```Reductions``` are a special type of terminal operations where all of the contents of the stream are combined into a single primitive or Objects.For example you might have an int or a Collection. The table below summarizes this section. 
+
+![Terminal Stream Operations](img/TerminalStreamOperations.png)
+
 ### count()
 ### min() and max()
 ### findAny() and findFirst()
