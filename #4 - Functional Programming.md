@@ -276,6 +276,37 @@ System.out.println(b2.apply("baby ", "panda"));   //baby panda
 
 
 ## Checking Functional Interfaces
+Now would be a good time to memorize table above on functional interfaces. Let's see a few examples to put it into practice. What functional interface would you use in these situations?
+
+- Returns String without taking any parameter?
+- Returns a Boolean and takes a String.
+- Returns an Integer an takes two Integers.
+
+Ready? OK, the first one is a ```Supplier``` because it generates an Object and takes zero params. The second is a ```Function``` because it takes one parameter and returns another type. Its a little tricky because you might thing it returns a boolean and therefore is a predicate but it returns a Boolean Object. Finally the third one is either a ```BiFunction``` or a ```BinaryOperator``` but ```BinaryOperator``` is a bettern answer because it is more specific.
+
+Now, let's do another exercise but with code:
+
+```java
+6:  _____<List> ex1 = x -> "".equals(x.get(0));
+7:  _____<Long> ex2 = (Long l) -> System.out.println(l);
+8:  _____<String, String> ex3 = (s1, s2) -> false;
+```
+
+Ready? OK, line 6 is a ```Predicate``` because it takes one parameter and returns a boolean value. Line 7 is ```Consumer``` because it takes one param and does not return anything. Line 8 is a ```BiFunction``` because it takes two parans and returns a boolean value.
+
+Now, let's do some tricky examples to identify the error:
+
+```java
+6: Function<List<String>> ex1 = x -> x.get(0);  //DOES NOT COMPILE
+7: UnaryOperator<Long> ex2 = (Long l) -> 3.14;  //DOES NOT COMPILE
+8: Predicate ex4 = String::isEmpty;             //DOES NOT COMPILE
+
+```
+
+Line 6 is wrong because a function has to specify two generics - the input and the return value type. The return value type is missing from line 6 causing the code not to compile. Line 7 is a ```UnaryOperator``` which returns the same type as the parameter it is passed in. Line 8 is missing the generic of the parameter for ```Predicate```. This makes the parameter that was passed an Object rather than a String. The lambda expects a String because it calls a method that only exists in the String object rather than an Object. Therefore, it does not compile.
+
+
+
 
 # Returning an Optional
 
