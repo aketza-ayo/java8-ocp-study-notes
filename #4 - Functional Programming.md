@@ -413,7 +413,13 @@ opt is an Optional<Double>. This means the Supplier must return a Double. Since 
  :yin_yang:  **Is Optional the same as null?** before Java 8 programmers would return null instead of Optional. There were a few  shortcomings with these approach. One is that there was a clear way to express that null might be a special case. By contrast, returning an Optional is a clear statement in the API that there might be a value in there. Another advantage of Optional is that you can use functional programming style with isPresent() and the other methods rather than needing an if statement. Finally, you can chain Optional calls.
  
 # Using Streams
+A ```stream``` in Java is a sequence of data. A ```stream pipeline```  is the opearations that run on a stream to produce a result. Think of a stream pipeline like a assembly line in a factory. In assembly production the second person cannot do anything until the first person has done his task and so on and so forth. There are three parts to a stream pipeline:
+- ```Source```: Where the stream comes from
+- ```Intermediate Operations```: Transform the stream into another one. There can be as few or as many intermidiate operations as you'd like. Since stream use lazy evaluation, the intermidiate operations do not run until the terminal operation runs.
+- ```Terminal operations```: Actually produces a result. Since streams can be used only once, the stream is no longer valid after a terminal operation completes. 
+
 ## Creating Stream Sources
+in Java the Stram interface is in java.util.stream
 ## Using Common Terminal Operations
 ### count()
 ### min() and max()
