@@ -306,9 +306,63 @@ Now, let's do some tricky examples to identify the error:
 Line 6 is wrong because a function has to specify two generics - the input and the return value type. The return value type is missing from line 6 causing the code not to compile. Line 7 is a ```UnaryOperator``` which returns the same type as the parameter it is passed in. Line 8 is missing the generic of the parameter for ```Predicate```. This makes the parameter that was passed an Object rather than a String. The lambda expects a String because it calls a method that only exists in the String object rather than an Object. Therefore, it does not compile.
 
 
-
-
 # Returning an Optional
+How do we express the idea that a variable's value is not set yet if we don't want to use ```null``` ? In java 8, we use the ```Optional``` type. An Optional is created using a factory. Yoyu can either request an empty Optional or pass a value for the Optional to wrap. Think of an Optional as a box that might have something in it or might instead be empty.
+
+Let's see how it looks in the code:
+
+```java
+public static Optional<Double> average(int... scores){
+  if(scores.length == 0) return Optional.empty();
+  
+  int sum = 0;
+  for(int score : scores) sum += score;
+  return Optional.of((double) sum / scores.length);
+  
+}
+```
+
+As you can see the code returns an empty optional when we can't calculate the average. The next lines add the scores. The last line creates an Optional to wrap the average. See below to see what's the value in the Optional box:
+
+```java
+System.out.println(average(90,100));      //Optional[95.0]
+System.out.println(average());            //Optional.empty
+```
+You can see that one optional contains a value and the other is empty. Normally, we want to check if a value is there and/or get it out the box. Here is one way to do that:
+
+```java
+Optional<Double> opt = average(90,100);
+if(opt.isPresent()){
+  System.out.println(opt.get());      //95.0
+}
+```
+
+The secod line checks whether it contains a value and the next line prints it out. What if we didn't do the check and the Optional was empty? 
+
+```java
+Optional<Double> opt = average();
+System.out.println(opt.get());      //bad
+
+```
+
+We'd get an exception since there is no value inside the Optional:
+
+``` java.util.NoSuchElementExcetion: No value present ```
+
+When creating an Optinal it is common to want to use empty when the value is null. You can do this with an if or ternary operation. 
+
+```java
+Optional o = (value == null) ? Optional.empty() : Optional.of(value);
+```
+
+If value is null, o is assigned the empty Optional. Otherwise, we wrap the value. Since this is such a common pattern, Java provides a factory method to do the same thing. The code below and above achieve the same thing.
+
+```java
+Optional o = Optional.ofNullable(value);
+```
+
+The following table covers what I need to know for the exam.
+
 
 # Using Streams
 ## Creating Stream Sources
