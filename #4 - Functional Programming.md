@@ -363,6 +363,9 @@ Optional o = Optional.ofNullable(value);
 
 The following table covers what I need to know for the exam.
 
+![optional instance methods](img/OptionalInstanceMethods.png)
+
+
 
 # Using Streams
 ## Creating Stream Sources
