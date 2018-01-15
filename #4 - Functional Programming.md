@@ -462,12 +462,84 @@ Stream<String> s = Stream.of("monkey","gorilla","panda");
 System.out.println(s.count());  //3
 ```
 ### min() and max()
+The min() and max() methods allow you to pass a custome comparator and find the smallest or largest value in a finite stream according to that sort order. Like count(), max() and min() also hang for infinite streams. Both methods are reductions because they return a single value after looking at the entire stream. The method signature as follows:
+
+```java
+Optional<T> min(<? super T> comparator);
+
+Optional<T> max(<? super T> comparator);
+```
+This example finds the animal with the fewest letters in its name:
+
+```java
+Stream<String> s = Stream.of("monkey","ape","panda");
+Optional<String> min = s.min((s1,s2) -> s1.length() - s2.length());
+min.ifPresent(System.out::println);   //ape
+```
+
+Notice that the code returns Optional rather than the value. This allows the method to specify that no minimum or maximum was found. We use the Optional method and a method reference to print out the minimum only if one is found. 
+
+As an example of where there isn't a minimum, let's look at an empty stream:
+
+```java
+Optional<?> minEmpty = Stream.empty().min((s1,s2) -> 0);
+System.out.println(minEmpty.isPresent());         //false
+```
+
+Since the stream is empty, the comparator is never called and no value is present in the Optional. 
 
 ### findAny() and findFirst()
+These two methods return an element of the stream unless the stream is empty. If the stream is empty they return an empty Optional. FindAny() is useful when you are working with parallel stream. It gives java the flexibility to return to you the first element it comes by rather than the one that needs to be first in the stream based on the intermidiate operations. These are terminal operations but not reductions. They return a value based on the stream but do not reduce the entire stream into one value.
+
+The method signatures are this:
+
+```java
+Optional<T> findAny();
+Optional<T> findFirst();
+
+```
+This example finds an animal:
+
+```java
+Stream<String> s = Stream.of("monkey","gorilla","panda");
+Stream<String> infinite = Stream.generate(() -> "chimp");
+s.findAny().ifPresent(System.out::println);             // monkey
+infinite.findAny().ifPresent(System.out::println);      // chimp
+
+```
+Finding any match is more useful than it sounds. Sometimes we just want to sample the result and get a representative element.
+
 ### allMatch(), anyMatch() and noneMatch()
+These methods search a stream and return information about how the stream pertains to the predicate. These may or may not terminate for infinite streams. It depends on the data. They are not reductions because they do not necessarily look at all of the elements. 
+
+The method signature is as follow:
+
+```java
+boolean anyMatch(Predicate <? super T > predicate )
+boolean allMatch(Predicate <? super T > predicate )
+boolean noneMatch(Predicate <? super T > predicate )
+```
+
+This example checks whether animal names begin with letters:
+
+```java
+List<String> list = Arrays.asList("monkey","2","chimp");
+Stream<Stream> infinite = Stream.generate(() -> chimp");
+
+Predicate<String> pred = x -> Character.isLetter(x.charAt(0));
+System.out.println(list.stream().anyMatch(pred));       //true
+System.out.println(list.stream().allMatch(pred));       //false
+System.out.println(list.stream().noneMatch(pred));      //false 
+System.out.println(infinite.anyMatch(pred));            //true
+```
+
+This shows that we can reuse the same predicate, but we need a different stream each time. anyMatch() returns true because two of the three elements match. allMatch() returns false because one doesn't match. noneMatch() also returns false because one matches. On the infinite list, one match is found so the call terminates. If we called noneMatch() or allMatch(), they would run until we killed the program.
+
+:yin_yang: remember that allMatch(), anyMatch() and noneMatch() return a boolean. By contrast, the find methods return an Optional because they return an element in the stream.
 ### forEach()
 ### reduce()
 ### collect()
+
 ## Using Common Intermediate Operations
 ### filter()
 ### distict()
