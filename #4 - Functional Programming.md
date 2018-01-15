@@ -537,7 +537,100 @@ This shows that we can reuse the same predicate, but we need a different stream 
 
 :yin_yang: remember that allMatch(), anyMatch() and noneMatch() return a boolean. By contrast, the find methods return an Optional because they return an element in the stream.
 ### forEach()
+A looping construct is available. Calling forEach() on a inifinite construct does not terminate. Since there is no a return value it is not a reduction. 
+
+The method signature as follows:
+
+```java
+void forEach(Consumer<? super T> action)
+```
+
+Notice that this is the only terminal operation with a return type of void. If you want something to happen you have to make it happen in the loop. Here is one way to print the elements in the stream. There are no other ways, which we cover later in the chapter.
+
+```java
+Stream<String> s = Stream.of("Monkey","Gorilla","Bonobo");
+s.forEach(System.out::print);        // MonkeyGorillaBonobo
+```
+Notice that you cannot use the traditional for loop on a stream:
+
+```java
+Stream s = Stream.of(1);
+for(Integer i : s){}      //DOES NOT COMPILE
+```
+While forEach() sounds like a loop, it is really a terminal operator for streams.Streams cannot use a traditional for loop to run because they don't implement the iterable interface.
+
 ### reduce()
+The reduce() method conbines a stream into a single object. As you can tell from the name, it is a reduction. The method signatues are these:
+
+```java
+T reduce(T identity, BinatyOperator<T> accumulator);
+
+Optional<T> reduce(BinatyOperator<T> accumulator);
+
+<U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinatyOperator<U> conbiner);
+```
+
+The most common way of doing a reduction is to start with an initial value and keep merging it with the next value. Think how would you concatenate an array of String into a single String without functional programming. It might look something like this:
+
+```java
+String[] array = new String[] {"w","o","l","f"};
+String result = "";
+for(String s: array) result = result + s;
+System.out.println(result);
+```
+
+The initial value of an empty String is the indentity. The accumulator combines the current result with the current String. With lambdas, we can do the same thing with a stream and reductions:
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f");
+String word = stream.reduce("", (s,c) -> s + c);
+System.out.print(word);           //wolf  
+
+```
+
+Notice how we still have the empty String as the identity. We also still concatenate the String to get the next value. We can also rewrite this with a method reference:
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f");
+String word = stream.reduce("", String::concat);
+System.out.println(word);         //wolf
+```
+
+Another example, we can try reduction to multiply all of the Integers in a Stream.
+
+```java
+Stream<Integer> stream = Stream.of(3,5,6);
+System.out.println(stream.reduce(1, (a, b) -> a*b));
+
+```
+We set the identity to 1 and the accumulator to multiplication. In many case the identity isn't really neccesary, So Java lets us omit it. When you don't specify the identity an Optional is returned because there might not be any data. There are three choices for what is in the Optional:
+- If the stream is empty, an empty Optional is returned 
+- If the stream has one element, it is returned.
+- It the stream has multiple elements, the accumulator is applied to combine them.
+
+The following illustrate each of the scenarios:
+
+```java
+BinaryOperator<Integer> op = (a,b) -> a*b;
+Stream<Integer> empty = Stream.empty();
+Stream<Integer> oneElement = Stream.of(3);
+Stream<Integer> threeElements = Stream.empty(3, 5, 6);
+
+empty.reduce(op).ifPresent(System.out::print);          //NO OUTPUT
+oneElement.reduce(op).ifPresent(System.out::print);     //3
+threeElements.reduce(op).ifPresents(System.out::print)  //90
+```
+
+Why are there two similar methods? Sometimes it is nice to differentiate the case where stream is empty rather than the case where there is a value that happens to match the identity beign returned from calculation. The signature returning an optional let us differentiate these cases. For example, we might return Optional.empty() when the stream is empty and Optional.of(3) when there is a value.
+
+The third method signature is used when we are processing collections in parallel. Java assumes that the stream might be parallel. This is handy because it lets us switch to a parallel stream easily in the future:
+
+```java
+BinaryOperator<Integer> op = (a, b) -> a * b;
+Stream<Integer> stream = Stream.of(3, 5, 6);
+System.out.println(stream.reduce(1, op, op));   //90
+
+```
 ### collect()
 
 ## Using Common Intermediate Operations
