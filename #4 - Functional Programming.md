@@ -451,7 +451,18 @@ You can perfom terminal operations without any intermidiate operations but not t
 ![Terminal Stream Operations](img/TerminalStreamOperations.png)
 
 ### count()
+The count() method determines the number of elements in a finite stream. For a infinite stream it hangs. Count() is a reduction because it looks at each of the element in the stream and returns a single value. Method signature is this:
+```java
+long count()
+```
+The example below shoes calling count() on a finite stream:
+
+```java
+Stream<String> s = Stream.of("monkey","gorilla","panda");
+System.out.println(s.count());  //3
+```
 ### min() and max()
+
 ### findAny() and findFirst()
 ### allMatch(), anyMatch() and noneMatch()
 ### forEach()
