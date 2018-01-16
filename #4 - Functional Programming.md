@@ -1087,6 +1087,13 @@ This funcion that takes an object  which is String in this case. The function re
 ![Function parameters when mapping between types of streams](img/functionParamMapping.png)
 
 
+You have to memorize last two tables. It is not as hard as it might seem. There are patterns in the names if you remember a few rules. 
+ 
+:yin_yang: You can also create a primitive stream from a Stream using flatMapToInt(), flatMapToDouble(), or flatMapToLong(). For example:
+```java
+IntStream ints = list.stream().flatMapToInt(x -> IntStream.of(x));
+```
+
 ## Using Optional with Primitive Streams
 ## Summararizing Statistics
 ## Learning the Functional Interfaces for Primitives
