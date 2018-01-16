@@ -911,6 +911,33 @@ When working with a Queue peek() looks only at the first element. In a stream, p
 
 Remeber that peek is intended to perform an operation without changing the result. 
 ## Putting Together the Pipeline
+Streams allow you to use chaining and express what you want to accomplish rather than how to do so. Let's say we wanted to get the first two names alphabetically that are four character long. In Java 7 we had to write something like the following:
+
+```java
+List<String> list = Arrays.asList("Toby","Anna","Leroy","Alex");
+List<String> filtered = new ArrayList<>();
+for(String name: list){
+  if(name.length() == 4) filtered.add(name);
+}
+Collections.sort(filtered);
+Iterator<String> iter = filtered.iterator();
+
+if(iter.hasNext()) System.out.println(iter.next());
+```
+
+This works. It takes sometime to figure out what it does but it works. The problem we are trying to solve gets lost in the implementation. It is also very focused on the how rather than on the what. In Java 8, the equivalent code is as follows:
+
+```java
+List<String> list = Arrays.asList("Toby","Anna","Leroy","Alex");
+list.stream()
+  .filter(n -> n.length() == 4)
+  .sorted()
+  .limit(2).
+  .forEach(System.out::print);
+```
+
+The difference is that we express what is going on. We care about String objects of length 4. Then we want them to be sorted. Then we want the first two and then we want to print them out. It maps better to the problem that we are trying to solve, and it si simpler because we dont have to deal with counters and such. Once you start using streams in your code, you might find yourself using them in many places. In this example you have seen all three parts of the pipeline. 
+
 
 ## Printing a Stream
 
