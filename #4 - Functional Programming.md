@@ -988,7 +988,96 @@ When code doesn't work as expected it is traditional to add a println() or set a
 Notice that most of the approaches are destructive. This means that you cannot use the stream anymore after printing. This is fine when you are getting started and just want to see what the code does. It's a problem if you are trying to find out what a stream looks like as it passes through a certain part of the pipeline. Also, notice that only one of the approaches works for infinite stream. It limits the number of elements in the stream before printing. If you try the other with a infinite stream , they will run until you kill the program.
 
 # Working with Primitives
+Up until now, we have been using wrapper classes when we needed primitives to go into streams. We did this with the Collection API so it would feel natural. With streams there are also equivalents that work with the int, double and long primitives. Let's take a look at why this is needed. Suppose that we want to calculate the sum of numbers in a finite stream:
+
+```java
+Stream<Integer> stream = Stream.of(1, 2, 3);
+Syste.out.println(stream.reduce(0, (s, n) -> s + n));
+```
+
+Not bad. We started the accumulator with 0, we then added each number to that running total as it came up in the stream. There is another way of doing that:
+
+```java
+Stream<Integer> stream = Stream.of(1, 2, 3);
+System.out.println(stream.mapToInt(x -> x).sum());
+```
+
+This time, we converted our Stream<Integer> to an IntStream and asked the IntStream to calculate the sum for use.  The primitive streams know how to perform certain common operations automatically.
+  
+This seems like a nice convenience feature but not very important. Now think about how would you implement an average. You need to divide the sum by the number of elements. The problem is that streams allow only one pass. Java recognizes that calculating an average is a common thing to do, and it provides a method to calculate the average on the stream classes for primitives:
+
+```java
+IntStream intStream = IntStream.of(1, 2, 3);
+OptionalDouble avg = intStream.average();
+System.out.println(avg.getAsDouble);
+```
+
+Not only it is possible to calculate the average, but it is also easy to do so. Clearly primitive streams are important. We will look at creating and using such streams. including optional and functional interfaces.
+
 ## Creating Primitive Streams
+Here are three types of primitive streams:
+- IntStream: Used for primitive types int, short, byte and char.
+- LongStream: Used for the primitive type long.
+- DoubleStream: Used for the primitive types double and float.
+
+Why doesnt each primitive type have its own primitive stream? These three are the most common, so the API designers went with them.
+
+Some of the methods are equivalent to the Object Streams. You can create an empty stream like this:
+
+```java
+DoubleStream empty = DoubleStream.empty();
+```
+
+Another way is to create the of() factory method from a single value or by using the vararg overload:
+
+```java
+DoubleStream oneValue = DoubleStream.of(3.14);
+DoubleStream bvaragrs = DoubleStream.of(1.0, 1.1, 1.2); 
+oneValue.forEach(System.out::println);
+System.out.println();
+varargs.forEach(System.out::println);
+```
+
+This code outputs the following:
+
+```
+3.14
+
+1.0
+1.1
+1.2
+```
+
+It works the same way of each type of the primitive stream. When dealing with int or long primitives, it is common to count. Suppose that we wanted a stream with the numbers from 1 through 5. We could write this using what we have explained so far:
+
+```java
+IntStream count = IntStream.iterate(1, n -> n + 1).limit(5);
+count.forEach(System.out::println)
+```
+
+This code does print the number 1 to 5 one per line. However we can use less code to achieve the same because Java provides a method that can generate a range of numbers:
+
+```java
+IntStream range = IntStream.range(1, 6);
+range.forEach(System.out::println);
+```
+
+This is better. The range() method indicates that we want number 1-6, not including number 6. Alternatively, we can do the following:
+
+```java
+IntStream range = IntStream.rangeClosed(1, 5);
+range.forEach(System.out::println);
+```
+
+Even better. This time we expressed that we want a close range or a inclusive range. 
+
+The final way to create a primitve stream is by mapping from anither stream type. 
+
+![Mapping methods between types of streams](img/mappingMethodsStreams.png)
+
+Obviously, they have to be compatible types fpr this to work. Java requires a mapping function to be provided as a parameter, for example:
+
+
 ## Using Optional with Primitive Streams
 ## Summararizing Statistics
 ## Learning the Functional Interfaces for Primitives
