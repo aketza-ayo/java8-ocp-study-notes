@@ -983,6 +983,7 @@ This one hangs as well until we kill the program. The filter doesn't allow anyth
 ## Printing a Stream
 When code doesn't work as expected it is traditional to add a println() or set a break point to see the value of an object. With streams, this is trickier. Since intermediate operations don't run until needed new techniques are needed. The table below shoes some options for printing out the the contents of a stream. You will find that you have less need to print out the values of a stream as you get more practice with stream pipeline. While learning, printing is really helpful!
 
+![How to print a stream](img/printStream.png)
 
 # Working with Primitives
 ## Creating Primitive Streams
