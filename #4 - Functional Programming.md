@@ -632,7 +632,51 @@ System.out.println(stream.reduce(1, op, op));   //90
 
 ```
 ### collect()
+The collect method is a special type of reduction called *mutable reduction*. It is more efficient than a regular reduction because we use the same mutable object while accumulating. Common mutable objects include ```StringBuilder``` and ```ArrayList```. This method lets you get data out of streams and into another form. The method signatures are as follows:
 
+```java
+<R> R collect(Supplier<R>, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner)
+
+<R, A> R collect(Collector<? super T, A, R> collector)
+```
+Let's see the first signature, which is used when we want to code specifically how collecting should work. Our wolf example from reduce can be converted to use collect():
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f");
+StringBuilder word = Stream.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);
+```
+
+The first param is a Supplier that creates the object that will store the results as we collect data. Remeber that a Supplier does not take any param and returns a value. In this case, it constructs a new StringBuilder.
+
+The second param is a BiConsumer, which takes two params and doesn't return anything. It is resposible for adding one more element to the data collection. In this example it appends the next String to the StringBuilder.
+
+The final param is another BiConsumer. It is responsible for taking two data collections and merging them. This is useful when we are processing in parallel. Two smaller collections are formed and then merged into one. This would work with StringBuilder only if we didn't care about the order of the letters. In this example the accumulator and the combiner had the same logic.
+
+Now, let's look at an example where the logic is different in the accumulator and combiner:
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f");
+TreeSet<String> set = stream.collect(TreeSet::new, TreeSet::add, TreeSet::addAll);
+System.out.println(set);      //[f,l,o,w]
+```
+
+The collector has three part as before. The Supplier creates an empty TreeSet. The accumulator adds a single Styring from Stream to the TreeSet. The combiner adds all of the elements of one TreeSet to another in case the operations were done in parallel and need to be merged.  This collector() method is very importart to know how it works because it is going to appear in the exam. Rather than making developers keep implementing the same ones , Java provides an interface with common collectors. For example, we could rewrite the previous example as follows:
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f");
+TreeSet<String> set = stream.collect(Collectors.toCollection(TreeSet::new));
+System.out.println(set);      //[f, l, o, w]
+```
+
+If we didn't need the set to be sorted, we could make the code even shorter:
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f");
+TreeSet<String> set = stream.collect(Collectors.toSet());
+System.out.println(set);      //[f,w,l,o]
+```
+
+The exam expects you to know about common predifined collectors in addition to beign able to write your own by passing a supplier, accumulator and a combiner.
 ## Using Common Intermediate Operations
 ### filter()
 ### distict()
