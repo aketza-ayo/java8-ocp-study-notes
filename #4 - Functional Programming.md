@@ -781,11 +781,67 @@ System.out.println(names);        // MAX | PETER  |  PAMELA  |  DAVID
 ```
 
 Since strings in Java are immutable, we need a helper class like StringJoiner to let the collector constructs our string. The suppliuer initially coinstructs such a StringJoiner with the appropriate delimiter. The accumulator is used to add each persons upper-cased name to the StringJoiner. The combiner knows how to merge two StringJoiners into one. In the last step the finisher constructs the desired String from the StringJoiner.
+
 ## Using Common Intermediate Operations
+Unlike a terminal operation, intermidiate operations deail with infinite streams simply by returning an infinite stream. Since elements are produced only as needed, this works fine. 
+
 ### filter()
+The fileter method returns a Stream with elements that match a given expression. Here is the method signature:
+
+```java
+Stream<T> filter(Predicate<? super T> predicate)
+```
+
+This operation is easy to remeber and very powerful because we can pass any Predicate to it. For example, this filters all elements that begin with the letter m:
+
+```java
+Stream<string> s = Stream.of("monkey","gorilla","bonobo");
+s.filter(x -> x.startsWith("m")).forEach(System.out::print);    //monkey
+```
 ### distict()
+The distinct method returns a stream with duplicate values removed. The duplicates do not need to be adjacent to be removed. As you might imagine, Java calls equals() top determine whther the object are the same. The method signature is as follows:
+
+```java
+Stream<T> disitinct()
+```
+
+Here is an example:
+
+```java
+Stream<String> s = Stream.of("duck","duck","duck","goose");
+s,distinct().forEach(System.out::print);        //duckgoose
+
+```
 ### limit() and skip()
+The limit and skip methods make a Stream smaller. They could make a finite stream smaller, or they could make a finite stream out of an infinite stream. The method signature are shown here
+
+```java
+Stream<T> limit(int maxSize)
+Stream<T> skip(int n)
+```
+
+The following code creates an infinite stream of numbers counting from 1. The skip() operation returns an infinite stream starting with the number counting from 6, since it skips the first five elements. The limit() call takes the first two of those. Now we have a finite stream with two elements:
+
+```java
+Stream<Integer> s = Stream.iterate(1, n -> n + 1);
+s.skip(5).limit(2).forEach(System.out::print);    //67
+
+```
 ### map()
+The map() method creates a one-to-one mapping from the elements in the stream to the elements of the next step in the stream. The method signature is as follows:
+
+```java
+<R> Stream<R> map(Function<? super T, ? extends R> mapper)
+```
+
+This one looks more complicated the the others you've seen. It uses the lambda expressions to figure out the type passed to that function and the one returned . The return type is the stream that gets returned. The map() method on stream is for transforming data. Don't copnfuse with the Map interface, which maps keys to values.
+
+As an example, this code copnverts a list of String objects to a list of integers representing their lengths:
+```java
+Stream<String> s = Stream.of("monkey","gorilla","bonobo");
+s.map(String::length).forEach(System.out::print);     //676
+```
+Remember that String::length is shorthand for the lambda x -> x.length() which clearly showes it is a function that turns into an integer
 ### flatMap()
 ### sorted()
 ### peek()
