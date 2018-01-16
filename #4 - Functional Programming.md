@@ -938,7 +938,7 @@ list.stream()
 
 The difference is that we express what is going on. We care about String objects of length 4. Then we want them to be sorted. Then we want the first two and then we want to print them out. It maps better to the problem that we are trying to solve, and it si simpler because we dont have to deal with counters and such. Once you start using streams in your code, you might find yourself using them in many places. In this example you have seen all three parts of the pipeline. 
 
-![Stream pipeline with multiple intermediate operations](img/pipelineOperations.png)
+![Stream pipeline with multiple intermediate operations](img/pipelineOperations.PNG)
 ## Printing a Stream
 
 # Working with Primitives
