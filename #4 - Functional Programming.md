@@ -1075,7 +1075,16 @@ The final way to create a primitve stream is by mapping from anither stream type
 
 ![Mapping methods between types of streams](img/mappingMethodsStreams.png)
 
-Obviously, they have to be compatible types fpr this to work. Java requires a mapping function to be provided as a parameter, for example:
+Obviously, they have to be compatible types for this to work. Java requires a mapping function to be provided as a parameter, for example:
+
+```java
+Stream<String> objStream = Stream.of("penguin","fish");
+IntStream intStream = objStream.mapToInt(s -> s.length());
+```
+
+This funcion that takes an object  which is String in this case. The function returns and int. The function mapping are intuitive here. They take the source type and return the target type. In this example, the actual function type is ToIntFunction. The table below shows tyhe mapping function names. As you can see, they do what you might expect:
+
+![Function parameters when mapping between types of streams](img/funtionParamMapping.png)
 
 
 ## Using Optional with Primitive Streams
