@@ -985,6 +985,8 @@ When code doesn't work as expected it is traditional to add a println() or set a
 
 ![How to print a stream](img/printStream.png)
 
+Notice that most of the approaches are destructive. This means that you cannot use the stream anymore after printing. This is fine when you are getting started and just want to see what the code does. It's a problem if you are trying to find out what a stream looks like as it passes through a certain part of the pipeline. Also, notice that only one of the approaches works for infinite stream. It limits the number of elements in the stream before printing. If you try the other with a infinite stream , they will run until you kill the program.
+
 # Working with Primitives
 ## Creating Primitive Streams
 ## Using Optional with Primitive Streams
