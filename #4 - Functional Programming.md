@@ -1095,6 +1095,24 @@ IntStream ints = list.stream().flatMapToInt(x -> IntStream.of(x));
 ```
 
 ## Using Optional with Primitive Streams
+Earlier in the chapter we calculated an average of an int[] and promised a better later. Now that you know abput primitive streams you can calculate the average in one line:
+```java
+IntStream stream = IntStream.rangeClosed(1, 10);
+OptionalDouble optional = stream.average();
+```
+The return type is not the Optional you are used to using. It is a new type called OptionalDouble. Why do we have a separate type? Why not just use Optional<Double> ? The differnce is that OptionalDouble is for a primitive and Optional<Double> is for Double wrappers. It is very similar to the Optional class though:
+  
+```java
+optional.ifPresent(System.out::println);
+System.out.println(optional.getAsDouble());
+System.out.println(optional.orElseGet(() -> Double.NaN));
+```
+
+The only noticable difference is that we called getAsDouble() rather than get(). This makes it clear that we are working with a primitive. Also, orElseGet() takes a DoubleSupplier instead of a supplier.
+
+As with the primitive streams, there are three type-specific classes for primitives. The tble below shows minor differences among the three. You probably woun't be surprised that you have to memorize it as well. This one is really easy because the only thing that changes is the primitive name. AS you should remember from the terminal operations , a number of stream methods return an optional such as min() or findAny(). The primitive stream implementation also add two new methods that you need to know. The sum() method does not return an optional. If you try to add an empty stream you simple get zero. The avg() method always returns and OptionalDouble, since an average can potentially have fractional data for any type.
+
+![Optional Type for primitives](img/optionalTypeForPrimitive.png)
 ## Summararizing Statistics
 ## Learning the Functional Interfaces for Primitives
 ### Functional Interfaces for boolean
