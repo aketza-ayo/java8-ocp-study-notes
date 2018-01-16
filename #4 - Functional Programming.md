@@ -1108,15 +1108,74 @@ System.out.println(optional.getAsDouble());
 System.out.println(optional.orElseGet(() -> Double.NaN));
 ```
 
+
 The only noticable difference is that we called getAsDouble() rather than get(). This makes it clear that we are working with a primitive. Also, orElseGet() takes a DoubleSupplier instead of a supplier.
 
 As with the primitive streams, there are three type-specific classes for primitives. The tble below shows minor differences among the three. You probably woun't be surprised that you have to memorize it as well. This one is really easy because the only thing that changes is the primitive name. AS you should remember from the terminal operations , a number of stream methods return an optional such as min() or findAny(). The primitive stream implementation also add two new methods that you need to know. The sum() method does not return an optional. If you try to add an empty stream you simple get zero. The avg() method always returns and OptionalDouble, since an average can potentially have fractional data for any type.
 
 ![Optional Type for primitives](img/optionalTypeForPrimitive.png)
+
+Let's try an example:
+
+```java
+5:  LongStream longs = LongStream.of(5, 10);
+6:  long sum = longs.sum();
+7:  System.out.println(sum);      //15
+8:  DoubleStream doubles = DoubleStream.generate(() -> Math.PI);
+9:  OptionalDouble min = doubles.min();     // runs infinitely
+```
+
+Line 5 creates a stream of long primitives with two elements. Line 6 shows that we don't use an optional to calculate a sum. Line 8 creates a infinite stream of double primitives. Line 9 is there to remind you that a question about code that runs infinitely can appear with primitive streams as well.
+
 ## Summararizing Statistics
+You have learnt enough to be able to get maximum value from a stream of int primitives. If the stream is empty, we want to throw an exception:
+
+```java
+private static int max(IntStream ints){
+  OptionalInt optional = ints.max();
+  return optional.orElseThrow(RuntimeException::new);
+}
+```
+
+Here we've got an OptionalInt because we have an IntStream. If the option contains a value, we return it. Otherwise, we throw a new RuntimeException.
+
+Now we want to change the method to take an IntStream and return a range. The range is the minimum value substracted from the maximum value. Uh-oh both min() and max() are terminal operations, which means that they use up the stream when they are run. We can't run two terminal operations against the same stream. Luckily, this is a common problem and the primitive stream solve it for us with summary statistics. Statistics is just a big word for a number that was calculated from data.
+
+```java
+private static int range(IntStream ints){
+  IntSummaryStatistics stats = ints.summaryStatistics();
+  if(stats.getCount() == 0) throw new RuntimeException();
+  returns stats.getMax()-stats.getMin();
+}
+
+```
+
+Here we asked Java to perform many calculations about stream. This includes the minimum, maximum, average, size and the number values in the stream. If the stream were empty, we'd have a count of zero. Otherwise, we can get the minimum and maximum out of the summary.
+
 ## Learning the Functional Interfaces for Primitives
+By now you need to memorize table about commmon functional interfaces. (its a must) we are about to make it more involved.Just as ther special streams and optional classes for primitives, ther are also special functional interfaces.Luckily, most of them are for the double, int and long types that you saw for streams and optionals. There is one exception, which is BooleanSupplier. We will cover that before introducing the ones for double, int and long.
+
 ### Functional Interfaces for boolean
+BooleanSupplier is a separate type. It has one method to implement:
+
+```java
+booelan getAsBoolean()
+```
+
+It works juest as you've come to expect from functional interfaces for example:
+
+```java
+12: BooleanSupplier b1 = () -> true;
+13: BooleanSupplier b2 = () -> Math.random() > .5;
+14: System.out.println(b1.getAsBoolean());
+15: System.out.println(b2.getAsBoolean());
+```
+
+Lines 12 and 13 each create a BooleanSupplier, which is the only functional interface for boolean. Line 14 prints true, since it is the result of b1. Line 15 prints out true or false, depending on the random value generated
 ### Functional Interfaces for double, int and long
+Most of the functional interfaces are for double, int and long to match the streams and optionals that we've been using for primitives. The table below shows the equivalent of functional interfaces table but for these primitives. You probably will not be surprise that you have to memorize it. Luckily you have memorized the funtional interface table by now and can apply what you have learnt to the table below:
+
+![Common functional interfaces for primitives](img/commonFuncInterPrim.png)
 
 # Working with Advanced Stream Pipeline Concepts
 ## Linking Streams to the Underlying Data
