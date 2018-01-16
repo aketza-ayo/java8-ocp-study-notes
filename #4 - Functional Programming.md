@@ -677,6 +677,110 @@ System.out.println(set);      //[f,w,l,o]
 ```
 
 The exam expects you to know about common predifined collectors in addition to beign able to write your own by passing a supplier, accumulator and a combiner.
+
+To recap, collect() method is a terminal operation to transform the elements of the stream into a different king of result, ie List, set or map. Collect accepts a Collector which conssists of four different operations: a supplier, an accumulator, a combiner and a finisher. Java 8 supports various built-in collectors via the collector class. So for most common operations you dont have to implement a collector yourself. 
+
+```java
+class Person {
+    String name;
+    int age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+}
+
+List<Person> persons =
+    Arrays.asList(
+        new Person("Max", 18),
+        new Person("Peter", 23),
+        new Person("Pamela", 23),
+        new Person("David", 12));
+```
+Let see a very common use case:
+```java
+List<Person> filtered = persons
+                                .stream()
+                                .filter(p -> p.name.startsWith("P"))
+                                .collect(Collectors.toList());
+System.out.println(filtered);   //[Peter. Pamela]
+```
+As you can see is very simple to constructs a list from the elements of a stream. If you need a set instead of a list - just use ```Collectors.toSet()```
+
+The next example groups all person by age:
+
+```java
+Map<Integer, List<Person>> personsByAge = persons
+    .stream()
+    .collect(Collectors.groupingBy(p -> p.age));
+
+personsByAge.forEach((age, p) -> System.out.format("age %s: %s\n", age, p));
+
+//age 18: [Max]
+//age 23: [Peter, Pamela]
+//age 12: [David]
+```
+
+Collectors are extremely versatile. You can also create a aggregation on the element of the stream, for example determining the average age of all persons.
+
+```java
+Double avergaeAge = persons
+    .stream()
+    .collect(Collectors.averageingInt(p -> p.age));
+System.out.println(avergaeAge);    
+
+```
+
+The next example joins all persons into a single string:
+
+```java
+String phrase = persons
+  .stream()
+  .filter(p -> p.age >= 18)
+  .map(p -> p.name)
+  .collect(Collectors.joining(" and", "In Germany", " are of legal age"));
+System.out.println(phrase);
+// In Germany Max and Peter and Pamela are of legal age
+```
+The join collector accepts a delimiter as well as an optional prefix and suffix.
+
+In order to transform trhe stream elements into a map, we have to specify how both the keys and the values should be mapped. Keep in mind that the mapped keys must be unique, otherwise an ```IllegalStateException```:
+
+```java
+Map<Integer, String> map = persons
+  .stream()
+  .collect(Collectors.toMap(
+    p -> p.age,
+    p -> p.name,
+    (name1, name2) -> name1 + ";" + name2));
+
+System.out.println(map);    
+// {18=Max, 23=Pamela, 12=David}
+```
+
+Now that we have seen the built-in collectors, we can also build our own special collector. We want to transform all persons of the stream into a single string consisiting of all names in upper case separated by the pipe ¦ character. In order to achieve this we create a new collector via ```Collector.of()```. We have to pass the four ingredients of a collector: a supplier, an accumulator, a combiner and a finisher:
+
+```java
+Collector<Person, StriungJoiner,String> personNameCollector = 
+    Collector.of(
+        () -> new StringJoiner("  |  "),            //supplier
+        (j, p) -> j.add(p.name.toUpperCase()),      //accumulator
+        (m, n) -> m.merge(n),                       //combiner
+        StringJoiner::toString);                    //finisher
+String names = persons
+  .stream()
+  .collect(personNameCollector);
+  
+System.out.println(names);        // MAX | PETER  |  PAMELA  |  DAVID  
+```
+
+Since strings in Java are immutable, we need a helper class like StringJoiner to let the collector constructs our string. The suppliuer initially coinstructs such a StringJoiner with the appropriate delimiter. The accumulator is used to add each persons upper-cased name to the StringJoiner. The combiner knows how to merge two StringJoiners into one. In the last step the finisher constructs the desired String from the StringJoiner.
 ## Using Common Intermediate Operations
 ### filter()
 ### distict()
