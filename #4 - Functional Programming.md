@@ -842,10 +842,75 @@ Stream<String> s = Stream.of("monkey","gorilla","bonobo");
 s.map(String::length).forEach(System.out::print);     //676
 ```
 Remember that String::length is shorthand for the lambda x -> x.length() which clearly showes it is a function that turns into an integer
-### flatMap()
+### flatMap() top-level element in a single stream. This is useful when you want to remove empty elements from a stream or you want ot combine a stream of lists. The method signature is a gibberish that you are not expeted to remember. Just know that it returns a Stream of the type that the function contains at the lower level. Don't worry about the signature is just headaches. What you should understand is the example below. It gets all of the animals into the same level along with getting rid of the empty list:
+
+```java
+List<String> zero = Arrays.asList();
+List<String> one = Arrays.asList("Bonobo");
+List<String> two = Arrays.asList("Mama gorilla", "Baby gorilla");
+Stream<List<String>> animals = Stream.of(zero, one, two);
+
+animals.flatMap(l -> l.stream()).forEach(System.out::println);
+```
+
+Here is the output:
+
+```
+Bonobo
+Mama gorilla
+Baby gorilla
+```
+
+As you can see it removed the empty list completely and changed all elements of each list to be at the top level of the stream.
+
 ### sorted()
+This method returns a Stream with the elements sorted. just like sorting arrays, Java uses natural ordering unless we specify a comparator. The method signature are these:
+
+```java
+Stream<T> sorted()
+Stream<T> sorted(Comparator<? super T> comparator)
+```
+Calling the first signature uses the default sort order:
+```java
+Stream<String> s = Stream.of("brown-", "bear-");
+a.sorted().forEach(Syste.out::print);       //bear-brown
+```
+
+Remember that we can pass a lambda expression as the comparator. For example, we can pass a Comparator implementation:
+
+```java
+Stream<String> s = Stream.of("brown bear-", "grizzly-");
+s.sorted(Comparator.reverseOrder()).forEach(System.out::print);   //grizzly-brown bear-
+```
+Here we passed a comparator to specify that we want to sort it in reverse of natural sort order. Ready for a tricky one? Do you see why this doen't compile?
+
+```java
+a.sorted(Comparator::reverseOrder);   //DOES NOT COMPILE
+```
+
+Take a look at the method signature again. Comparator is a functional Interface. This means that we can use method reference or lambdas to implement it. The Comparator interface implements one method that takes two string parameters and returns an int. However, Comparator::reverseOrder doesn't do that. It is a reference to a function that takes zero parameters and returns a comparator. This is not compatible with the interface. This means that we have to use a method and not a method reference. we bring this up to remind you that you really need to know method references well.
+
 ### peek()
+The peek method is useful for debbugging because it allows us to perform a stream operations without actually changing the stream. The method signature is as follows:
+
+```java
+Stream<T> peek(Consumer<? super T> action)
+```
+
+The most common use for peek() is to output the content of the stream as it goes by. Suppose the we made a typo and counted bears beginning with tyhe letter g instead of b. We are puzzled why the count is 1 instead of 2. We can add a peek() to find out why:
+
+```java
+Stream<String> stream = Stream.of("black bear", "brown bear", "grizzly");
+long count = stream.filters(s -> s.startsWith("g"))
+         .peek(System.out::println).count();            //grizzly
+System.out.println(count);
+```
+
+When working with a Queue peek() looks only at the first element. In a stream, peek() looks at each element that goes through that part of the stream pipeline. It's like having a worker take notes on how a particular step of the process is doing.
+
+Remeber that peek is intended to perform an operation without changing the result. 
 ## Putting Together the Pipeline
+
 ## Printing a Stream
 
 # Working with Primitives
