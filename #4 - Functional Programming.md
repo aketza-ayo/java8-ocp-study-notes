@@ -842,7 +842,8 @@ Stream<String> s = Stream.of("monkey","gorilla","bonobo");
 s.map(String::length).forEach(System.out::print);     //676
 ```
 Remember that String::length is shorthand for the lambda x -> x.length() which clearly showes it is a function that turns into an integer
-### flatMap() top-level element in a single stream. This is useful when you want to remove empty elements from a stream or you want ot combine a stream of lists. The method signature is a gibberish that you are not expeted to remember. Just know that it returns a Stream of the type that the function contains at the lower level. Don't worry about the signature is just headaches. What you should understand is the example below. It gets all of the animals into the same level along with getting rid of the empty list:
+### flatMap() 
+top-level element in a single stream. This is useful when you want to remove empty elements from a stream or you want ot combine a stream of lists. The method signature is a gibberish that you are not expeted to remember. Just know that it returns a Stream of the type that the function contains at the lower level. Don't worry about the signature is just headaches. What you should understand is the example below. It gets all of the animals into the same level along with getting rid of the empty list:
 
 ```java
 List<String> zero = Arrays.asList();
