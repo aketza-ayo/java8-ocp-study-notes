@@ -939,7 +939,50 @@ list.stream()
 The difference is that we express what is going on. We care about String objects of length 4. Then we want them to be sorted. Then we want the first two and then we want to print them out. It maps better to the problem that we are trying to solve, and it si simpler because we dont have to deal with counters and such. Once you start using streams in your code, you might find yourself using them in many places. In this example you have seen all three parts of the pipeline. 
 
 ![Stream pipeline with multiple intermediate operations](img/pipelineOperations.PNG)
+
+The dataflow looks like this:
+1. stream() sends Toby to filter(). filter() sees that the length is good and sends Toby to sorted(). Sorted() can't sort yet because it needs all of the data, so it holds Toby.
+2. stream() sends Anna to filter(). filter() sees that the length is good and sends Anna to sorted(). sorted() can't sort yet because it needs all of the data, so it holds Anna.
+3. stream() sends Leroy to filter(). filter() sees that the length is not a match, and it takes leroy out of the assembly line processing.
+4. stream() sends Alex to filter(). filter() sees that the length is good and sends Alex to sorted(). sorted() can't sort yet because it needs all of the data , so it holds Alex. It turns out sorted() does have all of the required data, but it doesn't know it yet.
+5. The foreman lets sorted() know that it is time to sort and the sort occurs.
+6. sorted() sends Alex to limit(). limit() remembers that it has seen one element and sends Alex to forEach(), printing Alex.
+7. sorted() sends Anna to limit(). limit() remembers that it has seen two elements and sends Anna to forEach(), printing Anna.
+8. limit() has now seen all of the elements that are needed and tells foreman. The foreman stops the line, and no more processing occurs in the pipeline.
+
+It all makes sence. Let's see a few more examples:
+
+```java 
+Stream.generate(() -> "Elsa")
+  .filter(n -> n.length() == 4)
+  .sorted()
+  .limit(2)
+  .forEach(System.out::println);
+```
+
+It actually hangs until you kill the program or it throws an exception after running out of memory. The foreman has instructed sorted() to wait until everything to osrt is present. That never happens because there is an infinite stream. What about this.
+
+```java
+Stream.generate(() -> "Elsa")  
+.filter(n -> n.length() == 4)  
+.limit(2)
+.sorted() 
+.forEach(System.out::println);
+```
+
+This one prints Elsa twice. The filter lets elements through and limit() stops the earlier operations after two elements. Now sorted() can sort because we have a finite list. Finally, what do you think this does?
+
+```java
+Stream.generate(() -> "Olaf Lazisson")  
+  .filter(n -> n.length() == 4)  
+  .limit(2)
+  .sorted() 
+  .forEach(System.out::println);
+```
+This one hangs as well until we kill the program. The filter doesn't allow anything through, so limit() never sees two elements. This means that we have to keep waiting and hope that they show up.
 ## Printing a Stream
+When code doesn't work as expected it is traditional to add a println() or set a break point to see the value of an object. With streams, this is trickier. Since intermediate operations don't run until needed new techniques are needed. The table below shoes some options for printing out the the contents of a stream. You will find that you have less need to print out the values of a stream as you get more practice with stream pipeline. While learning, printing is really helpful!
+
 
 # Working with Primitives
 ## Creating Primitive Streams
