@@ -1177,6 +1177,25 @@ Most of the functional interfaces are for double, int and long to match the stre
 
 ![Common functional interfaces for primitives](img/commonFuncInterPrim.png)
 
+There are a few things to notice that are different between this table and the table about functional interfaces:
+
+- Generics are gone for some of the interfaces, since the type name tells us what primitive is involved. In other cases, such as IntFunction, only the return type generic is needed.
+- The single abstract method is often, but not always, renamed to reflect the primitive type involved.
+- Bi consumer, BiPredicate and BiFunction are not in the table. The API designiers stuck to the most common operations. For primitives the functions with two different type parameters just aren't as often.
+
+In addition to the table "common functional interfaces", some interfaces are specific to primitives. See table below:
+
+![Primitive-specific functional interfaces](img/specificFuncInter.png)
+
+we have been using functional intrefaces all chapter long, so you should have a good grasp of how to read the table by now. Let's do one example to be sure. Which functional interface would you use to fill in the blank to make the following code compile?
+
+```java
+double d = 1.0;
+_________ f1 = x -> 1;
+f1.applyAsInt(d);
+```
+
+When you see a question like this look for clues. You can see that the fucntional interface takes a double and returns an int. You can also see that it has a single abstract method named applyAsInt. The only functional intreface meeting all three of those criteria is DoubleToIntFunction. 
 # Working with Advanced Stream Pipeline Concepts
 ## Linking Streams to the Underlying Data
 ## Chaining Optional 
