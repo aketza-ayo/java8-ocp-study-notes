@@ -446,7 +446,17 @@ Line 7 generates a stream of random numbers. As meny as you need. Line 8 takes a
 
 
 ## Using Common Terminal Operations
-You can perfom terminal operations without any intermidiate operations but not the other way around. ```Reductions``` are a special type of terminal operations where all of the contents of the stream are combined into a single primitive or Objects.For example you might have an int or a Collection. The table below summarizes this section. 
+You can perfom terminal operations without any intermidiate operations but not the other way around. ```Reductions``` are a special type of terminal operations where all of the contents of the stream are combined into a single primitive or Objects.For example you might have an int or a Collection. 
+
+Java 8 streams cannot be reused. As soon as you call any terminal operation the stream is closed:
+
+```java
+Stream<String> s = Stream.of("a1","a2","b","b1","c").filter(s -> s.startsWith("a"));
+s.anyMatch(s -> true);        //ok
+s.noneMatch(s -> true);       //throws exception
+```
+
+The table below summarizes this section. 
 
 ![Terminal Stream Operations](img/TerminalStreamOperations.png)
 
