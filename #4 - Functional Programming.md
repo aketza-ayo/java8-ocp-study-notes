@@ -1354,4 +1354,90 @@ System.out.println(map);      //{5=[lions, bears], 6=[tigers]}
 
 The groupingBy() collector tells collect() that it should group all of the elements of the stream into lists, organizing them by the function provided. This makes the keys in the map the function values and the values function results.
 
+Suppose that we dont want a List as the value in the map and prefer a Set instead. No problem. There is another mehod signature that lets you pass a downstream collector. This is a second collector that does something special with the values.
+
+```java
+Stream<String> ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, Set<String>> map = ohMy.collect(
+  Collector.groupingBy(String::length, Collectors.toSet()));
+System.out.println(map);      //{5=[lions, bears], 6=[tigers] }  
+```
+
+We can even change the type of Map returned through yet another parameter:
+
+```java
+Steam<String> phMy = Stream.of("lions", "tigers", "bears");
+TreeMap<Integer, Set<String>> map = ohMy.collect(
+  Collectors.groupingBy(String::length, TreeMap::new, Collectors.toSet()));
+System.out.println(map);    // {5=[lions,bears], 6=[tigers]}  
+```
+
+
+This is very flexible. What if we want to change the type of Map returned but leave the type of values alone as a List ? There isn't a method for this specifically because it is very easy enough to write with the exisitng ones:
+
+```java
+Steam<String> phMy = Stream.of("lions", "tigers", "bears");
+TreeMap<Integer, List<String>> map = ohMy.collect(  
+  Collectors.groupingBy(String::length, TreeMap::new, Collectors.toList()));
+System.out.println(map);    // {5=[lions,bears], 6=[tigers]}  
+```
+
+Partitioning is a special case of grouping. With partitioning, there are only two possible groups - true and false. Partitioning is like splitting a list into two parts. 
+
+Suppose that we are making a sign to put outside each aninmal's exhibit. We have two sizes of signs. One can accommodate names with five or fewer characters. The other is needed for longer names. We can partition the list according to which sign we need:
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears");
+Map<Boolean, List<String>> map = ohMy.collect(
+  Collectors.partitioningBy(s -> s.length() <= 5));
+System.out.println(map);        //{false=[tigers], true=[lions,bears]}  
+```
+
+Here we passed a Predicate with the logic for which group each animal name belongs in. Now suppose that we've figured out how we use a different font, and seven characters can now fit on the smaller sign. No worries. We just change the Predicate:
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears");
+Map<Boolean, List<String>> map = ohMy.collect(
+  Collectors.partitioningBy( s -> s.length() <= 7));
+System.out.println(map);     //{false=[], true=[lions, tigers, bears]}
+```
+
+Notice that there are still two keys in the map - one for each boolean value. It so happens thaty one of the values is an empty list, but it still there. As with groupingBy(), we can change the type of List to something else:
+
+```java
+Stream<String> ohMy = Stream.of("lions", "tigers", "bears");
+Map<Boolean, Set<String>> map = ohMy,collect(
+  Collectors,partitioningBy(s -> s.length() <= 7, Collectors.toSet()));
+System.out.println(map);   //{false=[], true=[lions, tigers, bears]}  
+```
+
+Unlike grouingBy(), we cannot change the type of Map that gets returned. However, there are only two keys in the map, so does it really matter which Map type we use? Instead of using the downstream collector to specify the type, we can use any of the collectors that we've already shown. For example, we can group by the length of the animal name to see how many of each lengh we have:
+
+```java
+Stream<String> ohMy = Stream.of("lions", "tigers", "bears");
+Map<Boolean, Set<String>> map = ohMy,
+  collect(  Collectors,partitioningBy(s -> s.length() <= 7, Collectors.toSet()));
+ System.out.println(map);   //{false=[], true=[lions, tigers, bears]}
+
+```
+
+Finally, there is a mapping() collector that let us do down a level and add another collector. Suppose that we wanted to get the first letter of the first animal alphabetically of each length. Why? Perhaps for random sampling. The example on this part of the exam are fairly contrived as well. We'd write the following:
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears");
+Map<Integer, Optional<Character>> map = ohMy.collect(
+  Collectors.groupingBy(String::length, Collectors.mapping(s -> s.charAt(0), Collectors.minBy(Comparator.naturalOrder()));
+Syste,out.println(map);    //{5=Optional[b], 6=Optional[t]}  
+```
+
+We aren't going to tell you that this code is easy to read. We will tell you that it is the most complicated thing you should expect to see on the exam. Comparing it to the previous example, you can see that we replaced counting() with mapping(). It so happens that mapping() takes two parameters: the function for the value and how to group it further. You might see collectors used with a static import to make the code shorter, This measn that you might see something like this:
+
+```java
+Stream<String> ohmy = Stream.of("lions", "tigers", "bears");
+Map<Integer, Optional<Character>> map = ohMy.collect(
+  groupingBy(String::length, mapping(s -> s.charAt(0), minBy(Comparator.naturalOrder()))));
+System.out.println(map);          //{5=Optional[b], 6=Optional[t]}
+```
+
+The code does the same thing as in the previous example. This means that it is important to recognize the colector names because you might have the Collectors classname to call your attention to it. There is one more collector called reducing(). You don't need to know it for the exam. It is a general reduction in case all of the previous colectors don't meet your needs. 
 
