@@ -1265,6 +1265,38 @@ This one works because flatMap removes the unnecessary layer. IN other words, it
 You are almost finished learning about stream. The last topoic builds on what you've learnt so far to group the results. Earlier in the chapter you learnt about collect() terminal operation. There are many different predefined collectors, including those in the table below. We will look at the different types of collectors in the following section:
 
 ![Example of grouping/partitioning collectors](img/groupingCollectors.png)
+
 ### Collecting Using Basic Collectors 
+Many of these collectors work in the same way. 
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears");
+String result = ohMy.collect(Collectors.joining(","));
+System.out.print(result);         //lions, tigers, bears
+```
+
+Notice how we predefinied Collectors class rather than Collectr class. This is a common them, which you saw with Collection vs Collections. We pass the predefined joining() collector to the collect() method. All elements of the stream are then merged into a String with the specified delimiter between each element. It is very important to pass the Collector to the collect method. It exists to help collect elements. A collector doesn't do anything on its own.
+
+ 
+Another example. What is the average of the three animal names?
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears");
+Double result = ohMy.collect(Collector.averagingInt(String::length));
+System.out.println(result);                       //5.3333333333333333333333
+```
+
+The pattern is the same. We pass a collector to the collect() method and it performs the average for us. This time we needed to pass a function to tell the collector what to average. We used the method reference, which return an int upon execution. With primitive streams, the result of the average was a double. For collectors is a Double. 
+
+Often you will find yourself intreacting with code that written prior to Java 8. This means that it will expect a Collection type rather than a Stream type. No problem you can still express using Stream and then convert to a collection at the end, for example:
+
+```java
+Stream<String> ohMy = Stream.of("lions", "tigers", "bears");
+TreeSet<String> result = ohMy.filter( s -> s.startWith("t")
+  .collect(Collectors.toCollection(TreeSet::new));
+System.out.println(result);             //[tigers]  
+```
+This time we have all three part of the stream pipeline. Stream.of() is the source for the stream. The intermediate operation is filter(). Finally, the terminal operation is collect() , which creates a TreeSet. If we didn't care which implement of Set we got, we could have written Collectors.toSet() instead. 
+
 ### Collecting into Maps
 ### Collecting Using Grouping, Partitioning and Mapping 
