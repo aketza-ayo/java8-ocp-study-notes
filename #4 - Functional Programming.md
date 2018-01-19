@@ -1207,7 +1207,22 @@ f1.applyAsInt(d);
 
 When you see a question like this look for clues. You can see that the fucntional interface takes a double and returns an int. You can also see that it has a single abstract method named applyAsInt. The only functional intreface meeting all three of those criteria is DoubleToIntFunction. 
 # Working with Advanced Stream Pipeline Concepts
+You've reached the end of the learning about streams. Only few more topisc left. In the following sections you will see the relationship between streams and underlying data, chaining Optional and grouping collectors.
+
 ## Linking Streams to the Underlying Data
+For example, what do you think this outputs?
+
+```java
+List<String> cats = new ArrayList<>();
+cats.add("Annie");
+cats.add("Ripley");
+Stream<String> stream = cats.stream();
+cats.add("KC");
+System.out.println(stream.count());
+```
+
+The corrrect answer is 3. Lines 1-3 create a List with two elements. Line 4 request that stream be created from that List. Remeber that streams are lazy evaluated and this means that the stream isn't actually created on line 4. An object is created that knows where to look for the data when is needed. On line 5, the list gets a new element added into it. On line 6, the stream pipeline actually, runs. The stream pipeline runs first, looking at the source and seeing three elements.
+
 ## Chaining Optional 
 ## Collecting Results
 ### Collecting Using Basic Collectors 
