@@ -1299,4 +1299,47 @@ System.out.println(result);             //[tigers]
 This time we have all three part of the stream pipeline. Stream.of() is the source for the stream. The intermediate operation is filter(). Finally, the terminal operation is collect() , which creates a TreeSet. If we didn't care which implement of Set we got, we could have written Collectors.toSet() instead. 
 
 ### Collecting into Maps
+Collectors code involving maps can get long. Make sure you understand each example before moving to the next one.
+
+```java
+Stream<String> ohmy = Stream.of("lions", "tigers", "bears");
+Map<String, Integer> map = ohMy.collect(
+  Collectors.toMap( s -> s, String::length));
+System.out.println(map);    //{lions=5, bears=5, tigers=6}  
+```
+
+When creating a map, you need to specify two functions. The first function tells the collector how tot create the key. In our example, we use the provided String as the key. The second function tells the collector how to create a value. In our example, we use the length  of the String as the value. Returning the same value passed into the lambda is a common operation, so Java provides a method for it. Ypu can rewrite ```s -> s``` as ```Function.indetify()```. It is not shorter and may or may not be clearer. 
+
+Now we want to do the reverse and map the length of the animal name to the name itself. Our first incorrect attempt is shown here:
+
+```java
+Stream<String> ohmy = Stream.of("lions", "togers", "bears");
+Map<Integer, String> map = ogMy.collect(Collectors.toMap(String::length, k -> k));      //BAD
+```
+
+Running the gives an exception, But what is wrong?  Two of the animals are of the same lenght and we didin't tell Java what to do. Should the collector choose the first one it encouters ? The last one it encounters ? Concatenate the two ? Since the collector has no idea what to do with it, it throws an exception. 
+
+Supposse that our requirements is to create a comma-separated String with the animal names.
+
+```java
+Steam<String> ohMy = Stream.of("lions","tigers","bears");
+Map<Integer, String> map =  ohMy.collect(Collectors.toMap(
+  String::length, k -> k, (s1, s2) -> s1 + " ," + s2));
+System.out.println(map);              // {5=lions,bear, 6=tigers}
+System.out.println(map.getClass());   // class. java.util.HashMap
+```
+
+It so happens that the Map returned is a HashMap. This behaviour is not guaranteed. Suppose that we want to mandatye that the code returns a TreeMap instead. No problem. We would just add a constructor reference as a param.
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears");
+TreeMap<Integer, String> map = ohMy.collect(Collectors.toMap(
+  String::length, k -> k, (s1, s2) -> s1 + "," + s2, TreeMap::new));
+  
+System.out.println(map);      // {5=lions,bears, 6=tigers}
+System.out.println(map.getClass());   //class java.util.TreeMap
+```
+
+This time we got the type that we specified. With us so far? This code is long but not particularly complicated.
+
 ### Collecting Using Grouping, Partitioning and Mapping 
