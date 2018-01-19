@@ -1343,3 +1343,15 @@ System.out.println(map.getClass());   //class java.util.TreeMap
 This time we got the type that we specified. With us so far? This code is long but not particularly complicated.
 
 ### Collecting Using Grouping, Partitioning and Mapping 
+Now, suppose that we want to the groups os names by their length. We can do that by saying that we want to group by length:
+
+```java
+Steam<String> ohMy = Stream.of("lions", "tigers", "bears");
+Map<Integer, List<String>> map = ohMy.collect(
+  Collectors.groupingBy(String::length));
+System.out.println(map);      //{5=[lions, bears], 6=[tigers]}  
+```
+
+The groupingBy() collector tells collect() that it should group all of the elements of the stream into lists, organizing them by the function provided. This makes the keys in the map the function values and the values function results.
+
+
