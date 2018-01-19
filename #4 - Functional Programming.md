@@ -1262,6 +1262,9 @@ Optional<Integer> result = optional.flatMap(ChaningOptionals::calculator);
 This one works because flatMap removes the unnecessary layer. IN other words, it flatens the result. Chaning to flatMap() is useful when you want to transform one Optional type to another.
 
 ## Collecting Results
+You are almost finished learning about stream. The last topoic builds on what you've learnt so far to group the results. Earlier in the chapter you learnt about collect() terminal operation. There are many different predefined collectors, including those in the table below. We will look at the different types of collectors in the following section:
+
+![Example of grouping/partitioning collectors](img/groupingCollectors.png)
 ### Collecting Using Basic Collectors 
 ### Collecting into Maps
 ### Collecting Using Grouping, Partitioning and Mapping 
