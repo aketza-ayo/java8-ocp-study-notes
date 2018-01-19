@@ -1224,6 +1224,43 @@ System.out.println(stream.count());
 The corrrect answer is 3. Lines 1-3 create a List with two elements. Line 4 request that stream be created from that List. Remeber that streams are lazy evaluated and this means that the stream isn't actually created on line 4. An object is created that knows where to look for the data when is needed. On line 5, the list gets a new element added into it. On line 6, the stream pipeline actually, runs. The stream pipeline runs first, looking at the source and seeing three elements.
 
 ## Chaining Optional 
+By now you know the benefits of chaining itermidiate operations in the stream pipeline. A few of the intermidiate operations for streams are available for Optional. Suppose that you are given an Optional<Integer> and asked to print the value but only if it is a three digit number. 
+  
+```java
+private static void threeDigit(Optional<Integer> optional){
+  optional.map( n -> "" + n)            //part1
+    .filter(s -> s.length() == 3)       //part2
+    .ifPresent(System.out::print);      //part3
+}
+```
+
+This code much compact and expressive. With lambdas the exam is fond of carving up a single statement and identifying the pieces with a comment.  Suppose that we are given an empty Optional. It sees an empty Optional and has both map() and filter() pass it through. Then ifPresent() sees an empty Optional and doesn't call the Consumer parameter.
+
+The nextr case is where we are given Optional.of(4). The code maps the number 4 to the string "4". The filter then returns an empty optional  since the filter doesn't match, and ifPresent() doesn't call the Consumer parameter. 
+
+The final case is where we are given Optional.of(123). The code maps 123 to String "123". The filter then returns the same Optional, and ifPresent() now soes call the COnsumer parameter.
+
+Now suppose that we wanted to get optional<Integer> representing the length of the String contained in another Optional. 
+
+```java
+Optional<Integer> result = optional.map(String::length);  
+```  
+  
+What if we had a helper method that did the logic of calculating something for us and it had the signature ```static Optional<Integer> calculator(String s)```? Using map doesn't work:
+
+```java
+Optional<Integer> result = optional.map(ChainingOptional::calculator);     //DOES NOT COMPILE
+
+```
+
+The problem is that calculator returns Optional<Integer>. The map() method adds another Optional, giving us Optional<Optional<Integer>>. Well, that's not good. The solution is to call flatMap() instead:
+  
+```java
+Optional<Integer> result = optional.flatMap(ChaningOptionals::calculator);
+```
+
+This one works because flatMap removes the unnecessary layer. IN other words, it flatens the result. Chaning to flatMap() is useful when you want to transform one Optional type to another.
+
 ## Collecting Results
 ### Collecting Using Basic Collectors 
 ### Collecting into Maps
