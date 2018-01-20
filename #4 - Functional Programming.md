@@ -1445,7 +1445,7 @@ The code does the same thing as in the previous example. This means that it is i
 It took me over an hour to complete the questions. I found them difficult to ansewer either because you need to know the APIs in detail or because they were tricky. On top of that, I answered two of the questions randomly because I had no clue :-(
 In general, I found this chapter super interesting although there are way too many classes and methods that need memorizing.
 
-!(Chater 4 questions)[img/testChapterFour.png]
+![Chater 4 questions](img/testChapterFour.png)
 ## Points to remember
 - The Stream methods needs a terminal operation otherwise it does not execute.
 - Need to be able to differenciate when a infinite stream could hang with anyMatch(), noneMatch() and allMatch().
