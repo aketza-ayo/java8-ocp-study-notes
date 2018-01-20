@@ -1442,7 +1442,7 @@ System.out.println(map);          //{5=Optional[b], 6=Optional[t]}
 The code does the same thing as in the previous example. This means that it is important to recognize the colector names because you might have the Collectors classname to call your attention to it. There is one more collector called reducing(). You don't need to know it for the exam. It is a general reduction in case all of the previous colectors don't meet your needs. 
 
 # Review Questions
-It took me over an hour to complete the questions. I found them difficult to ansewer either because you need to know the APIs in detail or because they were tricky. On top of that, I answered two of the questions randomly because I had no clue :-(
+It took me over an hour to complete the questions. I found them difficult to answer either because you need to know the APIs in detail or because they were tricky. On top of that, I answered two of the questions randomly.
 In general, I found this chapter super interesting although there are way too many classes and methods that need memorizing.
 
 ![Chater 4 questions](img/testChapterFour.png)
