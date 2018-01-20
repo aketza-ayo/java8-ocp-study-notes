@@ -11,9 +11,9 @@ December 28 - January 1   | Read Chapter 2                                  | 12
 January 1                 | Answer Chapter 2 Review Questions               | 33 min to answer + 15 min to revise
 January 2 - January 4     | Read Chapter 3                                  | 14 hrs to read and take notes 
 January 4                 | Answer Chapter 3 Review Questions               | 1hr to anwser + 30 min to revise
-January 5 - January 21    | Read Chapter 4                                  |
-January 21                | Answer Chapter 4 Review Questions               |
-January 27 - February 4   | Read Chapter 5                                  |
+January 5 - January 20    | Read Chapter 4                                  | Lost count but probably +25 hrs to read, take notes and understand what is going on. This is a dense topic
+January 20                | Answer Chapter 4 Review Questions               | Over an hour to answer and 20-25 min to go revise
+January 21 - February 4   | Read Chapter 5                                  |
 February 4                | Answer Chapter 5 Review Questions               |
 February 10 - February 18 | Read Chapter 6                                  |
 February 18               | Answer Chapter 6 Review Questions               |
