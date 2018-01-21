@@ -231,6 +231,16 @@ Syste.out.println(time.plus(period));               // UnsupportedTemporalTypeEx
 The last line attempts to add a month to an object that has only a time. This will not work Java throws an exception anmd complains the we attempted to use an Unsupported unit:Months. As you can see you will have to pay attention to the type of date and time objects every place you see them.
 
 ## Working with Durations
+Period is to deal with dates and Duration is for smaller units of time. For Duration you can specify the number of days, hours, minutes, seconds and nanoseconds. And yes you could pass 365 days to make up a year, but you really shouldn't - that's what period is for. 
+Conveniently Duration roughly works the same ways as Period, except it is used with objects that have time. Remember, that a period is output beginning with P. Duration is output beginning with PT, which you can thinks of a period of time. A Duration is stored in hours, minutes and seconds. The number of seconds includes fractional seconds.
+
+We can create a Duration using a number of different granularities:
+
+```java
+Duration daily = Duaration.ofDays(1);     //PT24H
+
+```
+
 ## Working with Instants
 ## Accounting for Daylight Savings Time
 
