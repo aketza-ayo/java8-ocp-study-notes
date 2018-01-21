@@ -103,6 +103,47 @@ LocalDate.of(2018, Month.JANUARY, 32);    //throws DateTimeException
 ```
 
 ## Manipulating Dates and Times
+Adding to a date is easy. The date and time classes are immutable .As you learned in Chapter 2 this means that we need to remember to assign the results of these methods to a reference variable so that they are not lost.
+```java
+LocalDate date = LocalDate.of(2018, Month.JANUART, 21);
+System.out.println(date);                     // 2018-01-21
+date = date.plusDays(2);                      
+System.out.println(date);                     // 2018-01-23
+date = date.plustWeeks(1);                  
+System.out.println(date);                     // 2018-01-30
+date = date.plusMonth(1);
+System.out.println(date);                     // 2018-03-02
+date = date.plusYears(2);
+System.out.println(date);                     // 2020-03-02
+```
+
+The code is nice because it does just what it looks like. There are also nice and easy methods to go back in time. Such as minusDays(1), minustHours(10), minusSeconds(30) and so on... It is common for date and time methods to be chained.For example:
+
+```java
+
+LocalDate date = LocalDate.of(2020. Month.JANUARY, 20);
+LocalTime time = LocalTime.of(5, 15);
+LocalDateTime datetime = LocalDateTime.of(date, time).minusDays(1).minusHours(10).minusSeconds(30);
+```
+
+When you have a lot of manipulation to make, this chaining comes in handy. There are two ways that the exam creators can try to trick you. What do you think this prints?
+
+```java
+LocalDate date = LocalDate.of(2020, Month.JANURY, 20);
+date.plusDays(10);
+System.out.println(date);
+```
+
+It prints Janruary 20, 2020. Adding 10 days was useless because the program ignored the result. Whenever you see immutable objects types pay attention to make sure that the reurn value of a method call isn't ignored. The exam might also trick to see if you remeber that each of the date and time objects include.
+
+```java
+LocalDate date = LocalDAte.of(2020, Month.JANUARY, 20);
+date = date.plusMinutes(10);              // DOES NOT COMPILE
+```
+
+LocalDate does not contain time. This means that you cannot add minutes. The following table shows the methods of LocalDate, LocalTime, LocalDateTime and ZOnedDateTime.
+
+![Methods in LocalDate, LocalTime, LocalDateTime and ZonedDateTime](img/methodsLocalDateTimeZone.png)
 
 ## Working with Periods
 ## Working with Durations
