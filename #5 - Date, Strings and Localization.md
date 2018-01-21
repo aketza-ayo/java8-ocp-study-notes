@@ -237,9 +237,55 @@ Conveniently Duration roughly works the same ways as Period, except it is used w
 We can create a Duration using a number of different granularities:
 
 ```java
-Duration daily = Duaration.ofDays(1);     //PT24H
-
+Duration daily = Duaration.ofDays(1);                 // PT24H
+Duration hourly = Duration.ofHours(1);                // PT1H
+Duration everyMinute = Duration.ofMinutes(1);         // PT1M
+Duration everyTenSeconds = Duration.ofSeconds(10);    // PT10S
+Duration everyMilli = Duration.ofMillis(1);           // PT0.001S
+Duration everyNano = Duration.ofNanos(1);             // PT0.000000001S
 ```
+
+This is similar to Period. We pass a nmumner of methods. We also try to make the code readable. We could say Duration.ofSeconds(3600) to mean one hour. That's just confusing but the exam praise to be confusing. Duration doesnt have a constructor that takes multiple units like Period does. If you want something to happen evry hour and a half, you would specify 90 minutes. Duration includes another more generic factory method. It takes a number and a TemporalUnit. The idea is, say, somethigng like "5 seconds". However, TemporalUnit is an interface. At the moment, there is only one implementation named ChronoUnit. The previous example could be re-written as this:
+
+```java
+Duration daily = Duration.of(1, ChronoUnit.DAYS);
+Duration hourly = Duration.of(1, ChronoUnit.HOURS);
+Duration everyMinute = Duration.of(1, ChronoUnit.MINUTES);
+Duration everyTenSeconds = Duration.of(10, ChronoUnit.SECONDS);
+Duration everyMilli = Duration.of(1, ChronoUnit.MILLIS);
+Duration everyNano = Duration.of(1, ChronoUnit.NANOS);
+```
+
+ChronoUnit also includes some convenient units such as ChronoUnit.HALF_DAYS to represent 12 hours.
+
+ChronoUnit is a freat way to determine how far apart from two Temporal values are. Temporal includes LocalDate, LocalTime and so on.
+
+```java
+LocalTime one = LocalTime.of(5, 15);
+LocalTime two = LocalTime.of(6, 30);
+LocalDate date = LocalTime.of(2016, 1, 20);
+
+System.out.println(ChronoUnit.HOURS.between(one, two));           //1
+System.out.println(ChronoUnit.MINUTES.between(one, two));         //75  
+System.out.println(ChronoUnit.MINUTES.between(one, date));         //DateTimeException
+```
+
+The first statement shows that between truncates rather than rounds. The seconds shows how easy it is to count in different units. Just change the ChronoUnit type. The last reminds us that Java will throw an exception if we mix up what can be done on date vs time objects.
+
+Using a duration works the same way as using a Period, for example:
+
+```java
+LocalDate date = LocalDate.of(2015, 1, 20);
+LocalTime time = LocalTime.of(6, 15);
+LocalDateTime dateTime = LocalDAteTime.of(date, time);
+Duration duration = DUration.ofHours(6);
+
+System.out.println(dateTime.plus(duration));      // 2015-01-20T12:15
+System.out.println(time.plus(duration));          // 12:15
+System.out.println(date.plus(duration));          // UnsupportedTemporalException
+```
+
+The first print statement shows that we can add hours to LocalDateTime, since it contains a time. Second print also works, since all we have is a time. Third line fails because we cannot add hours to an object that does not contain time.
 
 ## Working with Instants
 ## Accounting for Daylight Savings Time
