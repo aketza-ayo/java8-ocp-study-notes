@@ -357,9 +357,15 @@ LocalTime time = LocalTime.of(1, 30);
 ZoneId zone = ZoneId.of("US/Eastern");
 ZonedDateTime dateTime = ZonedDateTime.of(date, time, zone);
 
-System.out.println(dateTime);     // 2016-03-13T01:30
+System.out.println(dateTime);     // 2016-03-13T01:30-05:00[US/Eastern]
 
+dateTime = dateTime.plusHours(1);
+
+System.out.println(dateTime);    // 2016-03-13T03:30-04:00[US/Eastern]
 ```
+
+Notice that two things in this example. This time jusmps from 1:30 to 3:30. The UTC offset also changes. Remeber whan we calculated GMT time substrating the time zone from the times? You can see that we went from 6:30 GMT (1:30 minus -5:00) to 7:30 GMT (3:30 minus -4:00) this shows that the time really did change by one hour from GMT's point of view. Similarly in november happens the same but the other way around the times falls back. Java is smart enough to know that there is no 2:30am that night and switches over to the appropriate GMT offset. Yes it is annoying that Oracle expects you to know this even if you aren't in the USA. The exam creators decided it is important to know.
+
 # Reviewing The String class
 
 # Adding Internalization and Location
