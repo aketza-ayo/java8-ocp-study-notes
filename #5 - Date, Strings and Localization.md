@@ -287,6 +287,22 @@ System.out.println(date.plus(duration));          // UnsupportedTemporalExceptio
 
 The first print statement shows that we can add hours to LocalDateTime, since it contains a time. Second print also works, since all we have is a time. Third line fails because we cannot add hours to an object that does not contain time.
 
+If we do the same but adding 23 hours this time ``` Duration duration = Duration.ofHours(23)``` we see that Java moves forward past the end of the day. The first print goes to the next day since we pass midnight. Second print doesn't have a day so the time just wrapps aroud to show ```05:15``` just like a real clock. Remeber that Period and Duration are not equivalent. This example shows a Period and Duration of the same length:
+
+```java
+LocalDate date = LocalDate.of(2015, 5, 25);
+Period period = Period.ofDays(1);
+Duration days = Duration.ofDays(1);
+
+System.out.println(date.plus(period));        // 2015-05-26
+System.out.println(date.plus(days));          // Unsupported unit: seconds
+```
+
+Since we are working with LocalDate, we are required to use Period. Duration has time units in it. Even if we don't see them and they are meant only for objects with time. Make sure that you know the following table and indetify which objects can use Period and Duration.
+
+![Where to use Duration and Period](img/durationPeriod.png)
+
+
 ## Working with Instants
 ## Accounting for Daylight Savings Time
 
