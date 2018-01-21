@@ -435,9 +435,161 @@ In the table you can review the differences between String, StringBuilder and St
 ![Comparing String, StringBuilder and StringBuffer](img/comparingStrings.png)
 
 # Adding Internalization and Location
+Many applications need to work for different countries and with different languages. If we are making a website or program that will run in multiple countries we want to use the correct language and formatting. 
+- Internationalization is the process of designing your program so it can be adapted. This involves placing the trings in a property file and using classes like DateFormat so that the right format is used based on user preferences. You do not actually need to support more than one language or country to internationalize the program. Internationalization just means that you can.
+- Localization means actually supporting mutiple locales. Oracle defines a locale as "a specific geographical, political or cultural region." You can think of a locale as beign like a language and country pairing. Localization includes translating strings to different languages. It also includes outputting dates and numbers in the correct format for the locale. 
+Since internationalization and localization are such a long words, they are often abbreviated as i18n and l10n. The number refers to the number of characters between the first and the last letter. 
+In this section we will look at how to define a locale, work with resources bundles and format dates and numbers.
+
 ## Picking a Locale
+While Oracle defines a locale as "a specific geografical, political or cultural region" you will only see languages and countries on the exam. Oracle certainly isn't going delve into political region that are not countries. Too controversial for the exam. 
+
+The Locale class is in the ```java.util``` package. The first useful Locale to find is the user's current locale. Try running the following code on your computer:
+
+```java
+Locale locale = Locale.getDefault();
+System.out.println(locale);
+```
+
+When we run it, it prints en_US. It might be different for you. This tells us that our computers are using English and are sitting in the United States. Notice the formatter, first comes the lower case language code. Then comes the undersocre folllowed by the uppercase country code. The undersocre and the country code are optional it is ok for the locale to be just the language. 
+
+As practice make sure you understand why each of these Locales are invalid:
+
+US      // can have a laguage without a country, but not the reverse
+enUS    // missing underscore
+US_en   // the country and language are reversed
+EN      // language must be lowercase
+
+The correct versions are ```en``` and ```en_US```. You don't need to memorize country codes. You do need to recognize valid and invalid formats.
+
+Ypu can also Locale other than default. There are three main ways of certaing a Locale. First, the locale class provides constants for some of the most commonly used locales:
+
+```java
+System.out.println(Locale.GERMAN);    //de
+System.out.println(Locale.GERMANY);   //de_DE
+```
+Notice the first one is the language and the second is the country. 
+
+```java
+System.out.println(new Locale("fr"));           //fr
+System.out.println(new Locale("hi","IN"));      //hi_IN
+```
+The first is the language Freanch and the second is Hindi in India. Again you dont need to memorize the codes. There is another Locale constructor that lets you be more specific but is not in the exam.
+
+Java will let you create a locale with an invalid language or country. However it will not match with any of the Locales the program will not behave as expected. 
+
+There is another way to create a locale that is more flexible. The builder desing pattern lets you set all of the properties that you care about adn then build it at the end. The following locales and for the en_US:
+
+```java
+Locale l1 = new Locale.Builder()
+  .setLanguage("en")
+  .setRegion("US");
+  .build();
+  
+Locale l2 = new Locale.Builder()
+  .setRegion("US")
+  .setLanguage("en")
+  .build();
+```
+
+The advantage of the builder pattern is that you can easily use different convinations or setter methods. Locale.Builder() supports a number of ther setter methods that you dont need to knowfor the exam. This locale builder lets you convert uppercase or lower case and it will not complain. It is a bad thing to do but it will work.
+
+You can set a new deafult in Java:
+
+```java
+System.out.println(Locale.getDefault());    //es_US
+Locale locale = new Locale("fr");           
+Locale.setDefault(locale);                  // change the default
+System.out.println(Locale.getDefault());    //fr
+```
+
+The Locale changes only for the Java program. It does not change any setting on your computer. It does not even change future programs. If you run the previous code multiple times, the output will stay the same.
+
 ## Using a Resource Bundle
+A resource bundle contains the local specific objects to be used by a program. It is like a map with keys and values. The resource bundle can be in a property file or in Java class. 
+A property file is a file in a specific format with key/value pairs.
+Up until now, we've kept all of the strings from out program in the classes that use them. Localization requires externalizing to elsewhere. This is typically a property file, but it could be a resource bundle class. 
+
+Lets say that out zoo program is succesfull and is getting requests to use it a three more zoos. For that we create the following locales:
+
+```java
+Locale us = new Locale("en","US");
+Locale france = new Locale("fr","FR");
+Locale englishCanada = new Locale("en","CA");
+Locale frenchCanada = new Locale("fr","CA");
+```
+In the next section we are going to create a resource bundle.
+
 ## Creating a Property File Resource Bundle
+Luckily, Java doesnt require us to create four different resource bundles. If we dont have a country specific resource bundle, Java will use a language-specific one. For now, we need English and French property file resource bundle. First create two property files:
+
+**Zoo_en.properties**
+  hello=Hello
+  open=The zoo is open
+
+**Zoo_fr.properties**
+  hello=Bonjour
+  open=Le zoo est ouvert
+
+Now lets create a program to make use of this locales:
+```java
+import java.util.*;
+
+public class ZooOpen{
+  
+  public static void main(String[] arg){
+    Locale us = new Locale("en", "US");
+    Locale france = new Locale("fr", "FR");
+    
+    printProperties(us);
+    System.out.println();
+    printProperties(france);
+  }
+  
+  public static void printProperties(Locale locale){
+    ResourceBundle rb = ResourceBundle.getBundle("Zoo",locale);
+    System.out.println(rb.getString("hello"));
+    System.out.println(rb.getString("open"));
+  }
+
+}
+```
+
+The output is:
+```
+Hello 
+The Zoo is open
+
+Bonjour
+Le Zoo est ouvert
+```
+Notice what is going on. Java use the name of the bundle (Zoo) and looks for the relevant property file. 
+
+:yin_yang:**Property File Format** animal=dolphin / animal:dolphin / animal dolphin. These are valid formats
+you might wonder how to express some other idea ina property file. The comon ones are these:
+- If a line bigins with # or !, it is a comment
+- Spaces before or after the separator character are ignored
+- Spaces at the beginning of the line are ignored
+- Spaces at the end on a line are not ignored
+- End a line with backslash if you want to break the line for readability
+- You can use normal Java escape characters like \t and \n
+
+Putting these together, we can write the following:
+
+```
+#one comment
+! another comment
+key =       value\tafter tab
+long = abcdefghijklm\
+ nopqrstuvwxyz
+```
+Printing out these two propertirs in a program gives us this:
+```
+values after tab
+abcdefghijklmnopqrstuvwxyz
+```
+
+
 ## Creating a Java Class Resource Bundle
 ## Determining Which Resource Bundle to Use
 ## Formatting Numbers
