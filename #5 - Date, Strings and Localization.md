@@ -304,8 +304,62 @@ Since we are working with LocalDate, we are required to use Period. Duration has
 
 
 ## Working with Instants
-## Accounting for Daylight Savings Time
+The Instant class represents a specific moment in time in the GMT time zone. Suppose that they want to run a timer:
 
+```java
+Instant instant = Instant.now();
+//do something time consuming 
+Instant later = Instant.now();
+
+Duration duration = Duration.between(now, later);
+System.out.println(duration.toMillis());
+```
+In our case, the "something time consuming" was just over a second, and the program printed out 1025. If you have a ZonedDateTime, you can turn it into an Instant.
+
+```java
+LocalDate date = LocalDate.of(2015, 5, 25);
+LocalTime time = LocalTime.of(11, 55, 00);
+ZoneId zone = ZoneId.of("US/Eastern");
+ZonedDateTime zonedDateTime = ZonedDateTime.of(date, time, zone);
+Instant instant = zonedDateTime.toInstant();      //2015-05-25T15:55:00Z
+System.out.println(zonedDateTime);          //2015-05-25T11:55-04:00[US/Eastern]
+System.out.println(instant);           //2015-05-25T15:55:00Z  
+```
+
+The last two line represent the same moment in time, The ZOnedDateTime includes a time zone. The Instant gets rid of the time zone and turns it into an Instant of time in GMT. You cannot convert a LocalDateTime to an Instant. Remeber that an Instant is a point in time. A LocalDAteTime does not contain time zone, and it is therefore not universally recognized around the world as the same moment in time. 
+
+If you have the number of seocnds since 1970 you can also create an Instant that way:
+
+```java
+Instant instant = Instant.ofEpochSeocnds(epochSeconds);
+System.out.println(instant);         //2015-05-25T15:55:00Z
+```
+
+Using Instant, you can do math. INstant allows you to add any unit day or smaller, for example:
+
+```java
+Instant nextDay = instant.plus(1, ChronoUnit.DAYS);
+System.out.println(nextDay);      //2015-05-26T15:55:00Z
+Instant nextHour = instant.plus(1, ChronoUnit.HOURS);
+System.out.println(nextHour);     //2015-05-25T16:55:00Z
+Instant nextWeek = instant.plus(1, ChronoUnit.WEEKS);   //exception
+```
+It is weird that an Instant displays a year and a month while preventing you from doing math with those fields. Unfortunately, you need to memorize this fact.
+
+## Accounting for Daylight Savings Time
+Some countries observe Daylight Saving Time. This is where the clocks are adjusted by an hour twice a day to make better use of the sunlight. Children learn this as spring forward in the sptring and falls back in the fall/autum. IN programming we call this edge case but Oracel has decided that it is important enough to be on the exam. This means that you have to learn about it. 
+
+For example, on March 13, 2016, we move the clock forward an hour and jump from 2:00am to 3:00am this means that there is no 2:30am that day. If we wanted to know the time an hour later than 1:30, it would be 3:30
+
+```java
+LocalDate date = LocalDate.of(2016, Month.MARCH, 13);
+LocalTime time = LocalTime.of(1, 30);
+ZoneId zone = ZoneId.of("US/Eastern");
+ZonedDateTime dateTime = ZonedDateTime.of(date, time, zone);
+
+System.out.println(dateTime);     // 2016-03-13T01:30
+
+```
 # Reviewing The String class
 
 # Adding Internalization and Location
