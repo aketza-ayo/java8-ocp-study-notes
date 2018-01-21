@@ -583,13 +583,32 @@ key =       value\tafter tab
 long = abcdefghijklm\
  nopqrstuvwxyz
 ```
-Printing out these two propertirs in a program gives us this:
+Printing out these two properties in a program gives us this:
 ```
 values after tab
 abcdefghijklmnopqrstuvwxyz
 ```
+Since resource bundle contains key/value pairs, you can even loop through them to list all of the pairs. The ResourceBundle class provides a method to get a set of all keys:
 
+```java
+Locale us = new Locale("en", "US");
+ResourceBundle rb = ResourceBundle.getBundle("Zoo",us);
 
+Set<String> keys = rb.keySet();
+keys.stream().map( k -> k + " " + rb.getString(k))
+             .forEach(System.out::println);
+```
+
+The code above prints the following:
+
+```java
+name Vancouver Zoo
+hello Hello
+open The zoo is open
+```
+
+We could have used a traditional for loop. In fact you need to know both loops for the exam. In adition to ResourceBundle class Java supports class named Properties. It is like a Map. It was before collections map was written so it does not contain all of the method names.
+Properties has some additional features. Converting from ResourceBundle to Properties is easy:
 ## Creating a Java Class Resource Bundle
 ## Determining Which Resource Bundle to Use
 ## Formatting Numbers
