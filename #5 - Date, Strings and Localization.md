@@ -146,6 +146,90 @@ LocalDate does not contain time. This means that you cannot add minutes. The fol
 ![Methods in LocalDate, LocalTime, LocalDateTime and ZonedDateTime](img/methodsLocalDateTimeZoned.png)
 
 ## Working with Periods
+Now you know enough to do something fun with dates! Java has a Period class that we can pass in. This code below uses the Period class:
+
+```java
+public static void main(String[] args){
+  LocalDate start = LocalDate.of(2015, Month.JANRUARY, 1);
+  LocalDate end = LocalDate.of(2015, Month.MACRH, 15);
+  Period period = Period.ofMonths(1);                 // create a period
+  performAnimalEnrichment(start, end, period);
+}
+
+private static void performAnimalEnrichment(LocalDate start, LocalDate end, Period period){
+  LocalDate upTo = start;
+  while(upTo.isBefore(end)){
+    SYstem.out.println("give new toy: " + upTo);
+    upTo = upTo.plus(period);             // adds a period
+  }
+}
+```
+
+The method can add an arbitrary period of time that gets passed in. This allows us to reuse the same method for different periods of time as out zookeeper changes her mind.
+
+There are four ways to create a Period class:
+
+```java
+Period anually = Period.ofYears(1);               //every 1 year
+Period quarterly = Period.ofMonths(3);            //every 3 months
+Period everyThreeWeeks = Period.ofWeeks(3);       //every 3 weeks
+Period everyOtherDay = Period.ofDays(2);          //every 2 days
+Period everyYearAndAWeek = Period.of(1, 0, 7);    //every year and 7 days
+```
+There is one catch. Yopu cannot chain methods when creating a Period. The following code looks like it is equivalent to the everyYearAndAWeek example, but it's not. Only the last method is used because the Period of______ method are static methods.
+
+```java
+Period wrong = Period.ofYears(1).ofWeeks(1);          // every week
+```
+
+This tricky code is like writting the following:
+
+```java
+Period wrong = Period.ofYears(1);
+wrong = Period.ofWeeks(1);
+```
+
+This is clearly not what you intended ! what is why of() method allows you to pass oin the numnber of years months and days. They are all included in the same period. You will get a compiler warning about this. The of() method takes only years, months and days. The ability to use another factory method to pass weeks is merely a convinience. When you print out the value of a Period, Oracel displays any non-zero parts using the formater shown below:
+
+```
+System.out.println(Period.of) 1,2,3);
+
+P1Y2M3D
+```
+
+As you can see the P always starts out the String to show it is a period measure. Then come the number of years, number of months and number of days. In any of these are zero they are omitted.
+
+Can you figure out what is this output?
+
+```
+System.out.println(Period.ofMonths(3));
+```
+The output is P3M. Remeber that Java omits any measures that are zero. Let's try another example:
+
+```
+System.out.println(Period.of(0,20,47));
+```
+
+The output is P20M47D. There are no years so that part is skipped. Its ok to have more days than are in a month. Also is ok to have more months than are in a year. Java uses the measures provided for each. Now, let's see a tricky one:
+
+```
+System.out.println(Period.ofWeeks(3));
+```
+
+This one outputs P21D. Remember that week is not one of the units a Period stores. Therforem a week converted to 7 days. Since we have 3 weeks , that's 21 days. The last thing to know about Period is what objects it can be used with. Let's look at some code:
+
+```java
+LocalDate date = LocalDate.of(2015, 1, 20);
+LocalTime time = LocalTime.of(6, 15);
+LocalDateTime dateTime = LocalDateTime.of(date, time);
+Period period = Period.ofMonths(1);
+System.out.println(date.plus(period));              // 2015-2-20
+System.out.println(datetime.plus(period));    `     // 2015-2-20T06:15  
+Syste.out.println(time.plus(period));               // UnsupportedTemporalTypeException 
+```
+
+The last line attempts to add a month to an object that has only a time. This will not work Java throws an exception anmd complains the we attempted to use an Unsupported unit:Months. As you can see you will have to pay attention to the type of date and time objects every place you see them.
+
 ## Working with Durations
 ## Working with Instants
 ## Accounting for Daylight Savings Time
