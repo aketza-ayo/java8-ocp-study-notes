@@ -367,6 +367,72 @@ System.out.println(dateTime);    // 2016-03-13T03:30-04:00[US/Eastern]
 Notice that two things in this example. This time jusmps from 1:30 to 3:30. The UTC offset also changes. Remeber whan we calculated GMT time substrating the time zone from the times? You can see that we went from 6:30 GMT (1:30 minus -5:00) to 7:30 GMT (3:30 minus -4:00) this shows that the time really did change by one hour from GMT's point of view. Similarly in november happens the same but the other way around the times falls back. Java is smart enough to know that there is no 2:30am that night and switches over to the appropriate GMT offset. Yes it is annoying that Oracle expects you to know this even if you aren't in the USA. The exam creators decided it is important to know.
 
 # Reviewing The String class
+You might noticed that String class is not listed in the objectives of the OCP. However it is used in most of the questions for output. Since there are too many String objects in a program, the String class is final and are immutable. What Java does is to store string literals in the string pool. This also means that you can compare string litreals with ==. However, it is still a good idea to comapre with equals() because String objects created via a constructor to a method call will not always match when using comparison with ==. Here is an example:
+
+```java
+String s1 = "bunny";
+String s2 = "bunny";
+String s3 = new String("bunny");
+System.out.println(s1 == s2);         // true
+System.out.println(s1 == s3);         // false
+System.out.println(s1.equals(s3));    // true
+
+```
+s1 and s2 referenmces point to the same literal in the string pool. Second print shows false because creates a new object in memeory by calling the constructor. The last print shows true because the values are the same, even though the location in memory is not.
+
+Java allows concatenation of string by using +. Concatenation just means creating a new String with the valus from both original strings. Remember that Java processes these operations from left to right. Also remember that a String concatenanted with anythiong else is a String
+
+Do you see what makes these to examples different?
+
+```java
+String s4 = "1" + 2 + 3;
+String s5 = 1 + 2 + "3";
+System.out.println(s4);   //123
+System.out.println(s5);   //33
+```
+
+Finally, here is an example that uses common String methods:
+
+```java
+String s = "abcde ";
+System.out.println(s.trim().length());                  //5
+System.out.println(s.charAt(4));                        //e
+System.out.println(s.indexOf('e'));                     //4
+System.out.println(s.indexOf("de"));                    //3
+System.out.println(s.substring(2,4).toUpperCase());     //CD
+System.out.println(s.replace('a',1));                   //1bcde
+System.out.println(s.contains("DE"));                   //false 
+System.out.println(s.startWith("a"));                   //true
+```
+
+Since String is immutable it is inefficient for when you are updating the value in a loop. StringBuilder is bettern for that scenario. A stringBuilder is a mutable, which means that it can change value and increase its capacity. If multiple threads are updating the same object, you should use StringBuffer rather than StringBuilder. AS a review of the StringBuilder class see igf you can remeber this example:
+
+```java
+StringBuilder b = new StringBuilder();
+b.append(12345).append('-');
+
+System.out.println(b.length());         //6
+System.out.println(b.indexOf("-"));     //5
+System.out.println(b.charAt(2));        //3
+
+StringBuiler b2 = b.reverse();
+System.out.println(b2.toString());      //-54321
+System.out.println(b == b2);            //true
+
+```
+
+Another example:
+
+```java
+StringBuilders = mew StringBuilder("abcde");
+s.insert(1, '-').delete(3, 4);
+System.out.println(s);                    //a-bde
+System.out.println(s.substring(2, 4));    //bd
+```
+
+In the table you can review the differences between String, StringBuilder and StringBuffer. 
+
+![Comparing String, StringBuilder and StringBuffer](img/comparingStrings.png)
 
 # Adding Internalization and Location
 ## Picking a Locale
