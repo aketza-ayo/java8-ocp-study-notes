@@ -143,7 +143,7 @@ date = date.plusMinutes(10);              // DOES NOT COMPILE
 
 LocalDate does not contain time. This means that you cannot add minutes. The following table shows the methods of LocalDate, LocalTime, LocalDateTime and ZOnedDateTime.
 
-![Methods in LocalDate, LocalTime, LocalDateTime and ZonedDateTime](img/methodsLocalDateTimeZone.png)
+![Methods in LocalDate, LocalTime, LocalDateTime and ZonedDateTime](img/methodsLocalDateTimeZoned.png)
 
 ## Working with Periods
 ## Working with Durations
