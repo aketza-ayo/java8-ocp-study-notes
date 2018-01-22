@@ -717,12 +717,12 @@ ResourceBundle rb = ResourceBundle.getBundle("Zoo", new Locale("en"));
 ```
 
 The answer is six. They are listed below:
-1- Zoo_hi.java
-2- Zoo_hi.properties
-3- Zoo_en.java
-4- Zoo_en.properties
-5- Zoo.java
-6- Zoo.properties
+- Zoo_hi.java
+- Zoo_hi.properties
+- Zoo_en.java
+- Zoo_en.properties
+- Zoo.java
+- Zoo.properties
 
 This time, we didnt specify any country code so Java got to skip looking for those. If we ask for the default locale, Java will start searching the bundles starting with the step 6 in the table above and going to end (or until it finds a match)
 
@@ -732,6 +732,41 @@ But, there is a twist. The steps we have discussed so far are for finding a matc
 ----------------------------|-------------------------
 Zoo_fr_FR.java              | Zoo_fr_FR.java / Zoo_fr.java / Zoo.java
 Zoo_fr.properties           | Zoo_fr.properties / Zoo.properties                              
+ 
+ Let's put all of this together and print some information about our zoos. We have a number of property files this time:
+ **Zoo.properties**
+ name=Vancuver Zoo
+ 
+ **Zoo_en.properties**
+ hello=Hello
+ open=is open
+ 
+ **Zoo_en_CA.properties**
+ visitor=Canada visitor
+ 
+ **Zoo_fr.properties**
+ hello=Bonjour
+ open=est ouvert
+ 
+ **Zoo_fr_CA.properties**
+ visitor=Canada visitieur
+ 
+ Suppose that we have a visitor from Quebec (a default locale of French Canada) who has asked the program to provide information in English. What do you think this outputs?
+ 
+ ```
+ Locale locale = new Locale("en", "CA");
+ ResourceBundle rb = ResourceBundle.getBundle("Zoo", locale);
+ System.out.print(rb.getString("hello"));
+ System.out.print(". ");
+ System.out.print(rb.getString("name"));
+ System.out.print(" ");
+ System.out.print(rb.getString("open"));
+ System.out.print(" ");
+ System.out.print(rb.getString("visitor"));
+ 
+ ```
+ 
+ The answer is "Hello. Vancuver Zoo is open Canada visitor". First Java goes though the available resource bundle to find a match. It finds one right away with Zoo_en_CA.properties. This means the default locale is irrelevant. Third line doesn't find a match for the key hello in Zoo_en_CA.properties, so it goes up the hierarchy to Zoo_en.properties. Line 5 has to go all the way to the top of the hierarchy to Zoo.properties to find the key name. Line 7 has the same experience as line 3. Finally, line 9 has an easier job of it and finds a matching key in Zoo_en_CA.properties.
  
 ## Formatting Numbers
 ### Format and Parse Numbers and Currency
