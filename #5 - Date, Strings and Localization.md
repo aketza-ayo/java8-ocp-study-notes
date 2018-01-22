@@ -633,7 +633,76 @@ getProperty("key")           | Value | null
 getProperty("key","default") | Value | "default"
 
 ## Creating a Java Class Resource Bundle
+Most of the times the property file resource bundle is enough to meet the programs needs. It does have the limitation that only String values are allowed. Java class resource bundle allow any Java type as the value.
+To create a resource bundle in Java you create a class with the same name that you would use the property file. Only the extension is different. Since we have a Java object, the file must be a .java file rather tham a .property file. For example, the following class is equivalent to the property file that you saw in the last section:
+
+```java
+import java.util.*;
+
+public class Zoo_en extends ListResourceBundle{
+  protected Object[][] getCOntents(){
+    return new Object[][]{
+      {"hello", "Hello"},
+      {"open", "The zoo is open"}
+    };
+  }
+}
+
+```
+As you can see the class extends an abstract class ListResourceBundle that leaves one method for subclass to implement. The rest of the code creates a 2d array with the keys hello and open.
+
+There two main advantages of using a Java class instead of a property file for a resource bundle:
+- You can use a value type that is not a string
+- You can create the values of properties at runtime.
+
+In the zoo example we realise that we need to collect taxes differnetly in each country. Pretend we created a USTaxCode.
+
+```java
+package resourcebundles;
+
+import java.util.*;
+
+public class Tax_en_US extends ListResourceBundle{
+  protected Object[][] getContents(){
+    return new Object[][] {{"tax", new UsTaxCode() }};
+  }
+  
+  public static void main(String[] args){
+    ResourceBundle rb = ResourceBundle.getBundle(
+      "resourcebundle.Tax", Locale.US);
+      
+    System.out.println(rb.getObject("tax"));  
+  }
+}
+```
+
+The 3d line of code extends the ListResourceBundle so that we can define a resource bundle. This time, the class name specifies both the language code and the country code. This time the value is not a string 
+
 ## Determining Which Resource Bundle to Use
+On the exam, there are two methods for getting resource bundle:
+
+```
+ResourceBundle.getBundle("name");
+ResourceBundle.getBundle("name", locale)
+```
+
+The first one uses the default locale. The exam either tells you what to assume as the default locale or uses the second approach. 
+Java handles thje logic of picking the best available resource bundle for a given key. It tries to find the most specific value. When there is a tie, Java class resource bundle are given a preference. For example the table below shows what Java goes through when asked for resource bundle Zoo with locale new Locale("fr","FR") when the default locale is US English.
+
+**Step**| **Looks for file**       | **Reason**
+--------|--------------------------|--------------
+ 1      | Zoo_fr_FR.java | The requested locale 
+ 2      | Zoo_fr_FR.properties | The requested locale 
+ 3      | Zoo_fr.java | The language we request with no country
+ 4      | Zoo_fr.properties | The language we request with no country
+ 5      | Zoo_en_US.java | The default locale
+ 6      | Zoo_en_US.properties | The default locale
+ 7      | Zoo_en.java | The language we request with no country
+ 8      | Zoo_en.properties | The language we request with no country
+ 9      | Zoo.java | No locale at all - the default bundle
+ 10     | Zoo.properties | No locale at all - the default bundle
+ 11     | If still not found, throw MissingResourceException | 
+
 ## Formatting Numbers
 ### Format and Parse Numbers and Currency
 ## Fomratting Dates and Times
