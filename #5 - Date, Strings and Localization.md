@@ -784,5 +784,17 @@ System.out.println(formatted);
 ```
  
 ## Formatting Numbers
+Resource bundles are great for content that doesn't change. Text like awelcome greeting is pretty stable. When talking about dates and prices, the formatting varies and not just the text. The ```java.text``` package is what it does. The following section covers how to format numbers, currency and dates.
+
 ### Format and Parse Numbers and Currency
+Regadless you want to format or parse. The first step is the same. You need to create ```NumberFormat``` The class provides factory methods to get the desired formatter.
+
+**Description**| **Using Default Locale and a Specified Locale**
+----------------------------|-------------------------
+A general purpose formatter | NumberFormat.getInstance() / NumberFormat.getInstance(locale)
+Same as getInstance         | NumberFormat.getNumberInstance() / NumberFormat.getCurrencyInstance(locale)
+For formatting monetary amounts | NumberFormat.getCurrencyInstance() / NUmberFormat.getCurrencyInstance(locale)
+For formatting percentages | NumberFormat.getPercentInstance() / NumberFormat.getPercentInstance(locale)
+Rounds decimal values before displaying (not on the exam) | NumberFormat.getIntegerInstance() / NumberFormat.getIntegerInstance(locale)
+
 ## Fomratting Dates and Times
