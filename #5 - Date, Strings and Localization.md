@@ -703,6 +703,36 @@ Java handles thje logic of picking the best available resource bundle for a give
  10     | Zoo.properties | No locale at all - the default bundle
  11     | If still not found, throw MissingResourceException | 
 
+
+You do not be able to create rthe 11-step list. S another way of remebering it, learn thee steps:
+- Always look for the property file after the matching Java class.
+- Drop one thing at a time if there are no matches. First drop the country and then the language.
+- Look at the default locale and the default bundle last.
+
+How many files do you think Java would need to look for to find the resource bundle with the code? 
+
+```
+Locale.setDefault(new Locale("hi"));
+ResourceBundle rb = ResourceBundle.getBundle("Zoo", new Locale("en"));
+```
+
+The answer is six. They are listed below:
+1- Zoo_hi.java
+2- Zoo_hi.properties
+3- Zoo_en.java
+4- Zoo_en.properties
+5- Zoo.java
+6- Zoo.properties
+
+This time, we didnt specify any country code so Java got to skip looking for those. If we ask for the default locale, Java will start searching the bundles starting with the step 6 in the table above and going to end (or until it finds a match)
+
+But, there is a twist. The steps we have discussed so far are for finding a matching resource bundle to use as a base. Java insn't required to et all of the keys from the same resource bundle. It can get them from any parent of the matching resource bundle. A parent resource bundle in the hierarchy just removes components of the name until it gets to the top. Table below shows how to do this.
+
+**Matching Resource Bundle**| **Files Keys can come From**
+----------------------------|-------------------------
+Zoo_fr_FR.java              | Zoo_fr_FR.java / Zoo_fr.java / Zoo.java
+Zoo_fr.properties           | Zoo_fr.properties / Zoo.properties                              
+ 
 ## Formatting Numbers
 ### Format and Parse Numbers and Currency
 ## Fomratting Dates and Times
