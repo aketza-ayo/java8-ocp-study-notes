@@ -797,4 +797,169 @@ For formatting monetary amounts | NumberFormat.getCurrencyInstance() / NUmberFor
 For formatting percentages | NumberFormat.getPercentInstance() / NumberFormat.getPercentInstance(locale)
 Rounds decimal values before displaying (not on the exam) | NumberFormat.getIntegerInstance() / NumberFormat.getIntegerInstance(locale)
 
+Once you have a NumberFormat instance you can call format() to turn a number into a String and parse() to turn a String into a number.
+
+### Formatting
+The format method formats the given number based on the locale associated with the NumberFormat object. For example, the following shows printing out the same number in three different locales
+
+```java
+import java.text.*;
+import java.util.*;
+
+public class FormatNumbersExample{
+  public static void main(String[] args){
+    int attendesPerYear = 3_200_000;
+    int anttendesPerMonth = attendesPerYear / 12;
+    
+    NumberFormat us = NumberFormat.getInstance(Locale.US);
+    System.out.println(us.format(anttendesPerMonth));
+    
+    NumberFormat g = NumberFormat.getInstance(Locale.GERMANY);
+    System.out.println(g.format(anttendesPerMonth));
+    
+    NumberFormat ca = NumberFormat.getInstance(Locale.CANADA_FRENCH);
+    System.out.println(ca.format(anttendesPerMonth));
+   
+  }
+
+}
+
+```
+The output looks like
+
+```
+266,666
+266.666
+266 666
+```
+
+Formatting currency works the same way:
+```java
+double price = 48;
+NumberFormat us = NumberFormat.getCurrencyInstance();
+System.out.println(us.format(price));
+```
+
+When run with the default locale of en_US, the output is $48.00. Java automatically formats with two decimals and adds the dollar sign. This is convenient even if you don't need to localize your program!
+
+### Parsing
+The NumberFormat class defines a ```parse``` method for parsing a String into a number using a specific locale. The result of parsing depends on the locale. For example, if the locale is the United States and the number contains commas, the commas are treated as formatting symbols. If the locale is a country or language that uses commas as a decimal separator, the comma is treated as a decimal point.
+
+The parse method s for the different types of formats throw the checked exception ParseException if they fail to parse. Often, you will see the code as a snippet and not in a method as in the next example. You can assume that exceptions are properly handled.If you see parsing logic inside a method, make sure that ParseException or Exception is handled or declared.
+
+Let's look at an example. The following code parses a discounted ticket price with diferent locales:
+
+```java
+NumberFormat en = NumberFormat.getInstane(Locale.US);
+NumberFormat fr = NumberFormat.getInstane(Locale.FRANCE);
+
+String s = "40.45";
+System.out.println(en.parse(s));    // 40.45
+System.out.println(fr.parse(s));    // 40
+```
+
+In the US, a dot is part of the number. France does not use a decimal point to separate numbers. Java parses it as a formatting character, and it stops looking at the rest of the number. The lesson is to make sure that you parse using the right locale.
+
+The parse method is alos used for parsing currency. For example, we can read in the zoo's monthly income from ticket sales:
+
+```java
+String amount = "$92,807.99";
+NumberFormat cf = NumberFormat.getCurrencyInstance();
+double value = (Double) cf.parse(amount);
+System.out.println(value);        //92807.99
+```
+
+The currency string "$92,807.99" contains a dollar sign and a comma. The parse method strips out the characters and converts the value to a number. The return value of parse is a Number object. Number is the parent class of all the java.lang wrapper classes, so the return value can be cast to its appropriate data type. The Number is cast to Double and then automatically unboxed into a double.
+
+The NumberFormat classes have other features and capabilities, but the topics covered in this section address the cointent that you need to know for the OCP exam.
+
 ## Fomratting Dates and Times
+The date and time classes support many methods to get data out of them:
+
+```java
+LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+System.out.println(date.getDayOfWeek());          // MONDAY
+System.out.println(date,getMonth());              // JANUARY
+System.out.println(date.getYear());               // 2020
+System.out.println(date.getDayOfYear());          //20  
+```
+
+We could use this inforamtion to display information about the date. However, it would be more work than neccesary. Java provides a class DateTimeFormatter to help us out. Unlike the LocalDateTime class, DateTimeFormatter can be used to format any type of date and/or time object. What tchanges is the format. DateTimeFormatter is in the package java.time.format
+
+```java
+LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+LocalTime time = LocalTime.of(11, 12, 34);
+LocalDateTime dateTime = LocalDateTime.of(date, time);
+System.out.println(DateTimeFormatter.ISO_LOCAL_DATE);
+System.out.println(DateTimeFormatter.ISO_LOCAL_TIME);
+System.out.println(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+```
+
+ISO is a standard for dates. The output of the previous code looks like this:
+
+```
+2020-01-20
+11:12:34
+2020-01-20T11:12:34
+```
+
+This is a reasonable way for computres to communicate, but it is probably not how you want to output the date and time in your program. Luckily, there are some predefined formats that are more useful:
+
+```java
+DateTimeFormatter shortDateTime = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+
+System.out.println(shortDateTime.format(dateTime));       // 1/20/20
+System.out.println(shortDateTime.format(date));           // 1/20/20
+System.out.println(shortDateTime.format(time));           // UnsupportedTemporalTypeException
+```
+
+Here we get the exception because a time cannot be formatted as a date.  The format() method is delcared on both the formatter and the date/time objects, allowing you to reference the objects in either way/ The following outputs the same result as before
+
+```java
+DateTimeFormatter shortDateTime = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+
+System.out.println(dateTime.format(shortDateTime));       // 1/20/20
+System.out.println(date.format(shortDateTime));           // 1/20/20
+System.out.println(time.format(shortDateTime));           // UnsupportedTemporalTypeException
+```
+You should get used to both ways.
+
+There are two predefined formats that can show up on the exam: SHORT and MEDIUM. The other predefined formats involve time zones, which are not in the exam.
+
+```java
+LocalDate date = LocalDate.of(2020, Month.JANUARY, 20);
+LocalTime time = LocalTime.of(11, 12, 34)'
+LocalDateTime dateTime = LocalDateTime.of(date, time);
+DateTimeFormatter shortF = LocalDateTime.of(date, time);
+DateTimeFormatter mediumF = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+System.out.println(shortF.format(dateTime));            // 1/20/20  11:12 AM
+System.out.println(mediumF.format(dateTime));           // Jan 20, 2020 11:12:34 AM
+```
+
+If you dont want to use the predefined formatts you can use your own. For example, this code spells out the month:
+
+```java
+DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM dd, yyyy, hh:mm");
+System.out.println(dateTime.format(f));     // January 20, 2020, 11:12
+```
+
+Before we look at the syntx know that you are not expected to memorize that the different numbers of each symbols mean. The most you need to do is recognize the date and time parts.
+
+MMMM  represents the month. The more M's you have, the more verbose Java output.
+dd  day of the month
+,  use this if you want to output a comma
+yyyy  it represents the year. 
+hh  it represents the hour
+:  use this for colon
+mm  it represents the minute.
+
+Now that you know how to convert a date or time to a formatted String, you will find it easy to convert a String to a date or time. Just like the format() method, the parse() method takes a formatter as well. If you don't specify one, it uses the default for that type.
+
+```java
+DateTimeFormatter f = DateTimeFormatter.ofPattern("MM dd yyyy");
+LocalDate date = LocalDate.parse("01 02 2015", f);
+Localtime time = LocalTime.parse("11:22");
+System.out.println(date);         // 2015-01-02
+System.out.println(time);         // 11:22
+```
+
