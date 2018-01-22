@@ -768,6 +768,21 @@ Zoo_fr.properties           | Zoo_fr.properties / Zoo.properties
  
  The answer is "Hello. Vancuver Zoo is open Canada visitor". First Java goes though the available resource bundle to find a match. It finds one right away with Zoo_en_CA.properties. This means the default locale is irrelevant. Third line doesn't find a match for the key hello in Zoo_en_CA.properties, so it goes up the hierarchy to Zoo_en.properties. Line 5 has to go all the way to the top of the hierarchy to Zoo.properties to find the key name. Line 7 has the same experience as line 3. Finally, line 9 has an easier job of it and finds a matching key in Zoo_en_CA.properties.
  
+:yin_yang: **Handling Variables Inside Resource Bundles**
+in real programs, it is common to substitute variables in the middle of a resource bundle string. The convention is to use a number inside brackets such as {0}. Although Java resource bundles don't support this directly, the MessageFormat class does.
+
+Suppose we have this property defined:
+
+```helloByName= Hello, {0}```
+
+In Java, we can read in the value normally. After that, we can run it through the MessageFormat class to substitute the parameters. As you might guess, the second parameter to fomrat() is a vararg one. This mean that you can pass many parameters.
+
+```java
+String format = rb.getString("helloByName");
+String formatted = MessageFormat.format(format, "Tammy");
+System.out.println(formatted);
+```
+ 
 ## Formatting Numbers
 ### Format and Parse Numbers and Currency
 ## Fomratting Dates and Times
