@@ -609,6 +609,29 @@ open The zoo is open
 
 We could have used a traditional for loop. In fact you need to know both loops for the exam. In adition to ResourceBundle class Java supports class named Properties. It is like a Map. It was before collections map was written so it does not contain all of the method names.
 Properties has some additional features. Converting from ResourceBundle to Properties is easy:
+
+```java
+Proterties props = new Properties();
+rb.keySet().stream()
+           .forEach(k -> props.put(k, rb.getString(k)));
+```
+
+Here we went through each key and used a Consumer to add it to the Properties object. Now that we have Propertirs available, we can get a default value:
+
+```java
+System.out.println(props.getProperty("notReallyAProperty"));
+System.out.println(props.getProperty("notReallyAProperty". "123"));
+```
+
+The first line prints null, since the property doesn't exist. The second line prints 123, since the property wan't found. If a key were passed that actually existed, both would have returned it.
+
+Note that the method called was getProperty(). There is also a get() method as we'd expect with any collection. Only getProperty() allows for a default value. 
+
+**Key Found?   | Yes       | No**
+------------ --| --------|-----
+getProperty("key")| Value | null 
+getProperty("key","default") | Value | "default"
+
 ## Creating a Java Class Resource Bundle
 ## Determining Which Resource Bundle to Use
 ## Formatting Numbers
