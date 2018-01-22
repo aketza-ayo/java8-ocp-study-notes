@@ -627,9 +627,9 @@ The first line prints null, since the property doesn't exist. The second line pr
 
 Note that the method called was getProperty(). There is also a get() method as we'd expect with any collection. Only getProperty() allows for a default value. 
 
-**Key Found?   | Yes       | No**
------------- --| --------|-----
-getProperty("key")| Value | null 
+**Key Found?**   | **Yes**       | **No**
+-----------------|---------------|--------
+getProperty("key")           | Value | null 
 getProperty("key","default") | Value | "default"
 
 ## Creating a Java Class Resource Bundle
