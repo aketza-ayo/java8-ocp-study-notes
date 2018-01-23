@@ -968,3 +968,4 @@ I found the questions in this chapter quite easy although I got some questions w
 ![Chapter five questions](img/testChaptrFive.png)
 
 - The daylight saving time values might be a few hours apart but the offset is going to say how many hours apart they actually are.
+- Need to know the order in which the bundles are used
