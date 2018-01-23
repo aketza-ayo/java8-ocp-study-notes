@@ -965,6 +965,6 @@ System.out.println(time);         // 11:22
 # Review Questions
 I found the questions in this chapter quite easy although I got some questions wrong, one of which was a silly mistake. Took me no more than half an hour to complete them.
 
-![Chapter five questions](img/testChapterFive.png)
+![Chapter five questions](img/testChaptrFive.png)
 
 - The daylight saving time values might be a few hours apart but the offset is going to say how many hours apart they actually are.
