@@ -15,9 +15,23 @@ Below you can find the hierarchy of the exception classes. Rember that a *runtim
 
 ![Exception Hierarchy](img/exceptionHierarchy.png)
 
-In red are the unchecked exception and in blue checked exceptions.
+In red are the unchecked exception and in blue checked exceptions. 
+
 
 ## Exceptions on the OCP
+- **ArithmeticException:** Thrown by the JVM when code attempts to divide by zero.
+- **ArrayIndexOutOfBounds:** Thrown by the JVM when code uses an illegal index to access an array
+- **ClassCastException:** Thrown by the JVM when an attempt is made to cast an object to a subclass of which it is not an instance.
+- **IllegalArgumentException:** Thrown by the program to indicate that a method has been passed an illegal or inappropriate argument.
+- **NullPointerException:** Thrown by the JVM when there is a null reference where an object is required.
+- **NumberFormatException:** Thrown by the program when an attempt ismade to convert a string to numeric type, but the string an appropriate format..
+
+You also learnt that *java.io.IOException* is an example of a checked exception. On the OCP you need to know more exceptions. The objectives cover a number of APIs that throw a mix of checked and unchecked exceptions. Just remember that IO, parsing, and SQL exceptions are checked. Anything else is a runtime exception unless the exam states otherwise.
+
+See table below for further information:
+
+![OCP checked and unchecked exceptions](img/ocpExceptions.png)
+
 ## Try Statement
 ## Throw vs Throws
 
