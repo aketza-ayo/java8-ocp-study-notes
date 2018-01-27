@@ -124,6 +124,102 @@ public static void main(String[] args){
 }
 
 ```
+
+This works however duplicating code is bad! To deal with it we could catch Exception instead of the specific types. The duplicate code migt be gone but it isnt a good approach because it catches other exceptions too. The catch code could catcha NullPointerException and this was never out intention. Another approach would be to use a helper method to handle the exception but we would still have a little duplication. The Java designers realize this problem and they introduced the ability to catch multiple exceptions in the same catch block. Now we have an elegant solution:
+
+```java
+public static void main(String[] args){
+  try{
+    Path path = Paths.get("dolphinsBorn.txt");
+    String text = new String(Files.readAllBytes(path));
+    LocalDate date = LocalDate.parse(text);
+    System.out.println(date);
+  
+  }catch(DateTimeParseException | IOException e){
+    e.printStackTrace();
+    throw new RuntimeException();
+  }
+```
+This is much better. There is no code duplication, the common logic is in one place, and the logic is where we would expect it to find. Notice how there is only one variable name in the catch clause. Java is saying that the variable named e can be of type Exception1 or Exception2.
+
+The exam might try to trick you on the syntax. Remember that that exception can be listed in any order within the catch clause. However the variable name must appera only once and at the end. Do you see why these are valid or invalid?
+
+```java
+catch(Exception1 e | Exception2 e | Exception3 e)       //DOES NOT COMPILE
+
+catch(Exception1 e1 | Exception2 e2 | Exception3 e3)    // DOES NOT COMPILE
+
+catch(Exception | Exceotion | Exception e)
+
+```
+
+Java intends multi catch for exceptions that aren't related, and it prevents you from specifying redundant types in a multi-catch. Do you see what is wring here?
+
+```java
+try{
+  throw new IOExceotion();
+}catch( FileNotFoundException | IOException e){}    //DOES NOT COMPILE
+```
+
+FileNotFoundException is a subclass of IOException. Specifying it in the multi-catch is redundant, and the compiler gives a message like this:
+
+```
+The exception FileNotFoundException is already caught by the alternative IOException.
+```
+
+Since we can ommit that exception type without changing the behaviour of the program, java does not allow declaring it. The correct code is as follows.
+
+```
+try{
+  throw new IOException();
+}catch(IOException e){ }
+
+```
+
+**Multi-catch is effectively final** this try statement is legal. it is bad idea to reassing the variable in the catch bock, but is is allowed:
+
+```
+try{
+  // do some work
+}catch(RuntimeException e){
+  e = new RuntimeException();
+}
+```
+
+When adding multi-catch, this pattern is no longer allowed:
+
+```
+try{
+  // do some work
+}catch(IOException | RuntimeException e){
+  e = new RuntimeException();         // DOES NOT COMPILE
+}
+```
+Java uses the exception variable internally.
+
+To review the multi catch see how many erros you can find:
+
+```java
+public void doesNotCompile(){    //DOES NOT COMPILE
+  try{
+    mightThrow();
+  }catch(FileNotFoundException | IlegalStateException e){
+  }catch(InputMismatchException e | MissingResourceException e){
+  }catch(SQLException | ArrayIndexOutOfBoundException e){
+  }catch(FileNotFoundException | IlegalStateException e){
+  }catch(Exception e){
+  }catch(IOException e){
+  }
+}
+
+private void mightThrow() throws DateTimeParseException, IOException {}
+
+```
+- The second catch has an extra variable name.
+- Last two catch blocks are reversed. The more general superclass must be caught after their sublcass. While these does nothing to do with multi-catch, you will see regular catch blocks mixed with multi catch blocks.
+- The fourth catch it is already caught. You cannot list the same exception type more than once in the same try statement. 
+- The third catch block you cannot SQLException because nothing in the try statement can potentially throw one. Again, just like regular catch blocks any RuntimeException might be caught. However only checked exceptions that have potential to be thrown are allowed to be caught.
+
 # Using Try-With-Resources
 ## Try-With_resource Basics
 ## AutoCloseable
