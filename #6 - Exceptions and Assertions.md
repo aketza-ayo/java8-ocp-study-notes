@@ -64,8 +64,10 @@ public String getDataFromDatabase() throws SQLException{
 }
 ```
 
-
 # Creating Custom Exceptions
+Java creates a lot out of the box exceptions classes. Sometimes you want to create your own set of exception classes and Java allows you to do that.
+
+When creating your own exceptions you need to decide whether they are checked or unchecked exceptions. If you want to create checked exceptions you extend Exception and for unchecked exceptions you extend RuntimeExceptions.
 
 ## Using Multi-Catch
 
