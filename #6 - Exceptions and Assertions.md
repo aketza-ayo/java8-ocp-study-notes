@@ -69,6 +69,20 @@ Java creates a lot out of the box exceptions classes. Sometimes you want to crea
 
 When creating your own exceptions you need to decide whether they are checked or unchecked exceptions. If you want to create checked exceptions you extend Exception and for unchecked exceptions you extend RuntimeExceptions.
 
+Creating your own exceptions is really easy:
+
+```java
+class CannotSwimException extends Exception{}
+class DangerInWater extends RuntimeException{}
+class SharkInWater extends DangerInWater{}
+class Dolphin{
+  public void swim() throws CannotSwimException{
+    //logic here
+  }
+}
+
+```
+
 ## Using Multi-Catch
 
 # Using Try-With-Resources
