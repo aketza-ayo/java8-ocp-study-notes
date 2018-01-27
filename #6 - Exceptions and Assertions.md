@@ -3,7 +3,7 @@ A program can fail for just about any reason. Here are a few posibilities common
 - Your program tries to read a file that doesn't exist.
 - Your program tries to access a database, but the network connection to the database is unavailable.
 - You made a coding mistake and wrote a wrong SQL statement in your JDBC code.
-- You used a wrong format specifier when using DateTimeFormatter.
+- You used a wrong format specifier when using DateTimeFormatter.h
 
 As you can see some are coding mistakes while others are completely beyond your control. If your network connection goes wrong there isn't much that you can do to deal with this situation.
 
@@ -221,6 +221,18 @@ private void mightThrow() throws DateTimeParseException, IOException {}
 - The third catch block you cannot SQLException because nothing in the try statement can potentially throw one. Again, just like regular catch blocks any RuntimeException might be caught. However only checked exceptions that have potential to be thrown are allowed to be caught.
 
 # Using Try-With-Resources
+Multi-catch allows you to write code without duplication. Another problem arises with duplication in finally blocks. The followning code shows try-with-resources :
+
+```java
+public void newApproach(Path, path1, Path path2) throws IOException{
+  try(BufferedReader in = Files.newBufferedReader(path1);
+      BufferedReader out = Files.newBufferedReader(path2)){
+        out.write(in.readLine());
+      }
+}
+```
+
+This new code automatically closes all resources opened in the try clause. This feature is also known as *automatic resrouce management* because java automatically takes care of the closing.  
 ## Try-With_resource Basics
 ## AutoCloseable
 ## Suppressed Exceptions
