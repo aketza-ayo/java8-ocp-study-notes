@@ -255,7 +255,86 @@ try(Scanner s = new Scanner(System.in)){
 The problem is that the Scanner object has gone out of scope at the end of the try clause. 
 
 ## AutoCloseable
+You cannot just put any ramdon class in the try-with-resources statement. Java commits to closing automatically any resource opened in the try clause. Here we tell Java to try to close the Turkey class when we are fisnish with it:
 
+```java
+public class Turkey{
+  public static void main(String[] args){
+    try(Turkey t = new Turkey()){         //DOES NOT COMPILE
+      System.out.println(t);
+    }
+  }
+}
+```
+
+Java doesn't allow this. It has no idea how to close Turkey. Java informs us with a compiler error:
+
+```
+The resource type Turkey does not implement java.lang.AutoClosable.
+```
+
+In order for a class to be able to be created in the try clause, Java requires it  to implement an interface called AutoClosable. See below:
+
+```java
+public class Turkey implemets AutoClosable{
+  public void close(){
+    System.out.println("Close gate");
+  }
+  
+  public static void main(String[] args){
+    try(Turkey t = new Turkey()){         //DOES NOT COMPILE
+      System.out.println("put turkeys in");
+    }
+  }
+}
+```
+The AutoClosable interface only has one method to implement:
+
+```
+public void close() throws Exception;
+```
+
+Wait, Turkey didnt throw an exception but that is fine because an overriding method is allowed to declare more specific expections than the parent or even none at all.
+
+The following shows what happens when an Exception is thrown. 
+
+```java
+public class StuckTurkeyCage implements AutoClosable{
+  public void close(){
+    throw new Exception("Cage door does not close");
+  }
+  
+  public static void main(String[] args){
+    try(StuckTurkeyCage t = new StuckTurkeyCage()){     //DOES NOT COMPILE
+      System.out.print("Put turkey in")
+    }
+  }
+}
+
+```
+This code throws a checked exception. And you do know that checked exceptions need to be handled or delcared. This is somethoing that you need to watch for the exam. If the main method declared an Exception, this code would compile. Java stringly recommends that close() does not actually throw Exception. It is better to throw a more specific exception. Java also recommends to make the close() method *idempotent*. That means that the method can be called multiple times without any side effect on subsequent runs. For example, it shouldn't throw an exception or change the state like below the second time. Both of these are allowed but strongly discouraged:
+
+```java
+class ExampleOne implements AutoClosable{
+  public void close() throws IllegalStateException{
+    throw new IllegalStateException("cage door does not close");
+  }
+}
+
+class ExampleTwo implements AutoClosable{
+  public void close() throws Exception{
+    throw new Exception("Cage door does not close");
+  }
+}
+
+class ExampleThree implements AutoClosable{
+  static int COUNT = 0;
+  public void close(){ 
+    COUNT++;
+  }
+}
+```
+ExampleOne is the best implementation. ExampleTwo throws Exception rather than a more specific sublclass, which is not recommended. ExampleThree has a side effect. It changes the state of a variable. Side effects are not recommended. 
 
 ## Suppressed Exceptions
 ## Putting It Together
