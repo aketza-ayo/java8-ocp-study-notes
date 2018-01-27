@@ -33,6 +33,28 @@ See table below for further information:
 ![OCP checked and unchecked exceptions](img/ocpExceptions.png)
 
 ## Try Statement
+The try statement consists of a mandatory try clause. It can include one or more catch clause to handle the exception that are thrown. It can also include a finally clause, which runs regardless of whether the exception is thrown. This is true for both try and try-with-resources statements.
+
+The syntax looks like below:
+
+```
+try{
+  //protected code
+}catch(exception indentifier){
+  //exception handler
+}finally{
+  //finally block
+}
+```
+
+A few notes on the try catch block. A finallt block can only appear as part of a try statement. The finally blok always executes whether or not an exception occurs in the try blocks. 
+
+There is also a rule that says a try statement is required to have either or both the catch and finally clauses. This is true for try statements, but it is not true for try-with-resources statements. 
+
+There are two other rules that you need remeber:
+- Java checked the catch block in the order they appear. it is illegal to declare a subclass exception in a catch block that is lower down in the list than a super class exception because it will be unreachable code.
+- Java will not allow you to declare a catch block for a checked exception type that cannot potentially be thrown by the try clause body. This is again to avoid unreacheable body.
+
 ## Throw vs Throws
 
 # Creating Custom Exceptions
