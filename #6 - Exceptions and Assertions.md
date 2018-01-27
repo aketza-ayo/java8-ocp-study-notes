@@ -56,6 +56,14 @@ There are two other rules that you need remeber:
 - Java will not allow you to declare a catch block for a checked exception type that cannot potentially be thrown by the try clause body. This is again to avoid unreacheable body.
 
 ## Throw vs Throws
+The exam might try to trick you whether you are paying attention to the difference between throw and throws. Remember that throw means an exception is actually beign thrown and throws indicates that method merely has the potential to throw that exception. See code sample below:
+
+```java
+public String getDataFromDatabase() throws SQLException{
+  throw new UnsupportedOperationException();
+}
+```
+
 
 # Creating Custom Exceptions
 
