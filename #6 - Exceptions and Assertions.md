@@ -233,8 +233,30 @@ public void newApproach(Path, path1, Path path2) throws IOException{
 ```
 
 This new code automatically closes all resources opened in the try clause. This feature is also known as *automatic resrouce management* because java automatically takes care of the closing.  
-## Try-With_resource Basics
+
+## Try-With-resource Basics
+You might have noticed that there is no finally block in the try-with-resources code. For the OCA exam you learnt that a try statement must have one or more catch blocks or a finally block. This is still true. The finally still exists implicitly. You just don't have to type it. 
+
+A try-with-resources is stll allowed to have catch and/or finally blocks. They are run in addition to the implicit one. The implicit finally block rins before any programmer-coded code.
+
+The resources created in the try clause are only in the scope within the truy block. See example below:
+
+```java
+try(Scanner s = new Scanner(System.in)){
+  s.nextLine();
+}catch(Exception e){
+  s.nextInt();            //DOES NOT COMPILE
+}finally{
+  s.nextInt();            //DOES NOT COMPILE
+}
+
+```
+
+The problem is that the Scanner object has gone out of scope at the end of the try clause. 
+
 ## AutoCloseable
+
+
 ## Suppressed Exceptions
 ## Putting It Together
 
