@@ -337,6 +337,97 @@ class ExampleThree implements AutoClosable{
 ExampleOne is the best implementation. ExampleTwo throws Exception rather than a more specific sublclass, which is not recommended. ExampleThree has a side effect. It changes the state of a variable. Side effects are not recommended. 
 
 ## Suppressed Exceptions
+What happens if a close method throws an exception? Clearly we need to handle such a condition. We know that resources are closed before any programmer-coded catch blocks are run. This means that we can catch the exception thrown by close() if we wish. Alernatively, we can allow the caller to deal with it. Checked exceptions must be declared or handled. Unlike RuntimeException exceptions. The following code shows how we can catch the exception thrown by close.
+
+```java
+public class JammedTurkeyCage implements AutoClose{
+  public void close() throws IllegalStateException{
+     throw new IllegalStateException("Cage door does not close");
+  }
+  
+  public static void main(String[] args){
+    try(JammedTurkeyCage t = new JammedTurkeyCage()){
+      System.out.println("Put turkeys in");
+    }catch(IllegalStateException e){
+      System.out.println("caught :" + e.getMessage());
+    }
+  }
+}
+```
+
+The close() method is automatically called by try-with-resources and the catch block catches it and prints caught: Cage door does not close. Note if JammedTurkeyCage's close() method threw a checkedException, the try statement needs to catch it, or the main method needs to throw it.   
+
+But, what happens if the try also throws an exception ? Java 7 added a way to accumulate exceptions. When multiple exceptions are thrown, all but the first all called *surpressed exceptions*. The idea is that java treats the first exception as the primary one and turns around on any that come up while automatically closing. For example:
+
+```java
+    try(JammedTurkeyCage t = new JammedTurkeyCage()){
+      throw new IllegalStateException("turkeys run off")
+    }catch(IllegalStateException e){
+      System.out.println("caught :" + e.getMessage());
+      for(Throwable t : e.getSuppresed()){
+        System.out.println(t.getMessage());
+      }
+    }
+```
+
+The try throws the exception. At this point, the try clause ends and Java automatically calls the close() method. It throws an IllegalStateException, which is added as a suppressed exception. Then the catch statement catches the primary exception. The next line prints the message for the primary exception. Then the loop goes through the suppressed exceptions and prints them out. The output is:
+
+```
+caught: turkeys run off
+Cage door does not close
+```
+
+Keep in mind that the catch block looks for matches on the primary exception. What do you thinks this code prints?
+
+```java
+  try(JammedTurkeyCage t = new JammedTurkeyCage()){
+      throw new RuntimeException("turkeys run off")
+    }catch(IllegalStateException e){
+      System.out.println("caught :" + e.getMessage());
+    }
+
+```
+
+The second line throws the primary exception. Java again calls the close() method and adds suppressed exceptions. Line 3 would catch an IllegalStateException. However we don't have any of those. The primary exception is a RuntimeException. Since this does not match the catch clause, the exception is thrown to the called. Eventually the main method would output something like the following:
+
+```
+Exception in thread main java.lang.RuntimeException : turkeys ran off
+  Suppressed: java.lang.IllegalStateException: Cage door does not close
+```
+Java remembers the suppressed exceptions that go witha primary exception even if we don't handle them imn the code. Now see what happens if two exceptions are thrown while closing resources:
+
+```java
+try(JammedTurkeyCage t1 = new JammedTurkeyCage();
+    JammedTurkeyCage t2 = new JammedTurkeyCage()){
+      System.out.println("turkeys entered cage");
+    }catch(IllegalStateException e){
+      System.out.println("caught :" + e.getMessage());
+      for(Throwable t : e.getSuppresed()){
+        System.out.println(t.getMessage());
+      }
+    }
+```
+
+The turkeys enter the cage without exception. The Java tries to close both cages automatically. t2 is closed first, since java closes resources in the reverse order from which they are created. This throws an exception. Since it is the first exception to occur, it becomes the primary exception. Then t1 is closed. Since an exception already been thrown, this one becomes a suppressed exception. The output is:
+
+```
+turkeys entered cages
+caught: Cage door does not close
+Cage door does not close
+```
+
+Finally keep in mind that suppressed exceptions apply only to exceptions thrown in the try clause. The following exception does not throw a suppressed exception:
+
+```java
+  try(JammedTurkeyCage t = new JammedTurkeyCage()){
+      throw new IllegalStateException("turkeys run off");
+    }finally{
+      throw new RuntimeException("and we couldn't find them");
+    }
+```
+
+Second line throws an exception. Then Java tries to close the resource and adds a suppressed exception to it. Now we have a problem. The finally block runs after all this. Since the line in the finally throws an exception, the previous exception is lost. This has and continues to be bad programming practice. We don't want to loose exceptions. 
+
 ## Putting It Together
 
 # Rethrowing Exceptions
