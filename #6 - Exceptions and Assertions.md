@@ -13,7 +13,9 @@ An *exception* is Java's way of saying "I give up. I don't know what to do right
 ## Categories of Exceptions
 Below you can find the hierarchy of the exception classes. Rember that a *runtime exception* or unchecked exceptionmight be caught, but it is not requiered to be caught. A *checked exception* is any class that extends Exception but it is not a runtime exception. A checked exception must follow a declare a delcare rule where they either catch or throw an exception. An error is fatal and should never be caught. While it is legal to cathc an error it is not reccommended.
 
+![Exception Hierarchy](img/exceptionHierarchy.png)
 
+In red are the unchecked exception and in blue checked exceptions.
 
 ## Exceptions on the OCP
 ## Try Statement
