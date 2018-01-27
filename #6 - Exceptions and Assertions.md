@@ -83,8 +83,47 @@ class Dolphin{
 
 ```
 
-## Using Multi-Catch
+The following line shows the most common constructors defined in the Exception class:
+```java
+public class CannotSwimException extends Exception{
+  public CannotSwimgException(){
+    super();
+  } 
+  
+  public CannotSwimgException(Exception e){
+    super(e);
+  } 
+  
+  public CannotSwimgException(String message){
+    super(message);
+  } 
+}
 
+```
+
+The first constructor is default constructor with no param. The second constructor shows how to wrap another exception inside yours. The third one shows how to pass a custome message.
+
+## Using Multi-Catch
+When somethig goes wrong it is common to log the error and convert it a different exception type. In this example we print the stack trace rather than log to a file. Next we throw a expection:
+
+```java
+public static void main(String[] args){
+  try{
+    Path path = Paths.get("dolphinsBorn.txt");
+    String text = new String(Files.readAllBytes(path));
+    LocalDate date = LocalDate.parse(text);
+    System.out.println(date);
+  
+  }catch(DateTimeParseException e){
+    e.printStackTrace();
+    throw new RuntimeException();
+  }catch(IOException e){
+    e.printStackTrace();
+    throw new RuntimeException();
+  }
+}
+
+```
 # Using Try-With-Resources
 ## Try-With_resource Basics
 ## AutoCloseable
