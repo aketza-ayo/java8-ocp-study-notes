@@ -588,3 +588,17 @@ To specify what the error message of the thrown AssertionError should be.
 If a try statement has multiple catch blocks, at most one catch block can run. Java looks for an exception that can be caught by each catch block in the order in which they appear, and the first match is run. Then execution continues after the try statement to appear, and the first match is run. The execution continues after the try statement to the finally gets thrown. Common checked exceptions include ParseException, IOException and SQLException.
 
 Multi-catch allows catching multiple exception types in the same catch block. the types are separated with a pipe. The multiple exception types are not allows to have subclass/superclass relationship. The variable in a multi catch expression is effectively final.
+
+# Review Questions
+Completed the questions in about half an hour and didn't seem to be difficult at all while doing the test. The result is a different story, got %55 therefore it's a fail. There were 2 questions that I didn't know the answer one of which I left blank. Got several questions with not all the correct asnwers so I marked it as wrong.
+
+![Review questions Chapter Six](img/testChapterSix.png)
+
+- When using try-with-resources, all of the opened resources are closed in the reverse order even if an exception is thrown, first the resources are closed and then the exception is thrown.
+- Exception is superclass or RuntimeException.
+- Checking an argument passed from elsewhere in the program is an appropriate use of an assertion.
+- Need to memorize which classes are Exceptions and which ones are RuntimeExceptions.
+- When a single Exception type is caught only the same type or a sybtype is allowed to be assigned to a variable.
+- When usign muti-catch, the variable in the catch block is effectively final.
+- The exception within the catch block becomes the primary exception and it is thrown first. Any subsequent exception that is thrown gets added into suppressed exceptions.
+- The main difference between Closable and autoColsable is that AutoClosable has Exception in the signature and Closable has only IOException in the signature.
