@@ -516,6 +516,38 @@ An assertion throws an AssertionError if it is false. Since program aren't suppo
 - If assertion are disabled, Java skips the assertion and goes on in the code.
 - If assertion are enabled and the boolean expression is true, then our assertion has been validated and nothing happens, The program continues to execute in its normal manner.
 - If assertions are enabled and the boolean expression is false, the our assertion is invalid and java.lang.AssertionError is thrown. 
+
 ## Enabling Assertions
+By default, assert statements are ignored by the JVM at runtime. To enable assertions, use -enableassertions flag on the command line:
+
+```
+java -enableassertions Rectangle
+```
+
+You can also use the shortcut -ea flag:
+
+```
+java -ea Recatable 
+```
+Using the -enableassertion or -ea flag without any arguments enables assertions in all classes except system classes. System classes are classes that are part of the Java runtime. You can think of them as the classes that come with Java. You can also enable assertions for a specifi class or package. For example, the following command enables assertions only for classes in the com.wiley.demos package and any subpackages:
+
+```
+java -ea:com.wiley.demos... my.programs.Main
+```
+
+The three dots means any class in the specified package or subpackages. You can also enable assertions for a specific class:
+
+```
+java -ea:com.wiley.demos.TestColors my.programs.Main
+```
+
+You can dissable assertions using the -disableassertions or -da flag for a specific class or package that was previously enabled. For example, the following command enables assertions for the com.wiley.demos package but disables assertions for the TestColors class:
+
+```
+java -ea:com.wiley.demos... -da:com.widely.demos.TestColors my.programs.Main
+```
+
+If the assertion flag is not enabled then the assert statement is ignored in that situation.
+
 ## Using Assertions
 
