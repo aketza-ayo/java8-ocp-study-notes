@@ -574,6 +574,16 @@ When assertions are turn on, x is incremented to 11 but when assertion are turne
 
 Do not user assertions to check for valid arguments passed in to a method. Use an IllegalArgumentException instead.
 
+A lesser known feature of assert
+
+You can append : "Error message" like this:
+
+```
+assert d != null : "d is null";
+```
+
+To specify what the error message of the thrown AssertionError should be.
+
 # Summary
 If a try statement has multiple catch blocks, at most one catch block can run. Java looks for an exception that can be caught by each catch block in the order in which they appear, and the first match is run. Then execution continues after the try statement to appear, and the first match is run. The execution continues after the try statement to the finally gets thrown. Common checked exceptions include ParseException, IOException and SQLException.
 
