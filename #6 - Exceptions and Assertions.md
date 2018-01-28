@@ -595,7 +595,7 @@ Completed the questions in about half an hour and didn't seem to be difficult at
 ![Review questions Chapter Six](img/testChapterSix.png)
 
 - When using try-with-resources, all of the opened resources are closed in the reverse order even if an exception is thrown, first the resources are closed and then the exception is thrown.
-- Exception is superclass or RuntimeException.
+- Exception is superclass of RuntimeException.
 - Checking an argument passed from elsewhere in the program is an appropriate use of an assertion.
 - Need to memorize which classes are Exceptions and which ones are RuntimeExceptions.
 - When a single Exception type is caught only the same type or a sybtype is allowed to be assigned to a variable.
