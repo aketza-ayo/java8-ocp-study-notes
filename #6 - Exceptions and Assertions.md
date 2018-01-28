@@ -550,4 +550,31 @@ java -ea:com.wiley.demos... -da:com.widely.demos.TestColors my.programs.Main
 If the assertion flag is not enabled then the assert statement is ignored in that situation.
 
 ## Using Assertions
+You can use assertions for many reasons, including the following. You will not be asked to identify the type of assertion in the exam.
 
+- **Internal Invariants** you assert that a value is within a certain constraints. assert x < 0 is an example of an intrenal invariant.
+
+- **Class Invariants** you assert the validity of an object's state. Class invariants are typically private methods within the class the returns boolean.
+
+- **Control Flow Invariants** you assert that a line of code you assume is unreachable is never reached. 
+
+- **Preconditions** you assert that certain conditions are met before a method is invoked.
+
+- **Post Conditions**  you assert that certain conditions are met after a method excutes.
+
+**Assertions should not alter outcomes**
+Because assertions are turn off in a production environment, your assertion should not contain any business logic that affects the putcome of your code. For example the following is not a good approach because it alters the value of a variable:
+
+```
+int x = 10;
+assert ++x > 10;
+```
+
+When assertions are turn on, x is incremented to 11 but when assertion are turned off, the value of x is 10. This is not good because the outcome is different whether the assertions are turned on.
+
+Do not user assertions to check for valid arguments passed in to a method. Use an IllegalArgumentException instead.
+
+# Summary
+If a try statement has multiple catch blocks, at most one catch block can run. Java looks for an exception that can be caught by each catch block in the order in which they appear, and the first match is run. Then execution continues after the try statement to appear, and the first match is run. The execution continues after the try statement to the finally gets thrown. Common checked exceptions include ParseException, IOException and SQLException.
+
+Multi-catch allows catching multiple exception types in the same catch block. the types are separated with a pipe. The multiple exception types are not allows to have subclass/superclass relationship. The variable in a multi catch expression is effectively final.
