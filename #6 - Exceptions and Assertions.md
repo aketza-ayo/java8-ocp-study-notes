@@ -429,8 +429,74 @@ Finally keep in mind that suppressed exceptions apply only to exceptions thrown 
 Second line throws an exception. Then Java tries to close the resource and adds a suppressed exception to it. Now we have a problem. The finally block runs after all this. Since the line in the finally throws an exception, the previous exception is lost. This has and continues to be bad programming practice. We don't want to loose exceptions. 
 
 ## Putting It Together
+You've learned two new rules for the order in which code runs in a try-with-resources statement:
+- Resources are closed after the try clause ends and before any catch/finally clauses.
+- Resources are closed in the reverse order from which they were created.
+
+Based on these rules, can you figure out what this code prints?
+
+```java
+public class Auto implements AutoClosable{
+  int num;
+  Auto(int num){ this.num = num; }
+  public void close(){
+    System.out.println("Close " + num);
+  }
+  
+  public static void main(String[] args){
+    try(Auto a1 = new Auto(1);
+        Auto a2 = new Auto(2)){
+      throw new RuntimeException();
+    }catch(Exception e){
+      System.out.println("ex");
+    }finally{
+      System.out.println("finally");
+    }
+  }
+}
+
+```
+And it prints:
+
+Close: 2
+Close: 1
+ex
+finally
 
 # Rethrowing Exceptions
+It is a common pattern to log and then throw the same exception. Suppose that we have a method that declares two checked exceptions
+
+```java
+public void parseData() throws SQLException, DateTimeParseException{}
+```
+
+When calling this method, we need to handle or declare those two exception types. There are few valid ways of doing this. We could have two catch blocks and duplicate the logic. Or we could use multi-catch:
+
+```java
+public void multiCatch() throes SQLException, DateTimeParseException{
+  try{
+    parseData();
+  }catch(SQLException | DateTimeParseException e){
+    System.err.println(e);
+    throw e;
+  }
+}
+```
+If you notice the list of exceptions in the catch block and the list of exceptions in the method signature of multiCatch() are the same. This is duplication. The solution the Java designers came up with was that they made it legal to write Exception in the catch block but really only a limited set of exceptions. The following code is similar to the preceding example:
+
+```java
+public void rethrowing() throws SQLException, DateTimeParseException{
+  try{
+    parseData();
+  }catch(Exception e){
+    System.err.println(e);
+    throw e;
+  }
+}
+
+```
+
+We still have one catch block. This time Java interprets Exception as the possible exception that can be thrown in the method. As long as all of these checked exceptions are handled or declared, Java is happy. What happens if parseData() throws a NullPointerException? In the multi catch version the exception will not be caught in the catch block and will not be logged into System.err. In the rethrowing example, it will be caught, logged and rethrown. 
 
 # Working with Assertions
 ## The assert Statement
