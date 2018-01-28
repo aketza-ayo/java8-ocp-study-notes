@@ -499,7 +499,23 @@ public void rethrowing() throws SQLException, DateTimeParseException{
 We still have one catch block. This time Java interprets Exception as the possible exception that can be thrown in the method. As long as all of these checked exceptions are handled or declared, Java is happy. What happens if parseData() throws a NullPointerException? In the multi catch version the exception will not be caught in the catch block and will not be logged into System.err. In the rethrowing example, it will be caught, logged and rethrown. 
 
 # Working with Assertions
+An assertion is a Boolean expression that you place at a point in your code where you expect something to be true. The Ebglish definition of the word assert is to state that something is true, which means that you assert that something is true. An assert statement contains this statement along with an optional String message.
+An assertion allows for detecting defects in the code. You can turn on assertions for testing and debbuging while leaving them off when your program is in production.
+
+In the following sections we cover the syntax for using an assertion, how to turn them on/off and common uses of assertion.
+
 ## The assert Statement
+The syntax for an assert statement has two forms:
+
+assert boolean_expression
+assert boolean_expression: error_message;
+
+The boolean expression must evaluate to true or false. It can be inside optional parenthesis. The optional error message is a String used as the message for AssertionError that is thrown.
+
+An assertion throws an AssertionError if it is false. Since program aren't supposed to catch an Error, this means that assertion failures are fatal and end the program. The three possible outcomes of an assert statements are as follows:
+- If assertion are disabled, Java skips the assertion and goes on in the code.
+- If assertion are enabled and the boolean expression is true, then our assertion has been validated and nothing happens, The program continues to execute in its normal manner.
+- If assertions are enabled and the boolean expression is false, the our assertion is invalid and java.lang.AssertionError is thrown. 
 ## Enabling Assertions
 ## Using Assertions
 
