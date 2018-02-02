@@ -225,6 +225,15 @@ For the exam you should be aware that shutdown() does not actually stop any task
 ## Submitting Tasks
 Ypu can submit tasks to an ExecutionService instance multiples ways. The first method we presented, execute(), is inherited from the Executor interface, which the ExecutorService interface extends. The execute() method takes a Runnable lambda expression or instance and completes the task asynchronously. Because the return type of the method is void it does not tell us anything about the result of the task. It is considered "fire and forget" method, as once it is submitted, the results are not directly available to the calling thread. 
 Fortunately, the writers of the Java added submit() methods to the ExecutorService interface, which like execute(), can be use to complete tasks asynchronoulsy. Unlike execute(), though, submit() returns a Future that can be used to determine if the task is complete. It can also be used to return a generic result object after the task has been completed
+
+**Method Name**                  | **Description**
+---------------------------------|---------------
+void execute(Runnable command)           | Executes a Runnable task at some point in the future.  
+Future<?> submit(Runnable task)          | Executes a Runnable task at some point in the future and returns a Future representing tha task.
+<\T>Future<T> submit(Callable<\T> task)   | Executes a Callable task at some point in the future and returns a Future representing the pending results of the task.
+<\T>List<Future<T>> invokeAll(Collection<? extends Callable<\T> tasks>) throws InterrupedException | Executes the given tasks, synchronoulsy returning the results of all tasks as a Collection or Future objects, in the same order they were in the original collection.
+<\T>T invokeAny(Collection<? extends Callable<\T>> tasks) throws InterruptedException, ExecutionException | Executes the given tasks, synchronoulsy returning the result of one of finished tasks, cancelling any unfished tasks.
+
 ### Submitting Task Collections
 ## Waiting for Results
 ## Introducing Callable
