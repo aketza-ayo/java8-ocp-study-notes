@@ -218,6 +218,7 @@ With a single-therad executor, results are guaranteed to be executed in the orde
 ## Shutting Down a Thread Executor
 Once you have finished using a thread executor it is important that you call shutdown() method. A thread executor creates a non-daemon thread on the first task that is executed, so failing to call shutdown() will result in your application never terminating. The shutdown process of a thread executor involves first rejecting any new tasks submitted to the thread executor while continuing to execute any previously submitted tasks. During this time, submitted to the thread executor while it is shutting down, a RejectedExecutionException will be thrown. Onec all active tasks have been completedm isShutdown() and isTerminated() will both return true. See figure below that shows the life cycle of an ExecutorService object.
 
+![ExecutorService life cycle](img/executorServiceCycle.png)
 
 ## Submitting Tasks
 ### Submitting Task Collections
