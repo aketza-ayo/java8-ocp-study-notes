@@ -213,7 +213,7 @@ Printing record: 2
 Printing zoo inventory
 ```
 
-With a single-therad executor, results are guaranteed to be executed in the order in which they are addded to the executor service. Notice that the end text is output while our thread executor tasks are still running. This is because main() method is still an independent thread from ExecutorService, and it can perform tasks while the other thread is running. Onn the other hand, as you will see later in chapter, when we increase the number of threads in the excutor service,  the gurantee disapears
+With a single-therad executor, results are guaranteed to be executed in the order in which they are addded to the executor service. Notice that the end text is output while our thread executor tasks are still running. This is because main() method is still an independent thread from ExecutorService, and it can perform tasks while the other thread is running. On the other hand, as you will see later in chapter, when we increase the number of threads in the excutor service,  the gurantee disapears
 
 ## Shutting Down a Thread Executor
 Once you have finished using a thread executor it is important that you call shutdown() method. A thread executor creates a non-daemon thread on the first task that is executed, so failing to call shutdown() will result in your application never terminating. The shutdown process of a thread executor involves first rejecting any new tasks submitted to the thread executor while continuing to execute any previously submitted tasks. During this time, submitted to the thread executor while it is shutting down, a RejectedExecutionException will be thrown. Onec all active tasks have been completedm isShutdown() and isTerminated() will both return true. See figure below that shows the life cycle of an ExecutorService object.
@@ -236,10 +236,62 @@ Future<?> submit(Runnable task)          | Executes a Runnable task at some poin
 
 In practice using the submit() method is quite similar to using the execute() method, except that the submit() method return a Future object that can be used to determine whether or not the task has completed execution. Don't worry if you haven't seen Future or Callable before we will discuss them in detail shortly. We use and prefer the submit() method in the majority of the cases and it this chapter we will use submit() as a result. For the exam you need to be familiar with both execute() and submit(), but in your own code we recommend submit() over execute() whenver possible.
 
-
-
 ### Submitting Task Collections
+The last two methods in the table above that you should know for the exam are invokeAll() and invokeAny(). Both of these methods take a Collection object containing a list of tasks to execute. Both of these methods also execute synchronously. By synchronously, we mean that unlike other methods used to submit tasks to a thread executor, these methods will wait until the results are available before returning control to the enclosing program.
+
+The invokeAll() method executes all tasks in a provided collection and returns a List of ordered Future objects, with one Future object corresponding to each submitted task, in the order they were in the original Collection. Even though Future.isDone() returns true for each element in the returned List, a task could have completed normally or thrown an exception. The invokeAny() method executes a collection of tasks and returns the result of one of the tasks that succesfully completes execution, cancelling all unfinished tasks. While the first task to finish is often returned, this behaviour is not guaranteed, as any completed task can be returned by this method. Finally, the invokeAll() method will wait indefinitely until all tasks are complete, while the invokeAny() method will wait indefinitely until at least one task completes. The ExecutorService interface also includes overloaded versions of invokeAll() and invokeAny() that takes a timeout value and TimeUnit parameter. We will see how to use these types of parameters in the next section when discussing the Future class.
+
 ## Waiting for Results
+How do we know when a task submitted to an ExecutorService is complete? AS mentioned in the last section, the submit() method returns a java.util.concurrent.Future<V> object, or Future<V> for short, that can be used to determine this result:
+  
+```
+Future<?> future = service.submit(() -> System.out.println("Hello Zoo"));
+```
+The Future class includes methods that are useful in determining the state of a task, as shown in the table below:
+
+**Method Name**                    | **Description**
+-----------------------------------|-------------------------------------------------------------------------------------
+boolean isDone()                   | Returns true if the task was completed, threw an exception, or was cancelled.
+boolean isCancelled()              | Returns true if the task was cancelled before it completed normally
+boolean cancel()                   |  Attempts to cancel execution of the task
+V get()                            |  Retrieves the result of a task, waiting endlessly if it is not yet available.
+V get(long timeout, TimeUnit unit) | Retrieves the result of a task, waiting the specified amount of time. if the result is not ready by the time the timeout is reached, a checked TimeoutException will be thrown.
+
+The following is an updated version of our earlier polling example CheckResults class,which uses a Future instance to poll for the results:
+
+```java
+import java.util.concurrent.*;
+
+public class CheckResults{
+
+  private static int counter = 0;
+  public static void main(String[] args) throws InterruptedException, ExecutionException{
+      ExecutorService service= null;
+      try{
+        service = Executor.newSingleThreadExecutor();
+        Future<?> result = service.submit(() -> {
+          for(int i = 0; i < 500; i++) CheckResults.counter++;
+        });
+        result.get(10, TimeUnit.SECONDS);
+        System.out.println("Reached!");
+      }catch(TimeoutException e){
+        System.out.println("Not reached in time")
+      }finally{
+        if(service != null) service.shutdown();
+      }
+  }
+}
+```
+
+This example is similar to our ealier polling implementation, but it does not use the Thread class directky. In part, this is the essence of the Concurrency API: to do complex things with threads without using Thread class directly. It also waits at most 10 seconds, throwing a TimeoutException if the task is not done. What is the return value of this task? As Future<V> is a generic class, the type V is determined by the return type of the Runnable method. Since the return type of Runnable.run() is void, the get() method always returns null. In the next section, you will see that there is  another task class compatible with ExecutorService that supports other return types. As you saw in the previous example, the get() method can take an optional value and enum type java.util.concurrent.TimeUnit. We represent the full list of TimeUnit values in the table below in increasin order of duration. Note that numerous methods in the Concurrency API use the TimeUnit enum. The TimeUnit values are:
+- TimeUnit.NANOSECONDS
+- TimeUnit.MICROSECONDS
+- TimeUnit.MILLISECONDS
+- TimeUnit.SECONDS
+- TimeUnit.MINUTES
+- TimeUnit.HOURS
+- TimeUnit.DAYS
+  
 ## Introducing Callable
 ## Waiting for All Tasks to Finish
 ## Scheduling Tasks
