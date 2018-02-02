@@ -58,9 +58,116 @@ Notice that all of these lambda expressions start with a set of empty parenthese
 These examples are invalid Runnable expressions because they each returns a value. In this chapter we focus on creating lambda expressions that implicitly implement the Runnable interface.
 
 ## Creating a Thread
+The simplest way to execute a thread is using java.lang.Thread class, or Thread for short. Defining the task, or work, that a Thread instance will execute can be done two ways in Java:
+- Provide a Runnable object or lambda expression to the Thread constructor.
+- Create a class that extends Thread and overrides the run() method.
+
+The following are examples of these techniques. One way implementing Runnable:
+```java
+
+public class PrintData implements Runnable{
+  public void run(){
+    for(int i = =; i < 3; i++){
+      System.out.println("Printing record:" + i);
+    }
+  }
+  
+  public static void main(String[] args){
+    (new Thread(new PrintData())).start();
+  }
+}
+
+```
+The other extending Thread:
+
+```java
+public class ReadInventoryThread extends Thread{
+  public void run(){
+    System.out.println("Printing zoo inventory");
+  }
+  
+  public static void main(String[] args){
+    (new ReadInventoryThread()).start();
+  }
+}
+
+```
+
+Anytime you create a Thread instance, make sure that you remember to start the task with the Thread.start() method. This starts the task in a separate OS thread. For example, what is the output of the following examples?
+
+```java
+public static void main(String[] args){
+  System.out.println("begin");
+  (new ReadInventoryThread()).start();
+  (new Thread(new PrintData())).start();
+  (new ReadInventory()).start();
+  System.out.println("end");
+}
+
+```
+
+The answer is that it is unknown until runtime. For example, the following is just one possible output:
+
+```
+begin
+Pinting zoo inventory
+Printing record: 0
+end
+Printing zoo inventory
+Printing record: 1
+Printing record: 2
+```
+This example uses a total of four threads - the main() user thread and three additional threads created by the main() method. While the order of execution once the threads have been started is indeterminate, the order within a single thread is still linear. For example, the for() loop in PrintData is still ordered, as is the end appearing after the begin in the main() method. On the exam, be careful about cases where the Thread or Runnable is created but no start() method is called. While the code will compile, none will actually execute a task on a separate processing thread. Instead, the thread that made the call will be used to execute the task causing the thread to wait until each run() method is complete before moving on to the next line. 
+
+```
+new PrintData().run();
+(new Thread(new PrintData()).run();
+(new ReadInventoryThread()).run();
+```
+
+In general you should extend thread under very specific circustances, such as when you are creating your own priority-based thread. In most situations you should implement Runnable interface rather than extend the Thread class. The OCP 8 exam strongly encourages developers to use the Concurrency API to create and manage Thread objects for them.
+
 ## Polling with Sleep
+Often you need a thread to poll for a result to finish. *Polling* is the process of intermittnely checking data at some fixed interval. For example see example below:
+```java
+public class CheckResults{
+  private static int counter = 0;
+  public static void main(String[] args){
+    new Thread(() -> {
+      for(int i = 0; i < 500; i++){ CheckResult.counter++; }
+    }).start();
+    
+    while(CheckResult.counter < 100){
+      System.out.println("Not reached yet");
+    }
+    System.out.println("Reached!");
+  }
+}
+```
+
+How many times will the while() loop execute and output "Not reached yet?" the answer is, we don't know! It could be zero, ten, or a million times. If our thread scheduler is poor, it could operate infinitely! Using a while() loop to check for data without any delay is considered a very bad coding practice as it ties up with the CPU resources for no reason. We can improve the example by using Thread.sleep() method to implement polling. The Thread.sleep() method requests the current thread of execution rest for a specific number of miliseconds. When used inside the body of the main() method, the thread associated with the main() method will pause, while the separate thread will cointinue to run. Compare the previous implementation with the following one that uses Thread.sleep():
+
+```java
+public class CheckResults{  
+  private static int counter = 0;  
+  public static void main(String[] args) throws InterrupedException{    
+    new Thread(() -> {      
+      for(int i = 0; i < 500; i++){ CheckResult.counter++; }    
+    }).start();        
+    
+    while(CheckResult.counter < 100){      
+      System.out.println("Not reached yet");    
+      Thread.sleep(1000);
+    }    
+    System.out.println("Reached!");  
+  }
+}
+```
+
+While this might seems an small amount, we have prevented a possible infinite loop from executing and locking up our main program. Notice that we also changed the signature of the main method. That is because the sleep method throws a checked exception. Alaternatively we could have used try-catch block insisde the loop. Nother issue to be concerned about is the shared counter variable. What if one thread is reading the counter variable while another thread is writing it? The thread reading the shared variable may end up with an invalid or incorrect value. We will discuss these issues in detail in the upcoming section on synchronization.
 
 # Creating Thread with the ExecutorService
+
 ## Introducing the Single-Thread Executor
 ## Shutting Down a Thread Executor
 ## Submitting Tasks
