@@ -20,11 +20,43 @@ The property of executing multiple threads and processes at the same time is ref
 Finally, a thread can interrupt or supersede another thread if it has a higher thread priority than the other thread. A *thread priority* is a numeric value associated with a thread should currently be executing . In Java, thread priorities are specified as integer values. The Thread class includes 3 static constants. Bu default, user defined threads receive a thread priority value of Thread.NORM_PRIORITY. If you have a thread that needs to be executed right away, you can increase this value to 6 or higher or use the Thread.MAX_PRORITY. If two threads have the same priority, the thread scheduler will arbitrarily choose the one to process first in most situations.
 
 See below the Java thread priority constants
+
 Thread.MIN_PRIORITY = value 1
+
 Thread.NORM_PRIORITY = value 5
+
 Thread.MAX_PRIORITY = value 10
 
+
 ## Introducing Runnable
+Runnable is a functional interface that takes no arguments and returns no data. The following is the definition
+
+```java
+@FunctionalInterface
+public interface Runnable{
+  void run();
+}
+
+```
+
+The runnable intreface is commonly used to define the work a thread will execute, separate from the main application thread. We will be relying on the Runnable interface throughout this chapter. The following lambda expressions each rely on the Runnable interface:
+```
+() -> System.out.println("Hello World");
+() -> {int 1 = 10; i++;}
+() -> {return;}
+() -> {}
+```
+
+Notice that all of these lambda expressions start with a set of empty parentheses, (). Also notice that none of them return a value. For these reason the following lambdas while valid for other functional interfaces, are not compatible with Runnable:
+
+```
+() -> ""
+() -> 5
+() -> {return new Object();}
+```
+
+These examples are invalid Runnable expressions because they each returns a value. In this chapter we focus on creating lambda expressions that implicitly implement the Runnable interface.
+
 ## Creating a Thread
 ## Polling with Sleep
 
