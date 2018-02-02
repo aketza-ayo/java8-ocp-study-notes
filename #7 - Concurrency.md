@@ -167,8 +167,54 @@ public class CheckResults{ 
 While this might seems an small amount, we have prevented a possible infinite loop from executing and locking up our main program. Notice that we also changed the signature of the main method. That is because the sleep method throws a checked exception. Alaternatively we could have used try-catch block insisde the loop. Nother issue to be concerned about is the shared counter variable. What if one thread is reading the counter variable while another thread is writing it? The thread reading the shared variable may end up with an invalid or incorrect value. We will discuss these issues in detail in the upcoming section on synchronization.
 
 # Creating Thread with the ExecutorService
+With the announcement of the Concurrency API, Java introduced the ExecutorService, which creates and manages threads for you. You first obtain an instance of an ExecutorService interface, and the you send the service task to be processed. The framework includes numerous useful features, such as thread pooling and scheduling  which would be cumbersome for you to implement in every project. Therefore, it is recommended that you use this framework anytime you need to create and execute a separate task, even if you need only a single thread.
 
 ## Introducing the Single-Thread Executor
+Since ExecutorService is an interface, how do you obtain an instance fo it? The Concurrency API includes the Executors factory class that can be used to create instances of the ExecutorService object. As you may remember the factory pattern is a creational pattern in which the underlying implementation details of the object creation are hidden from us. Let's start with a simple example using the ```newSingleThreadExecutor()``` method to obtain an ExecutorService instance and the execute() method to perform asynchronous task:
+
+```java
+import java.util.concurrent.*;
+
+public class ZooInfo{
+  public static void main(String[] args){
+    
+    ExecutorService = null;
+    
+    try{
+      service = Executor.newSingleThreadExecutor();
+      
+      System.out.println("begin");
+      service.execute(() -> System.out.println("Printing zoo inventory"));
+      service.execute(() -> {
+        for(int i = 0; i < 3; i++){
+          System.out.println("Printing record: " + i);
+        }
+      });
+      service.execute(() -> System.out.println("Printing zoo inventory"));
+      System.out.println("begin");
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+  
+}
+
+```
+
+As you may notice, this is just a rewrite of our earlier PrintData and RreadInventoryThread clases to use Runnable-based lambda expressions and an ExecutorService instance. In this example, we used the newSingleThreadExecutor() method, which is the simplest ExecutorService that we could create. Unlike our earlier example, in which we had three extra threads for newly created tasks, this example uses only one, which means that the threads will order their results. For example the following is a possible output:
+
+```
+begin
+Pinting zoo inventory
+Printing record: 0
+Printing record: 1
+end
+Printing record: 2
+Printing zoo inventory
+```
+
+With a single-therad executor, results are guaranteed to be executed in the order in which they are addded to the executor service. Notice that the end text is output while our thread executor tasks are still running. This is because main() method is still an independent thread from ExecutorService, and it can perform tasks while the other thread is running. Onn the other hand, as you will see later in chapter, when we increase the number of threads in the excutor service,  the gurantee disapears
+
 ## Shutting Down a Thread Executor
 ## Submitting Tasks
 ### Submitting Task Collections
