@@ -390,6 +390,20 @@ Note that we could implicitly cast an instance of ScheduleExecutorService to Exe
 
 ![Scheduled Executor Service Methods](img/scheduledExecutorServiceMethods.png)
 
+In practice, these methods are the most convenient in the Concurrency API, as they perform complex tasks with a single line of code. The first two methods take a Callable or a Runnable, perform the task after some delay, and return a ScheduledFuture<V> instance. ScheduledFuture<V> is identical to Future<V> class, except that it includes a getDelay() method that returns the delay set when the process was created. The following uses the schedule() method with Callable and Runnable task.
+  
+```java
+ScheduleExecutorService service = Executor.newSingleThreadScheduledExecutor();
+
+Runnable task1 = () -> System.out.println("Hello Zoo");
+Callable<String> task2 = () -> "Monkey";
+
+Future<?> result1 = service.schedule(task1, 10, TimeUnit.SECOND);
+Future<?> result2 = service.schedule(task2, 8, TimeUnit.MINUTES);
+```
+
+The first task is scheduled 10 seconds in the future, whereas the second task is scheduled 8 minutes in the fuuture. Note that these task are scheduled in the future, the actual execution may be delayed. For example, there may be no threads available to perform the task, at which point they will just wait in the queue. Also, if the ScheduledExecutorService is shutdown by the time the scheduled task execution is reached they will be discarded.
+
 ## Increasing Concurrency with Pools
 # Synchronizing Data Access
 ## Protecting Data with Atomic Classes
