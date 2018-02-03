@@ -404,6 +404,24 @@ Future<?> result2 = service.schedule(task2, 8, TimeUnit.MINUTES);
 
 The first task is scheduled 10 seconds in the future, whereas the second task is scheduled 8 minutes in the fuuture. Note that these task are scheduled in the future, the actual execution may be delayed. For example, there may be no threads available to perform the task, at which point they will just wait in the queue. Also, if the ScheduledExecutorService is shutdown by the time the scheduled task execution is reached they will be discarded.
 
+The last two method in the table above might be a little confusing if you have not seen them before. They both seem to be similar. The difference is related to the timing of the process and when the next task starts. The ```scheduleAtFixedRate()``` method creates a new task and submits it to the executor every period, regardless of whether or not the previous task finished. The following example executes a Runnable task every minute, following an initial five minute delay.
+
+```
+service.scheduleAtFixedRate(command, 5, 1, TimeUnit.MINUTE);
+```
+
+One risk of using this method is that a task could consistently take longer to run than the period between tasks. Despite the fact that the task is still running, The ScheduledExecutorService would summit a new task to be started every minute. is a single thread executor was used, over time this would result in endless set tasks beign scheduled, which would run back to back assuming that no other tasks were submitted to the ScheduledExecutorService. On the other hand, the scheduledAtFixedDelay() method creates a new task after the previous task has finished. For example, if the first task runs at 12:00 and takes five minutes to finish, with a period of 2 minutes, then the second task will start at 12:07.
+
+```
+service.scheduleAtFixedDelay(command, 0, 2, TimeUnit.MINUTE);
+```
+Notice that neither of the methods, scheduleAtFixedRate() and scheduleAtFixedDelay() take a callable object as a input parameter. Since these tasks are scheduled to run infinetly, as long as the ScheduledExecutorService is still alive, the would generate an endless series of Future objects.
+
+Each of the ScheduledExecutorService methods is important and has real-world applications. For example, you can use the schedule() command to check on the state of processing a task and send out notifications if it is not finished or even call schedule() again to delay processing.
+
+The scheduleAtFixedRate() is useful for tasks that need to be run at specific intervals, such as checking the health of the animals once a day. Even if it takes two hours to examine an animal on Monday, this does not mean that Tuesday examination will start any later.
+
+Finally, scheduleAtFixedDelay() is useful for process that you want to happen repeately but whose specific time is unimportant. For example, imagine that we have a zoo cafeteria worker who peridically restock the salad bar throughout the day. The process can take 20 min or more, since it is requires the worker to haul a large number of items from the back room. Once the worker has filled the salad bar with fresh food, he doesnt need to check at some specific time, just after enough time has passed for it to become low on stock again.
 ## Increasing Concurrency with Pools
 # Synchronizing Data Access
 ## Protecting Data with Atomic Classes
