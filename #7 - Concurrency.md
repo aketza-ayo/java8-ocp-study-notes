@@ -357,6 +357,30 @@ service.submit(() -> {Thread.sleep(1000); });
 The first line compile, while the second line does not. Why? recall that Thread.sleep() throws a checked InterruptedException. Since the first lambda expression has a return type, the compiler treats this as Callable expression that supports checked exceptions. The second lambda expression does not have a return value; therefore the compiler treats it as Runnable expression. And Runnable does not support checked exceptions , the compiler reports an error and does not compile this code.
 
 ## Waiting for All Tasks to Finish
+After submitting a set of tasks to a thread executor, it is common to wait for the resut. One solution is to call ```get()``` method on each Future object  returned by the ```submit()``` method. If we don't need the results of the tasks and are finished using our thread executor, there is a much simpler approach. First we shutdown the tread executor using ```shutdown()``` method. Next, we use the ```awaitTermination(long timeout, TimeUnit unit)``` method available for all thread executors. The method waits the specified time to complete all tasks, returning sooner if all task finish or an InterruptedException is detected. You can see an example of this in the following cde snippet:
+```java
+ExecutorService service = null;
+try{
+  service = ExecutorService.newSingleThreadExecutor();
+  
+  //add tasks to the thread executor
+  
+}finally{
+  if(service != null) service.shutdown();
+}
+
+if(service != null){
+  service.awaitTermination(1, TimeUnit.MINUTES);
+  //Check whether all tasks are finished
+  if(service.isTerminated()){
+  `System.out.println("All tasks are finished");
+  }else{
+    System.out.println("At least one task is still running");
+  }
+}
+```
+In this example we submit a number of tasks to the thread executor and then shutdown the thread executor and wait up to one minute for the result. Notice that we call isTerminated() after awaitTermination() method finishes to confirm that all tasks are actually finished.
+
 ## Scheduling Tasks
 ## Increasing Concurrency with Pools
 # Synchronizing Data Access
