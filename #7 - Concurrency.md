@@ -283,7 +283,7 @@ public class CheckResults{
 }
 ```
 
-This example is similar to our ealier polling implementation, but it does not use the Thread class directky. In part, this is the essence of the Concurrency API: to do complex things with threads without using Thread class directly. It also waits at most 10 seconds, throwing a TimeoutException if the task is not done. What is the return value of this task? As Future<V> is a generic class, the type V is determined by the return type of the Runnable method. Since the return type of Runnable.run() is void, the get() method always returns null. In the next section, you will see that there is  another task class compatible with ExecutorService that supports other return types. As you saw in the previous example, the get() method can take an optional value and enum type java.util.concurrent.TimeUnit. We represent the full list of TimeUnit values in the table below in increasin order of duration. Note that numerous methods in the Concurrency API use the TimeUnit enum. The TimeUnit values are:
+This example is similar to our ealier polling implementation, but it does not use the Thread class directky. In part, this is the essence of the Concurrency API: to do complex things with threads without using Thread class directly. It also waits at most 10 seconds, throwing a TimeoutException if the task is not done. What is the return value of this task? As Future<V> is a generic class, the type V is determined by the return type of the Runnable method. Since the return type of Runnable.run() is void, the get() method always returns null. In the next section, you will see that there is  another task class compatible with ExecutorService that supports other return types. As you saw in the previous example, the get() method can take an optional value and enum type java.util.concurrent.TimeUnit. We represent the full list of TimeUnit values in the table below in increasing order of duration. Note that numerous methods in the Concurrency API use the TimeUnit enum. The TimeUnit values are:
 - TimeUnit.NANOSECONDS
 - TimeUnit.MICROSECONDS
 - TimeUnit.MILLISECONDS
@@ -293,6 +293,69 @@ This example is similar to our ealier polling implementation, but it does not us
 - TimeUnit.DAYS
   
 ## Introducing Callable
+When Concurrency API was released in Java 5 the java.util.concurrent.Callable interface was added. It is similar to Runnable except that its ```call()``` method returns a value and can throw a checked exception. As you may remember from the definition of Runnable, the ```run()``` method returns void and cannot throw any checked exceptions. Along with Runnable, Callable was also made a funcionalInterface in Java 8. The following is the definition of the Callable interface:
+```java
+@FunctionaInterface
+poublic interface Callable<V>{
+  V call() throws Exception;
+}
+```
+The Callable interface was introduced as an alternative to the Runnable interface, since it allows more details to be retrieved easily from the task after it is completed. The ExecutorService includes an overloaded version of the ```submit()``` method that takes a Callable object and returns a generic Future<T> object.
+  
+:yin_yang: **Ambiguous Lambda Expressions: Callable vs. Supplier** The Callable functional Interface strongly resembles the Supplier functional interface , in that they both take no arguments and return a generic type. Once difference is that Callable can throw a checked exception. How do you tell lambda expression for these two parts? The answer is that sometimes you cannot. See the following example:
+```java
+public class AmbiguousLambdaExample{
+  public static void useCallable(Callable<Interger> expression){}
+  public static void useSupplier(Supplier<Interger> expression){}
+  public static void use(Callable<Interger> expression){}
+  public static void use(Supplier<Interger> expression){}
+  
+  public static void main(String[] args){
+    useCallable(() -> {throw new IOException();});    // COMPILES
+    useSupplier(() -> {throw new IOException();});    // DOES NOT COMPILE
+    use(() -> throw new IOEXception(););              // DOES NOT COMPILE
+  }
+}
+
+```
+The first line of the main method compiles as Callable is permitted to throw checked exception, unlike the Supplier in the second line. What about last line? the use method is overloaded but the compiler does not take into account the fact that the body of the lambda expression happens to throw an exception; when the compiler does not what to do it reports an error and does not compile. When the compiler is unable to assign a functional interface to a lambda expression, it is referred to as an ambiguous lambda expression. Note that ambiguity can be resolved with an explicit cast. For example the following will compile:
+
+```java
+use((Callable<Integer>)() -> {throw IOException()};);   // COMPILES
+```
+
+Unlike Runnable in which the ```get()``` method always returns null, the ```get()``` methods on the Furute object return the matching generic type or null.
+
+Let's take a look to some examples:
+
+```java
+import java.util.concurrent.*;
+
+public class AddData{
+  public static void main(String[] args) throws InterruptedException, ExecutionException{
+    ExecutorService service = null;
+    try{
+      service = Executor.newSingleThreadExecutor();
+      Future<Integer> result = service.submit(() -> 30 + 11);
+      System.out.println(result.get());
+    
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+}
+```
+We can now retrieve and print the output of the Callable results, 41 in this example. The results could have also been obtained using Runnable and some shared, possibly static, object, although this solution using Callable is a lot simpler to follow. The Callable and Runnable interface are interchangeable is some situations where the lambda does not throw an exception and there is no return type.
+
+**Checked Exceptions in Callable and Runable:** Besides having a return type the Callable interface also supports Checked Exceptions, whereas the Runnable interface does not without an embedded ```try/catch``` block. Given an instance of ExecutionService called service, which of the following lines of code will compile or not?
+
+```java
+service.submit(() -> {Thread.sleep(1000); return null; });
+service.submit(() -> {Thread.sleep(1000); });
+```
+
+The first line compile, while the second line does not. Why? recall that Thread.sleep() throws a checked InterruptedException. Since the first lambda expression has a return type, the compiler treats this as Callable expression that supports checked exceptions. The second lambda expression does not have a return value; therefore the compiler treats it as Runnable expression. And Runnable does not support checked exceptions , the compiler reports an error and does not compile this code.
+
 ## Waiting for All Tasks to Finish
 ## Scheduling Tasks
 ## Increasing Concurrency with Pools
