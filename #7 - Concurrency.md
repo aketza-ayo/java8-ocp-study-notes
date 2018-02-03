@@ -382,6 +382,14 @@ if(service != null){
 In this example we submit a number of tasks to the thread executor and then shutdown the thread executor and wait up to one minute for the result. Notice that we call isTerminated() after awaitTermination() method finishes to confirm that all tasks are actually finished.
 
 ## Scheduling Tasks
+Oftentimes in Java, we need to schedule a tasks to happen at some point in the future time. We might even need to schedule the task to happen repeatedly, at some set interval. For example, imagine you want to check the food supply of zoo for the animals once an hour and fill it as needed. The ```ScheduleExecutorService``` which is a subinterface of ExecutorService, can be used for just such task. Like ```ExecutorService``` we obtain an instance of ```ScheduleExecutorService``` using a factory method in the Executors class, see below:
+```
+ScheduleExecutorService service = Executors.newSingleThreadScheduledExecutor();
+```
+Note that we could implicitly cast an instance of ScheduleExecutorService to ExecutorSerice, although doing so will remove the scheduled method that we want to use.
+
+![Scheduled Executor Service Methods](img/scheduledExecutorServiceMethods.png)
+
 ## Increasing Concurrency with Pools
 # Synchronizing Data Access
 ## Protecting Data with Atomic Classes
