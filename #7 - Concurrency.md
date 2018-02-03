@@ -422,7 +422,38 @@ Each of the ScheduledExecutorService methods is important and has real-world app
 The scheduleAtFixedRate() is useful for tasks that need to be run at specific intervals, such as checking the health of the animals once a day. Even if it takes two hours to examine an animal on Monday, this does not mean that Tuesday examination will start any later.
 
 Finally, scheduleAtFixedDelay() is useful for process that you want to happen repeately but whose specific time is unimportant. For example, imagine that we have a zoo cafeteria worker who peridically restock the salad bar throughout the day. The process can take 20 min or more, since it is requires the worker to haul a large number of items from the back room. Once the worker has filled the salad bar with fresh food, he doesnt need to check at some specific time, just after enough time has passed for it to become low on stock again.
+
 ## Increasing Concurrency with Pools
+All of our examples up until now have been with single-thread executors, which, while interesting , weren't particularly useful. After all, the name of this chapter is "Concurrency",and you can't do a lot of that with a single-thread executors!
+We now present three additional factory methods in the Executor class that act on a pool of threads, rather than on a single thread. A *thread pool* is a group of pre-instantiated reusable threads that are available to perform a set of arbitrary tasks. The table below includes our two previous single-thread executor methods, along with the new one that you should know for the exam.
+
+**Method Name**                           |  **Return type**  | **Description**
+------------------------------------------|-------------------|-------------------------------------------------------------
+newSingleThreadExecutor()                 | ExecutorService   | Creates a single threaded executor that uses a single worker thread operating off an unbounded queue. Results are processed sequentially in order in which they are submitted.
+newSingleThreadScheduledExecutor()        | ScheduledExecutorService | Creates single-threaded executor that can schedule commands to run after a given delay or to execute periodically.
+newCachedThreadPool()                     | ExecutorService  | Creates a thread pool that creates new threads as needed, but will reuses previously constructed threads when they are available.
+newFixedThreadPool(int nThreads)          | ExecutorService  | Creates a thread pool that reuses a fixed number of threads operating off a shared unbounded queue.
+newScheduledThreadPool(int nThreads)      | ScheduledExecutorService | Creates a thread pool that can schedule commands to run after a given delay or to execute periodically.
+
+
+
+As shown in table above these methods return the exact same instance types, ExecutorService and ScheduledExecuterService that we used earlier in this chapter. In other words, all of our previous examples are compatible with these new pooled-thread executors! There are also overloaded versions of each of the methods in the table above that create threads using a ThreadFactory input parameter. For the exam, you are only required to know the methods to create thread executors in the table above.
+
+The difference betwen a single-thread and a pooled-thread executor is what happends when a task is already running. While a single-thread executor will wait for an available thread to become available before running the next task, a pooled-thread executor can execute the next task concurrently. If the pool runs out of available threads, the task will be queued by the thread executor and wait to be completed.
+
+The newCachedThreadPool() method will create a thread pool of unbounded size, allocating a new thread anytime one is required or all existing threads are busy. this is commonly used for pools that require executing many short-lived asynchronous tasks. For long-lived processes, usage of this executor is strongly dioscouraged, as it could grow to encompass a large number of threads over the application life cycle.
+
+The newFixedThreadPool() takes a number of threads and allocates them all upon creation. As long as our number of tasks is less than our number of threads, all tasks will be executed concurrently. If at any point the number of tasks exceed the number of threads in the pool, they will wait in similar manner as you saw with a single-thread executor. In fact, calling newFixedThreadPool() with a value of 1 is equivalent to calling newSingleThreadExecutor().
+
+The newScheduledThreadPool() is indentical to the newFixedThreadPool() method, except that it returns an instance of ScheduledExecutorService and is therefore compatible with scheduling tasks. This executor has subtle differences in the way that the scheduleAtFixedRate() performs. For example, recall our previous example in which tasks took five minutes to complete:
+
+```
+ScheduledExecutorService service = Executors.newScheduledThreadPool(10);
+service.scheduleAtFixedRate(command, 3, 1, TimeUnit.MINUTE);
+```
+
+Whereas with a single-thread executor and five-minutes task execution time, an endless set of tasks would be scheduled over time. With a pooled executor, this can be avoided. if the pool size is sufficiently large, 10 for example, then as each thread finishes, it is returned to the pool and results in new threads available for the next tasks as they come up.
+
 # Synchronizing Data Access
 ## Protecting Data with Atomic Classes
 ## Improving Access with Synchronized Blocks
