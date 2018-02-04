@@ -836,6 +836,9 @@ try{
 This exam creates a LinkedBlockingDeque and assigns it to a BlockingDeque rederence. Since BlockingDeque extends Queue, deque and BlockingQueue, all of the previously defined queue methods are available for use.
 
 ## Understanding SkipList Collections
+The SkipList classes, ConcurrentSkipListSet and ConcurrentSkipListMap, are concurrent versions of their sorted counterparts, TreeSet and TreeMap respectively. They maintein their elements or keys in the natural ordering of their elements. When you see SkipList or SkipSet on the exam, just think "sorted" concurrent collections and the rest should follow naturally.
+Like other queue examples, it is recommeded that you assign these objects to interface references, such as SortedMap or NavigableSet. In this manner, using them is the same as the code that you worked with in Chapter 3.
+
 ## Understanding CopyOnWrite Collections
 ## Obtain Synchronized Collections
 
