@@ -608,7 +608,7 @@ public class SheepManager{
 }
 ```
 
-When this code ezxecutes, it will consistenly output the following:
+When this code executes, it will consistenly output the following:
 ```
 1 2 3 4 5 6 7 8 9 10
 ```
@@ -629,7 +629,47 @@ private void incrementAndReport(){
 Although we didn't need to make the lock variable final, doing so ensured that is not reassigned after threads starts using it. Note that we could have used an atomic count variable along with the synchronized block in this example, although it is unnecessary. Since synchronized blocks allow only one thread to enter, we're not ganing any improvement by using an atomic variable only time that we access the variable is within synchronized block.
 
 ## Synchronizing Methods
+In the previous example, we estabilished our monitor using ```synchronized(this)``` around the body of the method. Java actually provides a more convenient compiler enhancement for doing so. We can add the synchronized modifier to any instance method to syncronize automatically on the objet itself. For example, the follosing two method definitions are equivalent:
+
+```java
+private void incrementAndReport(){
+  synchronized(this){
+    System.out.println((++sheepCount) + " ");
+  }
+}
+
+private synchronized void incrementAndReport(){  
+  System.out.println((++sheepCount) + " ");
+}
+```
+
+The first uses a synchronized block whereas the second method uses a synchronized method modifier. Which one you use if completely up to you. We can also add the synchronzed modifier to static methods. What object is used as the monitor when we synchronize on a static method? The class object, of course! For example the following two methods are equivalent for static synchronization inside our SheepManager class:
+
+```java
+public static void printDaysWork(){
+  synchronized(SheepManager.class){
+    System.out.println("Finished work");
+  }
+}
+
+public static synchronized void printDaysWork(){
+  System.out.println("Finished work");
+}
+```
+
+As before, the first uses a synchronized block, with the second example using the synchronized modifier. You can use static synchronization if you need to order thread access across all instances, ratrher trhan a single instance.
+
 ## Understanding the Cost of Synchronization
+We complete this section by noting that synchronization, while useful, may be constly in practice. While multi-threaded programming is about doing multiple things at the same time, synchronization is about taking multiple threads and making them perform in a more single threaded manner.
+For example, let's say that we have a highly concurrent class with numerous methods that synchronize on the same object. Let's say that 50 concurrent thread access it. Let's also say that, on average, each thread takes a modes 100 millisecs to execute. In this example, if all of the threads try to access the lock/monitor at the same time, how long will it take for them to complete their work, assuming that 50 threads are available in the thread pool?
+
+```
+50 threads * 100 millisecs
+  = 5,000 millisecs
+  = 5 secs
+```
+
+Even though five seconds many not seem like a lot, it's actually pretty long in computter time. What if 50 new tasks are created before the five seconds are up? This will pile up into the workload, resulting in most threads constantly entering a waiting or "stuck" state. In this application, this may cause tasks that would normally be quick to finish ina a non-synchronized environment to take a significantly long amount of time to complete. Synchronization is about protecting data integrity at the cost of performance. In many cases, performance costs are minimal, but in extreme scenarios the application could slow down significanlty due to the inclusion of synchronization. Beign able to identify synchronization problems, including finding ways to improve performance in synchronized multi-threaded environments, is a value of skills in practice.
 
 # Using Concurrent Collections
 ## Introducing Concurrent Collections
