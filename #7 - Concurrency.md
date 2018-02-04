@@ -672,7 +672,46 @@ For example, let's say that we have a highly concurrent class with numerous meth
 Even though five seconds many not seem like a lot, it's actually pretty long in computter time. What if 50 new tasks are created before the five seconds are up? This will pile up into the workload, resulting in most threads constantly entering a waiting or "stuck" state. In this application, this may cause tasks that would normally be quick to finish ina a non-synchronized environment to take a significantly long amount of time to complete. Synchronization is about protecting data integrity at the cost of performance. In many cases, performance costs are minimal, but in extreme scenarios the application could slow down significanlty due to the inclusion of synchronization. Beign able to identify synchronization problems, including finding ways to improve performance in synchronized multi-threaded environments, is a value of skills in practice.
 
 # Using Concurrent Collections
+Besides managing threads, the Concurrency API includes interfaces and classes that help you coordinate access to collections across multiple tasks. By collections, we are of course referring to the Java Collections Framework that we introduced in chapter 3 "generics and collections". In this section, we will demonstrate many of the new concurrent classes available to you when using the Concurrency API.
+
 ## Introducing Concurrent Collections
+The first questions you might be asking is "Do we really need a new concurrent collection classes?". After all, in the previous section you saw that we can use the synchronized keyword on any method or block, so couldn't we do the same for our existing collection classes? The short answer is "We could". For example, take a look a the following code to access a map using synchronized keyword:
+
+```java
+public class ZooManager{
+  private Map<String, Object> fooData = new HashMap<String, Object>();
+  
+  public synchronized void put(String key, String value){
+    fooData.put(key, value);
+  }
+  
+  public synchronized Object get(String key){
+    return fooData.get(key);
+  }
+}
+
+```
+
+So then, why use a concurrent collection class? Like using ExecutorService to manage threads for us, using concurrent collections is extremely convenient in practice. It also prevents us from introducing mistakes in own custom implementation, such as if we forgot to synchronize one of the accessor methods. In fact, the concurrent collections often include performance enhancements that avoid unnecessary synchronization. Accessing collections from accross multiple threads is so common that the writters of Java thought it would be a good idea to have alternative versions of many of the regular collection classes just for multi threaded access. The following is an alternate version of our implementation that does not use the synchronized keyword but instead uses a concurrent collection class:
+
+```java
+public class ZooManager{
+  private Map<Strin,Object> foodData = new ConcurrentHashMap<String,Object>();
+  
+  public void put(String key, String value){
+    foodData.put(key, value);
+  }
+  
+  public Object get(String key){
+    return foodData.get(key);
+  }
+
+}
+
+```
+
+Ypu may notice that this code is almost the same to ourr previous example. In fact, even our reference type for the object, Map, remained unchanged. As you may remeber from our discussion of polymorphism in capter 2, even though the reference type changes, the underlying object is still a ConcurrentHashMap. ALso, notice that since ConcurrentHashMap implements Map, it uses the same get()/put() methods. Therefore, there is no need to use the ConcurrentHashMap reference type in this example.
+
 ## Understanding Memory Consistency Errors
 ## Working with Concurrent Classes
 ## Understanding Blocking Queues
