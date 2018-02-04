@@ -738,7 +738,47 @@ for(String key: foodData.keySet()){
 Although we don't usually modify a loop variable, this example highlights the fact that the ConcurrentHashMap is ordering read/write access such that all access to the class is consistent. In this code snippet, the iterator created keySet() is updated as soon as an object is removed from the Map. The concurrent classes help to avoid common issues in which multiple threads are adding and removing objects from the same collections. At any given instance, all threads are adding and removing objects from the same collections. At any given instance, all threads should have the same consistent view of the structure of the collection.
 
 ## Working with Concurrent Classes
+There are numerous collections classes with which you should be familiar for the exam. Luckily, you already know how to use most of them, as the methods available are a superset to the non-concurrent collection classes that you learned about it in chapter 3.
+You should use a concurrent collection class anytime that you are going to have multiple threads modify a collections object outside a synchronized block or method, even if you don't expect a concurency problem. On the other hand, if all of the threads are accessing an establish immutable or read-only collection, a concurrent collection class is not required. In the same way that we instantiated an ArrayList object but pass around a List reference, it is considered a good practice to instantiate a concurrent collection but pass it around using a non-concurrent interface whenever possible.
 
+The table below list a common concurrent classes with which you should be familiar for the exam:
+
+**Class Name**    |    **Java Collection Framework Interface**  | **Elements ordered?** |  **Sorted?**  |   **Blocking?**
+------------------|---------------------------------------------|-----------------------|---------------|-----------------
+ConcurrentHashMap | ConcurrentMap                               | No                    | No            | No
+ConcurrentLinkedDeque | Deque                                   | Yes                   | No            | No
+ConcurrentLinkedQueue|  Queue                                   | Yes                   | No            | No
+ConcurrentSkipListMap |  ConcurrentMapSortedMapNavigableMap     | Yes                   | Yes           | Yes
+ConcurrentSkipListSet |  SortedSetNavigableSet                  | Yes                   | Yes           | No
+CopyOnWriteArrayList  | List                                    | Yes                   | No            | No
+CopyOnWriteArraySet   | Set                                     | No                    | No            | No
+LinkedBlockingDequeue | BlockingQueue / BlockingDeque           | Yes                   | No            | Yes
+LinkedBlockingQueue   | BlockingQueue                           | Yes                   | No            | Yes
+
+Based on your knowledge on Collections from Chapter 3, classes like ConcurrencyHashMap, ConcurrentLinkedQueue and ConcurrentLinkedDeque should be quite easy for you to learn. Take a look at the following sample:
+
+```java
+Map<String, Integer> map = new ConcurrentHashMap<>();
+map.put("zebra", 52);
+map.put("elephant", 10);
+Sustem.out.println(map.get("elephant"));
+
+Queue<Integer> queue = new ConcurrentLinkedQueue<>();
+queue.offer(31);
+System.out.println(queue.peek());
+System.out.println(queue.poll());
+
+Deque<Integer> deque = new ConcurrentLinkedDeque<>();
+deque.offer(10);
+deque.push(4);
+System.out.println(deque.peek());
+System.out.println(deque.pop());
+
+```
+
+As you may have noticed, these samples strongly resemble the collection snippets that you saw earlier in this book, with the only differnce beign the object creation call. In each of the samples, we assign an interface reference to newly created object and use it the same way as we would a non-concurrent object.
+
+The ConcurrentHaspMap implements the ConcurrentMap interface, also found in the Concurrency API. You can use either reference type Map or ConcurrentMap, to access a ConcurrentHashMap object, depending on whther or not you want the caller to know anything about underlying implementation. For example, a method signature may require a ConcurrentMap reference to ensure that object passed to it is properly supported in multi-threaded environment.
 
 ## Understanding Blocking Queues
 ## Understanding SkipList Collections
