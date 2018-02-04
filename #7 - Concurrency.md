@@ -710,10 +710,36 @@ public class ZooManager{
 
 ```
 
-Ypu may notice that this code is almost the same to ourr previous example. In fact, even our reference type for the object, Map, remained unchanged. As you may remeber from our discussion of polymorphism in capter 2, even though the reference type changes, the underlying object is still a ConcurrentHashMap. ALso, notice that since ConcurrentHashMap implements Map, it uses the same get()/put() methods. Therefore, there is no need to use the ConcurrentHashMap reference type in this example.
+You may notice that this code is almost the same to our previous example. In fact, even our reference type for the object, Map, remained unchanged. As you may remeber from our discussion of polymorphism in capter 2, even though the reference type changes, the underlying object is still a ConcurrentHashMap. Also, notice that since ConcurrentHashMap implements Map, it uses the same get()/put() methods. Therefore, there is no need to use the ConcurrentHashMap reference type in this example.
 
 ## Understanding Memory Consistency Errors
+The purpose of the concurrent collection classes is to solve common memory consistency errors. A *memory consistency error* occurs when two threads have inconsistent views of what should be the same data. Conceptually, we want writes on one thread to be available to another thread if it accesss the concurrent collection after the write has occurred.  When two thread try to modify the same non-concurrent collection, the JMV may throw a ConcurrentModificationException at runtime. In fact, it can happen witha single thread. Take a look at the following code snippet:
+
+```java
+Map<String, Object> fooData = new HashMap<String, Object>();
+foodData.put("penguin",1);
+foodData.put("flamingo", 2);
+for(String key: foodData.keySet()){
+  foodData.remove(key);
+}
+
+```
+This snippet will throw a ConcurrentModificationException at runtime, since the iterator keySet() is not properly updated after the first element is removed. Changing the first line to use a ConcurrentHashMap will prevent the code from throwing an exception at runtime:
+
+```java
+Map<String, Object> foodData = new ConcurrentHashMap<String, Object>();
+foodData.put("penguin", 1);
+foodData.put("flamingo", 2);
+for(String key: foodData.keySet()){
+  foodData.remove(key);
+}
+```
+
+Although we don't usually modify a loop variable, this example highlights the fact that the ConcurrentHashMap is ordering read/write access such that all access to the class is consistent. In this code snippet, the iterator created keySet() is updated as soon as an object is removed from the Map. The concurrent classes help to avoid common issues in which multiple threads are adding and removing objects from the same collections. At any given instance, all threads are adding and removing objects from the same collections. At any given instance, all threads should have the same consistent view of the structure of the collection.
+
 ## Working with Concurrent Classes
+
+
 ## Understanding Blocking Queues
 ## Understanding SkipList Collections
 ## Understanding CopyOnWrite Collections
