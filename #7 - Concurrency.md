@@ -626,7 +626,8 @@ private void incrementAndReport(){
 }
 ```
 
-Although we didn't need to make the lock variable final, doing so ensured that is not reassigned after threads starts using it.
+Although we didn't need to make the lock variable final, doing so ensured that is not reassigned after threads starts using it. Note that we could have used an atomic count variable along with the synchronized block in this example, although it is unnecessary. Since synchronized blocks allow only one thread to enter, we're not ganing any improvement by using an atomic variable only time that we access the variable is within synchronized block.
+
 ## Synchronizing Methods
 ## Understanding the Cost of Synchronization
 
