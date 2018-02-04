@@ -552,6 +552,81 @@ When we run the above we get the following outcome:
 Unlike our previous sample output, the number 1 through 10 will always output. As you might notice, the result are still not ordered, although we will get to that soon. The key here is that using the atomic classes ansures that the data is consistent between workers and that no values are lost due to concurrent modifications.
 
 ## Improving Access with Synchronized Blocks
+How do we improive the result so that each worker is able to increment and report the result in order? The most common technique is to use a monitor, also called a *lock* to synchronize access. A *monitor* is a structure that supports mutual exclusion or the property that at most one thread is executing a particular segment of code at a given time. In Java, any object ca be used as monitor, along with ```synchronized``` keyword, as shown in the following example:
+
+```
+SheepManager manager = new SheepManager();
+synchronized(manager){
+  // work to be completed by one thread at a time
+}
+```
+
+This example is referred to as *synchronized block*. Each thread that arrives will first check if any threads are un the block. In this manner, a thread "acquires a lock" for the monitor. If the lock is available, a single thread will enter the block, acquiring the lock and preventing all other threads from entering. While the first thread is executing the block, all threads that arrive will attempyt to acquire the same lock and wait for first thread to finish. Once a thread finishes executing the block, it will release the lock, allowing one of the waiting threads to proceed.
+
+Note that in order to synchronize access across multiple threads, each threads must have access to the same Object. For example, synchronizing on different objects would not actually organize the result.
+
+Let's revisit our SheepManager example and see if we can improve the results so that each worker increments and outputs the counter in order. Let's say that we replaced our for() loop with the following implementation:
+
+```java
+for(int i = 0; i < 10; i++){
+  synchronized(manager){
+    service.submit(() -> manager.incrementAndReport());
+  }
+}
+
+```
+
+Does this solution fix the problem? No it does not. Can you spot the problem? We have synchronized the creation of the threads but not the execution of the threads. In this exampl, each thread would be created one at a time, but they may all still execute and perform their work art the same time., resulting in the same type of output that you saw earlier. Diagnosing resolving threading problems is often one of the most difficult tasks in any programming language.
+
+We now represent a corrected version of the SheepManager class, which does not order the workers:
+
+```java
+
+import java.util.concurrent.*;
+
+public class SheepManager{
+  
+  private int sheepCount = 0;
+  private void incrementAndReport(){
+    synchronized(this){
+      System.out.println((++sheepCount) + " ");
+    }
+  }
+  
+  public static void main(String[] args){
+    ExecutorService service = null;
+    
+    try{
+      service = Executor.newFixedThreadPool(20);
+      service.submit(() -> manager.incrementAndReport());
+      
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+
+}
+```
+
+When this code ezxecutes, it will consistenly output the following:
+```
+1 2 3 4 5 6 7 8 9 10
+```
+Although all threads are sitll created and executed at the same time, they each wait at the synchronized block for the workers to increment and reports the result before entering. In this manner, each zoo worker waits for the previous zoo worker to come back before running out on the field. While it's random which zoo worker will run out next, it is guanranteed that there will be at most one on the field.
+
+We could have synchronized on any object, so lonmg as it was the same object. For example, the following code snippet would have also worked:
+
+```java
+
+private final Object lock = new Object();
+private void incrementAndReport(){
+  synchronized(lock){
+    System.out.println((++sheepCount) + " ");
+  }
+}
+```
+
+Although we didn't need to make the lock variable final, doing so ensured that is not reassigned after threads starts using it.
 ## Synchronizing Methods
 ## Understanding the Cost of Synchronization
 
