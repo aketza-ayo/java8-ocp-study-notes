@@ -781,6 +781,60 @@ As you may have noticed, these samples strongly resemble the collection snippets
 The ConcurrentHaspMap implements the ConcurrentMap interface, also found in the Concurrency API. You can use either reference type Map or ConcurrentMap, to access a ConcurrentHashMap object, depending on whther or not you want the caller to know anything about underlying implementation. For example, a method signature may require a ConcurrentMap reference to ensure that object passed to it is properly supported in multi-threaded environment.
 
 ## Understanding Blocking Queues
+As you may have noticed in the previous table, it included two queue classes that implement blocking interfaces: linkedBlockingQueue and LinkedBlockingDeque. The BlockingQueue is just like a regular Queu, except that it includes methods that will wait specific amount of time to complete an operation. Since BlockingQueue inherits all of the methods from Queue, we skip the inherited methods and present the new waiting methods, see table below BlockingQueue waiting methods:
+
+**Method Name**                           | **Description**
+------------------------------------------|-----------------------------------------------------------------------------
+offer(E e, long timeout, TimeUnit unit)   | Adds item to the queue waiting the specified time, returning flase if time elapses before space is available
+poll(long timeout, TimeUnit unit)         | Retrieves and removes an item from the queue, waiting the specified time, returning null if the time elapses before the item is available
+
+A LinkedBlockingQueue as the name implies mantains a linked list between elements. The following sample is using a LinkedBlockingQueue to wait for the results of some of the operations. The methods in table above can each throw a checked IterruptedException, as they can be interrupted before they finish waiting for result; therefore they must be properly caught.
+
+```java
+try{
+  BlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>();
+  
+  blockingQueue.offer(39);
+  blockingQueue.offer(3, 4, TimeUnit.SECONDS);
+  
+  System.out.println(blockingQueue.poll());
+  System.out.println(blockingQueue.poll(10, TimeUnit.MILLISECONDS));
+}catch(InterruptedException e){
+  // handle exception
+}
+
+```
+As shown in this example, since LinkedBlockingQueue implements both Queue and BlockingQueue, we can use methods available to both, such as those that don't take any wait argument. The other table above also includes LinkedBlosckingDeque class that mantains a doubly linked list between elements and implements a BlockingDeque interface. The BlockingDeque interface extends Deque much in the same way that BlockingQueue extends Queue, providing numerous waiting methods. See table below for waiting methods defined in BlockingDeque:
+
+**Method Name**                              |    **Description**
+---------------------------------------------|-----------------------------------------------------------------------------
+offerFirst(E e, long timeout, TimeUnit unit) | Adds an item to the front of the queue, waiting a specified time, returning false if time elapses before space is available.
+offerLast(E e, long timeout, TimeUnit unit)  | Adds an item to the tail of the queue, waiting a specified time, returning false if time elapses before space is available.
+pollFirst(long timeout, TimeUnit unit)       | Retrieves and removes an item from the front of the queue, waiting the specified time, returning null if the time elapses before the item is available.
+pollLast(long timeout, TimeUnit unit)        | Retrieves and removes an item from the tail of the queue, waiting the specified time, returning null if the time elapses before the item is available.
+
+The following is a smaple code of using LinkedBlockingDeque. As before, since the methods in the table above each throw a checked InterruptedException , they must be properly caught in the code that uses them.
+```java
+try{
+  BlockingDeque<Integer> blockingDeque = new LinkedBlockingDeque<>();
+  
+  blockingDeque.offer(91);
+  blockingDeque.offerFirst(5, 2, TimeUnit.MINUTES);
+  blockingDeque.offerLast(47, 100, TimeUnit.MICROSECONDS);
+  blockingDeque.offer(3, 4, TimeUnit.SECONDS);
+  
+  System.out.println(blockingDeque.poll());
+  System,out.println(blockingDeque.poll(950, TimeUnit.MILLISECONDS));
+  System,out.println(blockingDeque.pollFirst(200, TimeUnit.NANOSECONDS));
+  System,out.println(blockingDeque.pollLast(1, TimeUnit.SECONDS));
+  
+}catch(){
+  //handle interruption
+}
+```
+
+This exam creates a LinkedBlockingDeque and assigns it to a BlockingDeque rederence. Since BlockingDeque extends Queue, deque and BlockingQueue, all of the previously defined queue methods are available for use.
+
 ## Understanding SkipList Collections
 ## Understanding CopyOnWrite Collections
 ## Obtain Synchronized Collections
