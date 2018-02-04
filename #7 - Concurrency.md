@@ -455,7 +455,102 @@ service.scheduleAtFixedRate(command, 3, 1, TimeUnit.MINUTE);
 Whereas with a single-thread executor and five-minutes task execution time, an endless set of tasks would be scheduled over time. With a pooled executor, this can be avoided. if the pool size is sufficiently large, 10 for example, then as each thread finishes, it is returned to the pool and results in new threads available for the next tasks as they come up.
 
 # Synchronizing Data Access
+Recall that thread safety is the property of an object that guarantees safe execution by multiple threads at the same time. Now that we have multiple threds capable of accessing the same objects in memory, we have to make sure to organize our access to this data such that we don't end up with invalid or unexpected results. Since threads run in a shared environment and memory space, how do we prevent tow threads from interfering with each other?
+
+Imagine our zoo has a program to count sheep, preferably one that won't put the zoo workers to sleep! Each zoo worker runs out to a field, adds a new sheep to the flock, count the total number of sheep, and runs back to us to report the result. We present the following code to represent this conceptually:
+
+```java
+import java.util.concurrent.*;
+
+public class SheepManager{
+  
+  private int sheepCount = 0;
+  private void incrementAndReport(){
+    System.out.println((++sheepCount)+ " ");
+  }
+  
+  public static void main(String[] args){
+    ExecutorService service = null;
+    try{
+      service = Executors.newFixedThreadPool(20);
+      SheepManager manager = new SheepManager();
+      
+      for(int = 0; i < 10; i++){
+        service.submit(() -> manager.incrementAndreport());
+      }
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+
+}
+
+```
+
+A problem occurs when two threads both execute the right side of the expression, reading "old" value before either thread writes the new value of the variable. The two assignments become redundant; they both assign the same new value, with one thread overwriting the results of the other. Both threads read and write the same values, causing one of the two ++sheepCount operations to be lost. Therefore, the increment operator ++ is not thread safe. As you will see later in this chapter, the unexpected result of two tasks executing at the same time is referred to as *race condition*.
+
+Returning to the sheep example, we choose a large thread size of 20 so that all tasks can be run concurrently. Let's say that each lambda expression submitted to the thread executor corresponds to a zoo worker. Each time a zoo worker increments the sheep counter, they run back to report the results. What would you expect the putput of this program to be? Although the putput will vary, the following are some samples created by this program:
+
+```
+1 2 2 3 4 5 6 7 8 9
+
+2 4 5 6 7 8 1 9 10 3
+
+2 1 3 4 5 6 7 8 9 10
+```
+
+In this example, multiple workers are sharing the sheepCount variable. In the first sample, two zoo workers both call ++sheepCount at the same time, resulting in one of the increment operations actually beign lost, with the last total beign 9 instead of 10. In the other examples, results from earlier threads are output before ones that started later, such as 3 beign output after 4 in the second example. We know we had 10 workers but results are incomplete and out of order.
+The idea here is that some zoo workers may run faster on their way to the field but more slowly on their way back and report late.
+
 ## Protecting Data with Atomic Classes
+Withe the release of the ConcutrrentyAPI, Java added a new ```java.util.concurrent.atomic``` package to help coordinate access to primitive values and object references. As with most classes in the Concurrency API, these classes are added solely for convenience. In our first SheepManager smaple output, the same value, 2, was printed twice, with the highest counter beign 9 instead of 10. As we demonstrated in the previous section, the increment operator ++ is not thread safe. Furthermore, the reason that it is not thread safe is that the operation is not atomic, carrying out two tasks, read and write, that can be interrupted by other threads.
+*Atomic* is the property of an operation to be carried out as single unit of execution without any interference by another thread, A thread-safe atomic version of the increment operator would be one that performed the read and write of the variableas as single operation, not allowing any other threads to access the variable during the operation. Any thread trying to access the sheepCount variable while an atomic operation is in process will have to wait until the atomic operation on the variable is complete. Of course, this exclusivity applies only to threads trying to access the sheepCount variable, with the rest of memory space not affected by this operation. Since accessing primitives and references in Java in shared environments, the concurrency API includes numerous useful classes that are conceptually the same as our primitive classes but that support atomic operations. The table below list atomic classes with which you should be familiar with for the exam:
+
+**Class Name**       |  **Description**
+---------------------|-----------------------------------------------------------------------------
+AtomicBoolean        | A boolean value that may be updated automatically
+AtomicInteger        | An int value that may be updated automatically
+AtomicIntegerArray   | An int array in which elements may be updated automatically
+AtomicLong           | A long value that may be updated automatically
+AtomicLongArray      | A long array in which elements may be updated automatically
+AtomicReference      | A generic object reference that may be updated automatically
+AtomicReferenceArray | An array of generic object references in which elements may be updated automatically
+
+How do we use an atomic class? Each class includes numerous methods that are equivalent to many of the primitve built-in ioerators that we use on primitves, such as the assignment operator = and the increment operators ++. We describe the common atomic methods that you should know for the exam in the table below:
+
+**Method Name**   |  **Description**
+------------------|-----------------------------------------------------------------------------
+get()             | Retrieve the curent value
+set()             | Set the given value, equivalent to the assignment = operator
+getAndSet()       | Atomically sets the new value and returns old value
+incrementAndGet() | For numberic classes, atomic pre-increment operation equivalent to ++value
+getAndIncrement() | For numeric classes, atomic post-increment operation equivalent to value++
+decrementAndGet() | For numeric classes, atomic pre-decrement operation equivalent to --value
+getAndDecrement() | For numeric classes, atomic post-decrement operations equivalent to value--
+
+In the following examples, we update our SheepManager class with an AtomicInteger:
+
+```java
+private AtomicInteger sheepCount = new AtomicInteger(0);
+
+private void incrementAndReport(){
+  System.,out.println(sheepCount.incrementAndGet() + " ");      
+}
+```
+
+When we run the above we get the following outcome:
+
+```
+2 3 1 4 5 6 7 8 9 10
+
+1 4 3 2 5 6 7 8 9 10
+
+1 4 3 5 6 2 7 8 10 9
+
+```
+
+Unlike our previous sample output, the number 1 through 10 will always output. As you might notice, the result are still not ordered, although we will get to that soon. The key here is that using the atomic classes ansures that the data is consistent between workers and that no values are lost due to concurrent modifications.
+
 ## Improving Access with Synchronized Blocks
 ## Synchronizing Methods
 ## Understanding the Cost of Synchronization
