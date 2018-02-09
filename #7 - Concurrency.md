@@ -864,7 +864,47 @@ Despite aadign elements to the array, while iterating over it, only those elemen
 Note: the CopyOnWrite classes are similar to the immutable object pattern that you saw in Chapter 2, as a new underlying structure is created every time the collection is modified. Unlike immutable object pattern, though, the reference to the object stays the same even while the underlying data is changed. Therefore, strictly speaking, this is not an immutable object pattern, although it shares many similarities.
 
 The CopyOnWrite classes can use a lot of memeory, since a new collection structure needs to be allocated anytime the collection is modified. They are commonly used in multi-threaded environment situations where reads are far more common that writes.
+
 ## Obtain Synchronized Collections
+Besides the concurrent collection classes that we have covered, the Concurrency API also includes methods for obtaining synchronized version of existing non-concurrent  collection objects. These methods, defined in teh Collections class, contain synchronized methods that operate on the inputted collection and return a reference that is the same type as the underlying collection. We list these methods in the table below:
+
+**Method Name**                              
+--------------------------------------------
+synchronizedCollection(Collection<T> c)
+synchtronizedList(List<T> t)
+synchronizedMap(Map<K,V> m)
+synchronizedNavigableMap(NavigableMap<K,V> m)
+synchronizedNavigableSet(NavigableSet<T> s)
+synchronizedSet(Set<T> s)
+synchronizedSortedMap(SortedMap<K,V> m)
+synchronizedSortedSet(SortedSet<T> s)
+
+
+When should you use these methods? If you know at the time of creation that your object require synchronization, then you should use one of the concurrent collection classes listed in the table of concurrent collection classes shown earlier in the section working with concurrent classes. On the other hand, if you are given an exisiting collection that is not a concurrent class and need to access it among multiple threads, you can wrap it using the method in the table above. While the methods in this table synchronize access to the data elements, such as the get() and set() methods, they do not synchronize access on any iterators that you may create from the synchronized collection. Therefore, it is imperative that you use a synchronization block if you need to iterate over any of the returned collection is the table above as shown in the following example:
+
+```java
+List<Integer> list = Collections.synchronizedList(new ArrayList<>(Array.asList(4,3,52)));
+synchronized(list){
+  for(int data : list){
+    System.out.println(data + " ");
+  }
+}
+
+```
+
+Unlike the concurrent collections, the synchronized collections also throw an exception if they are modified within an iterator  by a single thread. For example, take a look at the following modification of out earlier example:
+
+```java
+Map<String, Object> foodData = new HashMap<String, Object>();
+foodData.put("penguin", 1);
+foodData.put("flamingo", 2);
+Map<String, Object> synchronizedFoodData = Collections.synchronizedMap(foodData);
+for(String key: synchronizedFoodData.keySet()){
+  synchronizedFoodData.remove(key);
+}
+```
+
+This code throws a ConcurrentModificationException at runtime, whereas our example that used CocurrentHashMap did not. Other than iterating over the collection, the object returned by the methods in table above are inherently safe to use among multiple threads.
 
 # Working with Parallel Streams
 ## Creating Parallel Streams
