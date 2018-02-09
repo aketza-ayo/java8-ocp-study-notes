@@ -840,6 +840,28 @@ The SkipList classes, ConcurrentSkipListSet and ConcurrentSkipListMap, are concu
 Like other queue examples, it is recommeded that you assign these objects to interface references, such as SortedMap or NavigableSet. In this manner, using them is the same as the code that you worked with in Chapter 3.
 
 ## Understanding CopyOnWrite Collections
+The concurrent collection classes table from before included two classes, CopyOnWruteArrayList and CopyOnWriteArraySet, that behave a little differently than the other concurrent examples that you have seen. These classes copy all of their element to a new underlying structure anytime an element is added, modified, or removed from the collection. By a modified element, we mean that the reference in the collection is changed. Modifying the actual contents of the collection will not cause a new structure to be allocated. 
+Although the data is copied to a new underlying structure, our reference to the object does not change. This is particularly useful in multi-threaded environments that need to iterate the collection. Any iterator established prior to a modification will not see the changes, but instead it will iterate over the original elements prior to the modification. Let's see an example:
+
+```java
+List<Integer> list = new CopyOnWriteArrayList<>(Arrays.asList(4,3,52));
+for(Integer item : list){
+  System.out.println(item + " ");
+  list.add(9);
+}
+
+System.out.println();
+System.out.println("Size: " + list.size());
+```
+
+When executed as part of a program, this code snippet outputs the following:
+```
+4, 3, 52
+Size: 6
+```
+Despite aadign elements to the array, while iterating over it, only those elements in the collection at the time the for() loop was created were accessed. Alternatively, if we had used a regular ArrayList object, a ConcurrentModificationException would have been thrown at runtime. With either class, though, we avoid entering an infinite loop in which elements are constantly added to the array as we iterate over them.
+
+Note: the CopyOnWrite classes are similar to the immutable object pattern that you saw in Chapter 2, as a new underlying structure is created every time
 ## Obtain Synchronized Collections
 
 # Working with Parallel Streams
