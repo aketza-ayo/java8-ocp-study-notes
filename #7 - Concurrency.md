@@ -861,7 +861,9 @@ Size: 6
 ```
 Despite aadign elements to the array, while iterating over it, only those elements in the collection at the time the for() loop was created were accessed. Alternatively, if we had used a regular ArrayList object, a ConcurrentModificationException would have been thrown at runtime. With either class, though, we avoid entering an infinite loop in which elements are constantly added to the array as we iterate over them.
 
-Note: the CopyOnWrite classes are similar to the immutable object pattern that you saw in Chapter 2, as a new underlying structure is created every time
+Note: the CopyOnWrite classes are similar to the immutable object pattern that you saw in Chapter 2, as a new underlying structure is created every time the collection is modified. Unlike immutable object pattern, though, the reference to the object stays the same even while the underlying data is changed. Therefore, strictly speaking, this is not an immutable object pattern, although it shares many similarities.
+
+The CopyOnWrite classes can use a lot of memeory, since a new collection structure needs to be allocated anytime the collection is modified. They are commonly used in multi-threaded environment situations where reads are far more common that writes.
 ## Obtain Synchronized Collections
 
 # Working with Parallel Streams
