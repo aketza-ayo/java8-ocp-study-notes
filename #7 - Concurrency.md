@@ -907,13 +907,179 @@ for(String key: synchronizedFoodData.keySet()){
 This code throws a ConcurrentModificationException at runtime, whereas our example that used CocurrentHashMap did not. Other than iterating over the collection, the object returned by the methods in table above are inherently safe to use among multiple threads.
 
 # Working with Parallel Streams
+In Chapter 4, you learned the Stream API enabled functional programming in Java 8. One of the most power features of the Stream API is the built-in concurrency support. Up until now, all of the streams with which you have worked have been serial streams. A *serial stream* is a stream in which the results are ordered, with only one entry beign proessed at a time.
+A *parallel stream* is a stream that is capable of processing results concurrently, using multiple threads. For example, you can use a parallel stream and the stream map() method to operate concurrently on the elements in the stream, vastly improving performance over processing a single element at a time.
+Using a parallel stream can change not only the performance of your application but also the expected results. As you shall see, some operations also require special handling to be able to processed in parallel manner.
+
+Note, by default the number of threads available in a parallel stream is related to the number of available CPUs in your environment. In order to increase the thread count, you would need to create your own custom class.
+
 ## Creating Parallel Streams
+The Stream API was designed to make creating parallel streams quite easy. Foe the exam, you should be familiar with the two ways of creating a parallel stream. 
+
 ### parallel()
+The first way to create a parallel stream is form an exisiting stream. You just call parallel() on the existing stream to convert it to one that supports multi-threaded processing, as shown in the following code:
+
+```java
+Stream<Integer> stream = Arrays.asList(1,2,3,4,5,6).stream();
+Stream<Integer> parallelStream = stream.parallel();
+```
+
+Be aware that parallel() is an intermediate operation that operates on the original steam.
+
 ### parallelStream()
+The second way to create a parallel stream is from Java collection class. The Collection interface includes a method parallelStream() that can be called on any collection and returns a parallel stream. The following  is a revised code snippet that creates the parallel stream direclty from the List object:
+
+```java
+Stream<Integer> parallelStream2 = Arrays.asList(1,2,3,4,5,6).parallelStream();
+```
+
+We will use parallelStream() and Collection objects throughout this section.
+
+Note: The stream interface includes a method isParallel() that can be used to test if the instance of a stream supports parallel processing. Some operations on streams preserve the parallel attribute, while others do not. For example, the Stream.concat(Stream s1, Stream s2) is parallel if either s1 or s2 is parallel. On the other hand, flatMap() creates a new stream that is not parallel by default, regardless of weather the underlying elements were parallel.
+
+
 ## Processing Task in Parallel
+AS you may have noticed, creating the parallel stream is the easy part. The interesting part comes in using it. Let's take a look at a serial examples:
+
+```java
+Arrays.asList(1,2,3,4,5,6)
+  .stream()
+  .forEach(s -> System.out.println(s + ""));
+```
+
+What do you think this code will output when executed as part of main() method? Let's take a look:
+```
+1,2,3,4,5,6
+```
+
+As you might expect, the results are ordered and predictable because we are using a serail stream. What happens if we use a parallel stream, though?
+```java
+Arrays.asList(1,2,3,4,5,6)
+  .parallelStream()
+  .forEach(s -> System.out.println(s + " "));
+```
+
+With parallel stream, the forEach() operation is applied accross multiple elements of the stream concurrently. The following are each sample outputs of this code snippet:
+```
+4 1 6 5 2 3
+
+5 2 1 3 6 4
+
+1 2 6 4 5 3
+```
+
+As you can see the results are no longer predictable. If you compare this to the earlier parts of the chapter, the forEach() operation on a parallel stream is equivalent to submitting multiple runnable lambda expressions to a pooled thread executor.
+
+**Ordering for each results**
+------------------------------
+The Stream API includes an alternate version of the for each() operaion called forEachOrdered() which forces a parallel stream to process the results in order at athe cost of performance. For example, take a look at the following code snippet:
+```java
+Arrays.asList(1,2,3,4,5,6)
+  .parallelStream()
+  .forEachOrdered(s -> System.out.println(s + " "));
+```
+
+Like our starting example, this outputs the results in order:
+```
+1 2 3 4 5 6
+```
+
+Since we have ordered the results, we have lost some of the performance gains of using a parallel stream, so why use this method? You might be calling this method in a section of your application that takes both serail and parallel streams, and you need to ensure that the results are processed in a particular order. Also, stream operations that occur before/after the forEachOrdered() can still gain performance improvements for using a parallel stream.
+
 ## Understanding Performance Improvements
+Let's look at another example to see how much using a parallel stream may improve performance in your application.Let's say that you have a task that requires processing 4,000 records, with each record taking modest 10 milisecond to complete. The following is a sample implementation that uses Thread.sleep() to simulate processing the data:
+
+```java
+import java.util.*;
+
+public class WhaleDataCalulator{
+  
+  public int processRecord(int input){
+    try{
+      Thread.sleep(10);
+    }catch(InterruptedException e){
+      //Handle interrupted exception
+    }
+    return input + 1;
+  }
+  
+  public void processAllData(List<Integer> data){
+    data.stream().map( a -> processRecord(a)).count();
+  }
+  
+  public static void main(String[] args){
+    WhaleDataCalculator calculator = new WhaleDataCalculator();
+    
+    //Define the data
+    List<Integer> data = new ArrayList<Integer>();
+    for(int i=0; i<4000; i++) data.add(i);
+    
+    //Process the data
+    long start = System.currentTimeMillis();
+    calculator.processAllData(data);
+    double time = (System.currentTimeMillis() - start)/1000.0;
+    
+    //Report results
+    System.out.println("Task completed in: " + time + " seconds");
+  }
+}
+```
+
+Given that there are 4000 records, adn each record takes 10 milliseconds to process, by using a serial stream(), the resuls will take approximately 40 seconds to complete this task. Each task is completed one at a time:
+```
+Task completed in: 40.044 seconds
+```
+
+If we use a parallel stream, though, the results can be processed concurrently.
+
+```
+public void processAllData(List<Integer> data){
+  data.parallelStream().map(a -> processRecord(a)).count();
+}
+```
+Depending on the number of CPUs available in your environment, the following is a possible output of the code using a parallel stream:
+```
+Tasks completed in: 10.542 seconds
+```
+
+You see that using a paralle stream can have a four-fold improvement in the results. Even better, the results scale with the number of procesors. Scalling is the property that as we add more resources such as CPU, the results gradually improve.
+Does that mean that all yopu streams should be parallel? not exaclty. Prallel streams tend to achieve the most improvements when the number of elements in the stream is significantly large. For small streams, the improvmenet is often limited, as there are some overhead costs to allocating and setting up the parallel processing.
+
+Note: As with earlier examples in this chapter, the performance of using parallel streams will vary with your local computing environments., There is never a guarantee that using a parallel stream will improive performance. In fact, using a parallel stream could the application due to the overhead of creating the parallel processing structures. That said, in a variety of circustances, applying parallel streams could result in significant performance gains.
+
 ## Understanding Independent Operations
+Parallel streams can improve performance because the rely on the property that many stream operations can be executed independently. by independent operations, we mean that the results of an operation on one elements of a stream do not require or impact the results of another element of the stream. For example, in the previous example, each call to processRecord() can be executed separetly, without impacting any other invocation of the method. As another example, consider the following lambda expression supplied to the map() method, which maps the streams content to uppercase strings:
+
+```java
+Arrays.asList("jackal", "kangaroo" ,"lemur")
+  .parallelStream()
+  .map(s -> s.toUpperCase())
+  .forEach(System.out::println());
+```
+
+In this example, mapping jackal to JACKAL can be done independently of mapping kangaroo to KANGAROO. In other workds, multiple elements of the stream can be processed at the same time and the results will not change.
+Many common stream including map(), forEach(), and filter() can be processed independently, altough order is never guanranteed. Consider the following modified version of our previous stream code:
+```java
+Arrays.asList("jackal","kangaroo","lemur")
+  .parallelStream()
+  .map(s -> {System.out.println(s); return s.toUpperCase();})
+  .forEach(System.out::println())
+```
+This example includes an embedded print statement in the lambda, passed to the map() method. While the return values of the map() operations are the same, the order in which they are processed can result in very different output. We might even print terminal results before the intermidiate operations have finished, as showhn in the following generated output:
+
+```
+kangaroo
+KANGAROO
+lemur
+jackal
+JACKAL
+LEMUR
+```
+
+When using stream, you should avoid any lambda expressions that can produce side effects. Note that for the exam, you should remeber that parallel streams can process results independently, altough the order of the results cannot be determined ahead of time.
+
 ## Avoiding Stateful Operations
+
 ## Processing Parallel Reductions
 ### Performing Order-Based Tasks
 ### Combining Results with reduce()
