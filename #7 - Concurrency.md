@@ -1119,12 +1119,115 @@ null 2 4 5 6 1
 For an ArrayList object, the JVM internally manages a primitive array of the same type. As the size of the dynamic ArrayList grows, a new, larger primitive array is periodically required. If two threads both trigger the array to be resized at the same time , a result can be lost, producing the unexpected value shown here. As briefly mentioned earlier, and also discussed later in this chapter, the unexpected results of two tasks executing at the same time is a race condition.
 
 ## Processing Parallel Reductions
-
+Besides possibly improving performance and modifying the order of operations, using a paralle streams can impact how you write your application. Reduction operations on parallel streams are referred to as parallel reductions. The results for parallel reductions can be different from what you expect when working with serial streams.
 
 ### Performing Order-Based Tasks
+Since orer is not guaranteed with parallel streams, methods such as findAny() on parallel stream may result in unexpected behavious. Let's look at the results of findAny() applied to a serial stream:
+```
+System.out.println(Arrays.asList(1,2,3,4,5,6).stream().findAny().get());
+```
+
+This code consisitenly outputs the first value in the serial stream, 1. With parallel stream, the JVM can create any number of threads to process the stream. When you call findAny() on a parallel stream, the JVM selects the first thread to finish the task and retrieve its data:
+
+```
+System.out.println(Arrays.asList(1,2,3,4,5,6).parallelStream().findAny().get());
+```
+
+The result is that the putput could be 4,1 or really any value in the stream. You can see that with parallel streams, the results of findAny() are no longer predictable. Any stream operation that is based on order, including findFirst(), limit(), or skip(), may actually perform more slowly in a parallel env. This is a result of a parallel processing taks, beign forced to coordinate all of its threads in a synchronized-like fashion.
+On the plus side, the results of ordered operation on a parallel stream will be consistent with a serial stream. For example. calling skip(5).limit(2).findFirst() will return trhe same result on ordered serail and parallel streams.
+
 ### Combining Results with reduce()
+The stream operation reduce() combines a stream into a single object. Recall that first parameter to the reduce() method is called the identity, the second parameter is called the accumulator and third param is called the combiner. We can concatenate a string using the reduce() method to produce wolf, as hown in the following example:
+
+```java
+System.out.println(Arrays.asList('w','o','l','f'))
+  .stream()
+  .reduce("", (c, s1) -> c + s1, (s2, s3) -> s2 + s3);
+```
+
+Noite that the naming of the variables in this stream example is not accidental. The variable c is interpreated as a char, whereas s1, s2 and s3 are string values. Recall that in the three argument version of reduce(), the accumulator is a BiFUnction, while the combiner is a BinaryOperator. 
+
+On paralle streams, the reduce() method works by applying the reduction to pairs of elements within the stream to create intermidiate values and then co,bining those intermidiate values produce a final result. Whereas witjh a serail stream, wolf was built one character at a time, in a aprallel stream, the intermidiate string wo and lf could have been created and the combined.
+Whith parallel streams though, we now have to be concerned about order. What if the elements of a string are combined in the rowng order to produce wlfo or flow? the Stream API prevents this problem, while still allowing streams to be processed in parallel, as long as the arguments to the reduce() operation adhere to certain principles.
+
+Reuierements for reduce() arguments
+- The indetity must be defined such that for all elements in the stream u, combiner.apply(indentity, u)is equals to u.
+- The accumulator operator op must be associative and stateless such that (a op b) op c is equal to a op (b op c).
+- The combiner operator must also be associative and stateless and compatible with the indetity, such that for all u and t combiner.apply(u, accumulator.apply(indetity, t)) is equals to accumulator.apply(u, t)
+If you follow these principles when building your reduce() arguments, then the operations can be performed wugina parallel stream and the results will be ordered as they would be with a serial stream. Note that these principles still apply to the identity and accumulator when using the one-or-two argument version of reduce() on parallel streams.
+
+Note: while the requirements for the input arguments reduce() method hold true for both serial and paralle streams, you may not have noticed any problems in serail streams because the result was always ordered. With parallel streams, though, order is no longer guanrateed, and an argument that violates one of these rules is much more likely to produce side effects and/or unpredicatble results.
+
+Lets take a looks at an example using a non-associative accumulator. In particular substracting numbers is not an associative operation; therefore  the following code can output different values depending on whther you use a serial or parallel stream:
+```java
+System.out.println(Arrays.asList(1,2,3,4,5,6)
+  .parallelStream()
+  .reduce(0, (a,b) -> (a-b)));    //NOT AN ASSCIATIVE ACCUMULATOR
+```
+
+It may output -21, 3, or some other value as the accumulator function violates the associativity property. You can see other problems if we use an identity parameter that is not truly ad indetify value. For example, what do you expect the following code to outout?
+
+```java
+System.out.println(Arrays.asList("w","o","l","f")
+  .parallelStream()
+  .reduce("X", String::concat));
+```
+
+In fact, ti can output XwXoXlXf. AS part of the parallel process, the identity is applied to multiple elements in the stream, resulting in very unexpected data.
+
+Uing the three argument reduce() method is recommended to be used when working with parallel streams.
+
 ### Combining Results with collect()
+Like reduce(), the Stream API includes a three argument version of collect() that takes accumulator and combiner operator, alonmg with a supplier operator insted of an indentity. Also like reduce() , the accumulator and combiner operations must be associative and stateless, with the combiner operations compatob;le with the accumulator operator, as previously discussed. In this manner, the three argument verwsion of collect() can be performed as a parallel reduction, as shown in the following example:
+
+```java
+
+Stream<Integer> stream = Stream.of("w","o","l","f").parallel();
+SortedSet<String> set = stream.collect(COncurrentSkipListSet::new, Set::add, Set::addAll);
+System.out.println(set);      // [f, l, o ,w ]
+```
+
+Recall that elemetns in a ConcurrentSkipListSet are sorted accoring to their natural ordering. Ypou should use a concurrent collection to combine the results, ensuring that the results of concurrent threads do not cause a ConcurrentModificationException.
+
 ### Using the One-Argument collect() Method
+Recall that one-argument version of collect() takes a collector argument as shown in the follosing example:
+
+```java
+Stream<String> stream = Stream.of("w","o","l","f").parallel();
+Set<String> set = Stream.collect(Collectors.toSet());
+System.out.println(set);        //[f, w, l ,o ]
+```
+Performing parallel reductions with a collector required additional considerations, For example, if the collection into which you are inserting in an ordered data set, such as a List, then the elements in the resulting collection must be in the same order, regarless of whther you use a serial or parallel stream. This may reduce your performance, though,as some operations are unable to be completed in parallel. The following rules ensure that a parallel reductions will be performed efficiently in Java using a collector.
+
+Requirements for Parallel Reductions with collect():
+- The stream is parallel
+- The parameter of the collect operations has the Collector,Characteristics.CONCURRENT characteristics.
+- Either the stream is unordered or the collector has the characteritics Collector.Characteristics.UNORDERED
+
+Any class that implements the Collector interface includes a characteristics() method that retusn a set of available attributes for the collector. While Collectors.toSet() does have UNORDERED characteristics, it does not have the CONCURRENT characteristics; therefore the previous collector example will not be performed as a concurrent reduction.
+
+The Collcetors class includes two sets of methods for retrieving collectors that are both UNOURDERED and CONCURRENT, Collectors.toConcurrentMap() and Collectors.groupingByConcurrent(), and therefore it is capable of performing parallel reductions efficiently. Like their non-concurrent couterparts, there a reoverloaded versions that take additional arguments.
+Here is a rewrite of an example fro chapter 4 to use parallel stream and parallel reductions:
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears").parallel();
+ConcurrentMap<Integer, String> map = ohMy
+  .collect(Collector.toConcurrentMap(String::length, k -> k, (s1, s2) -> s1 + "," + s2));
+System.out,println(map);      //{5=lions,bears, 6=tigers}
+System.out.println(map.getClass());    //java.util.concurrent,ConurrentHashMap
+```
+
+We use ConcurrentMap reference, although the actual class returned is likely CncurrentHashMap. The particular class is not guaranteed; it will just be a class that implements the interface ConcurrentMap.
+Finally, we can rewrite our grouingBy() example from Chapter 4 to use a parallel stream and paralle reduction:
+
+```java
+Stream<String> ohMy = Stream.of("lions","tigers","bears").parallel();
+ConcurrentMap<Integer, List<String>> map = ohMy.collect(
+  Collectors.groupingByConcurrent(String::length));
+System.out.println(map);     //{5=[lions,bears], 6=[tigers]}  
+```
+
+As before, the returned object can be assigned a ConcurentMap reference.
 
 # Managing Concurrent Processes
 ## Creating a CyclicBarrier
