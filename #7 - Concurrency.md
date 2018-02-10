@@ -1079,8 +1079,48 @@ LEMUR
 When using stream, you should avoid any lambda expressions that can produce side effects. Note that for the exam, you should remeber that parallel streams can process results independently, altough the order of the results cannot be determined ahead of time.
 
 ## Avoiding Stateful Operations
+Side effects can also appear in parallel stream if you lambda expression are stateful. A stateful lambda expression is one whose result depenmds on any state that might change during the execution of a pipeline. On the other hand, a stateless lambda expression is one whose result does not depend on any state that might change during the execution of a pipeline. Let's look an example to see why stateful lambda expression should be avoided in parallel streams:
+
+```
+List<Integer> data = Collections.synchronizedList(nmew ArrayList<>());
+Arrays.asList(1,2,3,4,5,6).parallelStream()
+  .map(i -> {data.add(i); return i;})    // AVOID STATEFUL LAMBDA EXPRESSIONS!
+  .forEachOrdered( i -> System.out.println(i + " "));
+  
+System.out.println();
+for(Integer e : data){
+  System.out.println(e + " ");
+}
+```
+
+The following is a sample generation of this code snippet using a parallel stream:
+
+```
+1 2 3 4 5 6
+2 4 3 5 6 1
+```
+
+The forEachOrdered() method displays the number iun the stream sequentially, whereas the order of the elements in the data list is completely random. You can see that stateful lambda expressionm which modifies the data list in parallel, produces unpredictable results at runtime. Note that this would not have been noticeable with a serial stream, where the results would have been the following:
+
+```
+1 2 3 4 5 6
+1 2 3 4 5 6
+```
+
+It strongly recommended that you avoid stateful operations when using parallel streams, so as to remove any potential data side effects. In fact, they should generally, be avoided in serial streams wherever possible, since they prevent your streams from taking advantage of parallelization.
+
+**Real World Scenario: Using concurrent collections with parallel streams**
+We applied the parallel stream to a synchonized list in the previous example. Anytime you are working with a collection with a parallel stream, it is recommended that you use a concurrent collection. For example, if we had used regular ArrayList rather than a synchronized one, we could have seen output such as the following.
+
+```
+   1 2 3 4 5 6
+null 2 4 5 6 1
+```
+For an ArrayList object, the JVM internally manages a primitive array of the same type. As the size of the dynamic ArrayList grows, a new, larger primitive array is periodically required. If two threads both trigger the array to be resized at the same time , a result can be lost, producing the unexpected value shown here. As briefly mentioned earlier, and also discussed later in this chapter, the unexpected results of two tasks executing at the same time is a race condition.
 
 ## Processing Parallel Reductions
+
+
 ### Performing Order-Based Tasks
 ### Combining Results with reduce()
 ### Combining Results with collect()
