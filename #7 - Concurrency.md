@@ -1491,7 +1491,73 @@ The key concept to take away from this example is that the process was started a
 Note: Creating a ForkJoinTask and submitting it to the ForkJoinPool does not guarantee it will be executed immediately. For example, a recursive step may generate 10 tasks when there are only four threads available, Like a pooled thread executor, the task will wait for an available thread to start processing the data.
 
 ## Working with a RecursiveTask
+Let's say that we want to compute the sum of all weight values while processing the data. Instead of extending RecursiveAction, we could extend the generic RecuriveTask to calculate and return each sum in the compute() method. The following is an updated implementation that uses RecursiveTask<Double>:
+
+```java
+public class WeightAnimalAction extends RecursiveTask<Double>{
+  private int start;
+  private int end;
+  private Double[] weights;
+  
+  public WeightAnimalAction(Double[] weights, int start, int end){
+    this.start = start;
+    this.end = end;
+    this.weights = weights;
+  } 
+  
+  protected Double compute(){
+    if(end-start <= 3){
+      double sum = 0;
+      for(int i=start; i<end; i++){
+        weights[i] = (double)new Random().nextInt(100);
+        System.out.println("Animal Weighted: " + i);
+        sum += weights[i];
+      }
+      return sum;
+    }else{
+      int middle = start + ((end-start) / 2);
+      System.out.println("[start=]" + start + ",middle=" + middle + ", end=" + end + "]");
+      RecursiveTask<Double> otherTask = new WeightAnimalTask(weights, start, middle);
+      otherTask.fork()
+      return new WeightAnimalTask(weights, middle, end).compute() + otherTask.join();
+    }
+  }
+```
+While our base case is mostly unchanged, except for returning a sum value, the recursive case is quite different. Since the invokeAll() method doesn't return a value, we instead issue a fork() and join() commmand to retrieve a recursive data. The fork() method instructs the fork/join framework to complete the task in a separate thread, while the join() method causes the current thread to wait for the results.
+In this example, we compute the [middle,end] rangeusing the current thread, since we already have one available, and the [start, middle] range using a separate thread. We then combine the results, waiting for the otherTask to complete. We can then update our main() method to include the results of the entire task:
+
+```java
+ForkJoinTask<Double> task = new WeightAnimalTask(weights, 0, weights.length);
+ForJoinPool pool pool = new ForJoinPool();
+Double sum = pool.invoke(task);
+System.out.println("Sum: " + sum);
+```
+
+Given our previous sample run, the toal sum would have been 617.  One thiong to be careful about when using the fork() and join() methods is the order in which they are applied. For instance, while previous example was multi-threaded, the following variation operates with single threaded performance:
+
+```java
+RecursiveTask<Double> otherTask = new WeighAnimalTask(weights, start, middle);
+Double otherResult = otherTask.for().join();
+return new WeightAnimalRTask(weights, middle, end).compute() + otherResults;
+```
+
+In this example the current thread class join(), causing it to wait for the [start, middle] subtask to finish before starting on the [middlem,end] subtask. In this manner, the results are actually performed in a single-threaded manner. For the examm, make sure that fork() is called before current thread begins a subtask and that join() is called after it finishes retrieveing the result, in order for them to be done in parallel.
+
 ## Indentifying Fork/Join Issues
+Unlike many of our earlier Concurrency API classes and structures, the fork/join framework can be a bit overwhealming for developers whoi have not seen it before. With that in mind, we have created the following list of tips for identifying issues in a for/join class on the exam.
+
+Tips for Reviewing Fork/Join Class:
+- The class should extedn RecursiveACtion or RecursiveTask.
+- If the class extends RecursiveAction, then it should override a protected compute() method that takes no arguments and returns void.
+- If the class extedns RecursiveTask, then it should override a protected cvompute() method that takes no arguments and returns a generic type listed in the class.
+- The invokeAll() method takes two instances of the fork/join class and does not return a result.
+- The fork() method causes a new task to be submitted to the pool and is similar to the thread executor submit() method.
+- The join() method is called after the fork() and causes the current thread to wait for the results of a subtask.
+- Unlike fork(), calling compute() within a compute() method causes the task to wait for the results of the subtask.
+- The fork() method should be called before concurrent thread performes a compute() operation, with join() called to read results afterwards.
+- Since compute() takes no arguments, the constructor of the class is often used to pass instructions to the task.
+
+Obviously, this is a lot to look for when taking the exam, so we recommend that you practive with the framework by writing your own fork/join classes. You can also time the results with System.currentTimeMillis() to see how the fork/join can improve performance.
 
 # Idetifying Threading Problems
 ## Understanding Liveness
