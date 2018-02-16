@@ -1235,6 +1235,137 @@ The Concurrency API includes classes that can be used to coordinate tasks among 
 ## Creating a CyclicBarrier
 Our zoo workers are back, and this time they are cleaning pens. Imagine that there is a lion pen that needs to be emptied, cleaned, and then filled back up with the lions. To complete the task, we have assigned four zoo workers. Obviously, we don't want to start cleaning the cage while the lion is roaming in it, lest we end up losing a zoo worker! Furthermore, we don't want to let lions back into the pen while it is still beign cleaned.
 
+We could have all of the work completed by a single worker, but this would be slow and ignore the fact we have three zoo workers standing to help. A bettern solution would be to have all four zoo employees work concurrently, pausing between the end of one set of tasks and the start of the next.
+
+To coordinate these tasks, we can use the ```CyclickBarrier``` class. For now, let's start with a code sample without a ```CyclickBarrier```.
+
+```java
+import java.util.concurrent.*;
+
+public class LionPenManager{
+  
+  private void removeAnimals(){ System.out.println("Removing animals");}
+  
+  private void cleanPen(){ System.out.println("Cleaning the pen"); }
+  
+  private void addAnimals(){ System.out.println("Adding animals"); }
+  
+  public void performTask(){
+    removeAnimals();
+    cleanPen();
+    addAnimals();
+  }
+
+  public static void main(String[] args){
+    ExecutorService service = null;
+    try{
+      service = Executor.newFixedThreadPool(4);
+      LionPenManager manager = new LionPenManager();
+      for(int i = 0; i < 4; i++){
+        service.submit(() -> manager.performTask());
+      }
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+}
+```
+
+The following is sample output based on this implementation:
+
+```
+Removing animals
+Removing animals
+Cleaning the pen
+Adding animals
+Removing animals
+Cleaning the pen
+Adding animals
+Removing animals
+Cleaning the pen
+Adding animals
+Cleaning the pen
+Adding animals
+```
+
+Although within a single thread the results are ordered, among multiple workers the output is entirely random. We see that some animals are still being removed while the cage is beign cleaned, and other aniamals are added before the cleaning process is finished. In our conceptual example, this would be quite chaotic and would not lead to a very clean cage. We can improve these results by using ```CyclickBarrier``` class. This class takes in its constructor a limit value, indicating the number of threads to wait for. As each thread finishes, it calls await() method on the cycle barrier. Once the specified number of threads have each called await(), the barrier is released and all threads can continue. The following is a reimplementation of our LionPenManager class that uses ```CyclicBarrier``` objects toi coordinate access. 
+
+```java
+import java.util.concurrent.*;
+
+public class LionPenManager{
+  
+  private void removeAnimals(){ System.out.println("Removing animals");}
+  
+  private void cleanPen(){ System.out.println("Cleaning the pen"); }
+  
+  private void addAnimals(){ System.out.println("Adding animals"); }
+  
+  public void performTask(CyclicBarrier c1, CyclicBarrier c2){
+     try{
+      removeAnimals();
+      c1.await();
+      cleanPen();
+      c2.await();
+      addAnimals();
+     }catch(InterruptedException | BrokenBarrierException e){
+      //handle checked exceptions here
+     }
+  }
+  
+  public static void main(String[] args){
+    ExecutorService service = null;
+    try{
+      service = Executors.newFixedThreadPool(4);
+      
+      LionsPenManager manager = new LionPenManager();
+      CyclicBarrier c1 = new CyclicBarrier(4);
+      CyclicBarrier c2 = new CyclicBarrier(4,
+        () -> System.out.println("*** Pen Cleaned!"));
+        
+      for(int i = 0; i < 4; i++){
+        service.submit(() -> manager.performTask(c1, c2));
+      }  
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+
+```
+In this example we have updated the performTask() to use the CyclicBarrier objects. Like synchronizing on the same object, coordinating a task with a ```CyclicBarrier``` requires the object to be static or passed to the thread performing the task. We also add a try/catch block in the performTask() method, as the await() method throws multiple checked expections.
+
+The following is sample output based on this revised implementation of our LionPenManager class:
+
+```
+Removing animals
+Removing animals
+Removing animals
+Removing animals
+Cleaning the pen
+Cleaning the pen
+Cleaning the pen
+Cleaning the pen
+*** Pen Cleaned!
+Adding animals
+Adding animals
+Adding animals
+Adding animals
+```
+
+As you can see, all of the results are now organized. Removing the animals all happens in one step, as does cleaning the pen and adding the animals back in. In this example we used two different constructors for our ```CyclicBarrier``` obecjts, the latter of which called a ```Runnable``` method upon completion.
+
+**Thread Pool Size and Cyclic Barrier Limit**
+If you are using a thread pool, make sure that you set the number of available threads to be at least as large of your CiclicBarrier. For example, what if we changed the code to allocate only two threads, such as in the following snippet?
+```
+ExecutorService service = Executors.newFixedThreadPool(2);
+```
+In this case, the code will hang indefinitely. The barrier would never be reached as the only threads available in the pool are stuck waiting for the barrier to be complete. As you shall see in the next section, this is a form of deadlock.
+-----------------------
+The CyclicBarrier class allows us to perform complex, multi-threaded tasks, while all threads stop and wait at logical barriers. This solution is superior to a single-threaded solution, as the individual tasks, such as removing the animals, can be completed in parallel by all four zoo workers. The ir a slight loos in performance to be expected from using CyclicBarrier. For example, one worker may be increadibly slow at removing lions, resulting in the other three workers waiting for him to finish. Since we can't start cleaning the pen while it is full of lions, though, this solution is about as concurrent as we can make it.
+
+**Reusing CyclicBarrier** 
+After a CyclickBarrier is broken, all threads are released and the number of threads waiting on the CyclicBarrir goes back to zero. At this point, the CyclicBarrir may be used again for a new set of waiting threads. For example, if our CyclicBarrir limit is 5 and we have 15 threads that call await(), then the CyclicBarrir will be activated a total of three times.
+
 ## Applying the Fork/Join Framework
 ## Working with a RecursiveTask
 ## Indentifying Fork/Join Issues
