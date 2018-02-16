@@ -1230,7 +1230,11 @@ System.out.println(map);     //{5=[lions,bears], 6=[tigers]}
 As before, the returned object can be assigned a ConcurentMap reference.
 
 # Managing Concurrent Processes
+The Concurrency API includes classes that can be used to coordinate tasks among a group of related threads. These classes are designed for use in specific scenarios, similar to many of the design patterns that you saw in Chapter 2. In this chapter, we present two classes with which you should be familiar for the exam, ```CyclicBarrier``` and ```ForkJoinPool```.
+
 ## Creating a CyclicBarrier
+Our zoo workers are back, and this time they are cleaning pens. Imagine that there is a lion pen that needs to be emptied, cleaned, and then filled back up with the lions. To complete the task, we have assigned four zoo workers. Obviously, we don't want to start cleaning the cage while the lion is roaming in it, lest we end up losing a zoo worker! Furthermore, we don't want to let lions back into the pen while it is still beign cleaned.
+
 ## Applying the Fork/Join Framework
 ## Working with a RecursiveTask
 ## Indentifying Fork/Join Issues
