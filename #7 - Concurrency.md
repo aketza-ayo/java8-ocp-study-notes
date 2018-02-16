@@ -1394,6 +1394,102 @@ In this example, you see that 1 is the base case, and any integer value greater 
 
 Let's use an array of Double values called weights. For simplicity, let's say that there are 10 animals in the zoo; thus our array is of size 10.
 
+```
+Double[] weights = new Double[10];
+```
+
+We are further constrained by the fact that the animals are spread out, and a simgle person can weight at most three animals in an hour. If we want to complete this task in an hour, our zoo is going to to need help. Conceptually we start off with a single zoo worker who realizes that they cannot perform all 10 tasks in time. They perform a recursive step by dividing the set of 10 animals into two sets of 5 animal, one set for each zoo worker. The two zoo workers then further subdivide the set until each zoo worker has the most three animals to weight, which is the base case of our example. Applying the fork/join framework requires us to perform three steps:
+1. Create a ForJoinTask
+2. Create the ForkJoinPool
+3. Start the ForJoinTask
+
+The first step is the most complex, as it requires defining the recursive process. Fortunately, the second and third steps are easy and can each be completed with a single line of code. For the exam, you should know how to implement the fork/join solution by extending oine of the two classes, ```RecursiveAction``` and ```RecursiveTask```, both of which implement the ```ForkJoinTask``` interface.
+
+The first class, RecursiveAction is an abstract class that requiress us to implement the compute() method, which returns void, to perform the bulk of the work. The second class, RecursiveTask, is an abstract generic class that requires us to implement the compute() method, which returns the generic type, to perform the bulk of the work. As you might have guessed, the difference between RecursiveAction and RecursiveTask is analogous to the difference between Runnable and Callable, respectively, which you saw at the start of the chapter.
+
+Let's define a WeightAnimalAction that extends the fork/join class RecursiveAction:
+
+```java
+import java.util.*;
+import java.util.concurrent;
+
+public class WeightAnimalAction extends RecursiveAction{
+  private int start;
+  private int end;
+  private Double[] weights;
+  
+  public WeightAnimalAction(Double[] weights, int start, int end){
+    this.start = start;
+    this.end = end;
+    this.weights = weights;
+  } 
+  
+  protected void compute(){
+    if(end - start <= 3){
+      for(int i = start; i < end; i++){
+        weights[i] = (double) new Random().nextInt(100);
+        System.out.println("Animal Weighted: " + i);
+      }
+    }else{
+      int middle = start + ((end-start) / 2);
+      System.out.println("[start=" + start + ", middle=" + middle + ",end=" + "]");
+      invokeAll(new WeightAnimalAction(wweights, start, middle),
+                new WeightAnimalAction(weights, middle, end));
+    }
+  } 
+}
+
+```
+
+We start off by defining the task and the arguments on which the task will operate, such as start ,end and weights. We then override the abstract compute() method, defining our base and recursive process. For the base case, we weight the animal if there are most three left in the set. For simplicity, this base case assigns a random number from 0 to 100 as the weight. For the recursive case, we split the work from one WeightAnimalACtion object into two WeightAnimalAction instances, dividing the available indices between the two tasks. Some subtask may end up with little or no work to do, which is fine, as long as they terminate in a base case.
+
+Note: Dividing tasks into recursive subtasks may not always result in evenly divided sets. In our zoo example, one zoo worker may end up with three animals to weight, while other may have only one animal to ewight. The goal of the fork/join framework is to break up larger tasks into smaller ones, not to guarantee every base case ends up beign exactly the same size.
+ 
+-----------------------------------------------------------
+
+Once the task class is defined, creating the ForkJoinPool and starting the task is quite easy. The following main() method performs the task on 10 records and outputs the results:
+
+```java
+public static void main(String[] args){
+  Double[] weights = new Double[10];
+  
+  ForkJoinTask<?> task = new WeightAnimalAction(weights, 0, weights.length);
+  ForJoinPool pool pool = new ForkJoinPool();
+  pool.invoke(task);
+  
+  //print results
+  System.out.println();
+  System.out.println("Weights: ");
+  Arrays.asList(weights).stream().forEach(
+    d -> System.out.println(d.intValue() + " "));
+}
+
+```
+
+By default, the ForJoinPool class will use the number of preoicessors to determine how many threads to create. The following is a sample output of this code:
+
+```
+[start=0,middle=5,end=10]
+[start=0,middle=2,end=5]
+Animal Weighted: 0
+Animal Weighted: 2
+[start=5,middle=7,end=10]
+Animal Weighted: 1
+Animal Weighted: 3
+Animal Weighted: 5
+Animal Weighted: 6
+Animal Weighted: 7
+Animal Weighted: 8
+Animal Weighted: 9
+Animal Weighted: 4
+
+Weights: 94 73 8 92 75 63 76 60 73 3
+```
+
+The key concept to take away from this example is that the process was started as a single task, and it spawned additional concurrent tasks to split up the work after if had already started. As you might have noticed in the sample output, some taskss reached their base case while others were still performing recursive work. Likewise, the order of the output cannot be guaranteed, since some zoo workers finish before others.
+
+Note: Creating a ForkJoinTask and submitting it to the ForkJoinPool does not guarantee it will be executed immediately. For example, a recursive step may generate 10 tasks when there are only four threads available, Like a pooled thread executor, the task will wait for an available thread to start processing the data.
+
 ## Working with a RecursiveTask
 ## Indentifying Fork/Join Issues
 
