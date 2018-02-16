@@ -1360,13 +1360,40 @@ If you are using a thread pool, make sure that you set the number of available t
 ExecutorService service = Executors.newFixedThreadPool(2);
 ```
 In this case, the code will hang indefinitely. The barrier would never be reached as the only threads available in the pool are stuck waiting for the barrier to be complete. As you shall see in the next section, this is a form of deadlock.
+
 -----------------------
+
 The CyclicBarrier class allows us to perform complex, multi-threaded tasks, while all threads stop and wait at logical barriers. This solution is superior to a single-threaded solution, as the individual tasks, such as removing the animals, can be completed in parallel by all four zoo workers. The ir a slight loos in performance to be expected from using CyclicBarrier. For example, one worker may be increadibly slow at removing lions, resulting in the other three workers waiting for him to finish. Since we can't start cleaning the pen while it is full of lions, though, this solution is about as concurrent as we can make it.
 
 **Reusing CyclicBarrier** 
 After a CyclickBarrier is broken, all threads are released and the number of threads waiting on the CyclicBarrir goes back to zero. At this point, the CyclicBarrir may be used again for a new set of waiting threads. For example, if our CyclicBarrir limit is 5 and we have 15 threads that call await(), then the CyclicBarrir will be activated a total of three times.
 
 ## Applying the Fork/Join Framework
+Suppose that we need to measure the ewight of all of the animals in our zoo. Further suppose that we ask exactly one person to perform this task and perform in one hour. What's the first thing that the person is likely to do? Probably ask for help! In most of the examples in this chapter, we knew at the start of the process exactly how many threads and tasks we needed to perform. Sometimes, we aren't so lucky. It may be that we have five threads, or five zoo workers in our example, but we have no idea how many tasks need to perform. When a tasks gets too complicated, we can split the task into multiple other tasks using the fork/join framework. 
+
+**Introducing Recursion**
+The fork/join framework relies on the concept of recusrion to solve complex tasks. Recursion is the process by which a task calls itself to solve a problem. A recursive solution is constructed with a base case and a recursive case:
+
+Base case: A no-recursive method that is used to terminate the recursive path.
+Recursive case: A recursive method that may call itself one or multiple times to solve a problem.
+
+For example, a method that computes the factorial of a number can be expressed as a recursive function. In mathematics a factorial is what you get when you multiply a number by all of the intergers below it. The factorial of 5 * 4 * 3 * 2 * 1 = 120. The following is a recursive factorial function in java.
+
+```java
+public static int factorial(int n){
+    if(n <= 1){
+      return 1;  
+    }
+    return n * factorial(n - 1);
+}
+```
+
+In this example, you see that 1 is the base case, and any integer value greater tyhan 1 triggers the recursive case. One challenge in implementing a recursive solution is always to make sure that the recursive process arrives at a base case. For example, if the base case is never reached, the solution will continue infinitely and the program will hang. In Java, this will result in a StackOverflowError anytime the application recurse too deeply.
+
+--------------------------------
+
+Let's use an array of Double values called weights. For simplicity, let's say that there are 10 animals in the zoo; thus our array is of size 10.
+
 ## Working with a RecursiveTask
 ## Indentifying Fork/Join Issues
 
