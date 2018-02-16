@@ -1559,7 +1559,11 @@ Tips for Reviewing Fork/Join Class:
 
 Obviously, this is a lot to look for when taking the exam, so we recommend that you practive with the framework by writing your own fork/join classes. You can also time the results with System.currentTimeMillis() to see how the fork/join can improve performance.
 
-# Idetifying Threading Problems
+# Identifying Threading Problems
+A threading problem can occur in muti-threaded applications when tow or more threads interact in an unexpected and undesirable way. For example, two threads may block each other form accessing a particular segment of code.
+
+The Concurrency API was created to help eliminate potential threading issues common to all developers. As you have seen, the Concurrency API creates threads and manages complex thread interactions for you, often in just a few lines of code. Although the Concurrency API reduces the potential for threading issues, it does not eliminate it. In practice, finding and indetiying threading issues within an application is often on of the most difficult tasks a developer can undertake.
+
 ## Understanding Liveness
 ## Deadlock
 ## Starvation
