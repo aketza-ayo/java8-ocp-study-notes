@@ -1565,6 +1565,7 @@ A threading problem can occur in muti-threaded applications when tow or more thr
 The Concurrency API was created to help eliminate potential threading issues common to all developers. As you have seen, the Concurrency API creates threads and manages complex thread interactions for you, often in just a few lines of code. Although the Concurrency API reduces the potential for threading issues, it does not eliminate it. In practice, finding and indetiying threading issues within an application is often on of the most difficult tasks a developer can undertake.
 
 ## Understanding Liveness
+As you have seen in this chapter, many thread operations can be performend independently, but some require coordination. For example, synchronizing on a method requires all threads that call the methoid to wait for other threadsto fionish before continuing. You also saw earlier in the chapter that threads in a CyclicBarrier will each wait for the barrier limit to be reached before continuing. What happens to the application while all of these threads are waiting? In many cases, the waitinhg is ephemeral and the user has very little idea that any dealy has occurred. In other casees, though, the waiting may b
 ## Deadlock
 ## Starvation
 ## Livelock
