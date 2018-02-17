@@ -1565,8 +1565,89 @@ A threading problem can occur in muti-threaded applications when tow or more thr
 The Concurrency API was created to help eliminate potential threading issues common to all developers. As you have seen, the Concurrency API creates threads and manages complex thread interactions for you, often in just a few lines of code. Although the Concurrency API reduces the potential for threading issues, it does not eliminate it. In practice, finding and indetiying threading issues within an application is often on of the most difficult tasks a developer can undertake.
 
 ## Understanding Liveness
-As you have seen in this chapter, many thread operations can be performend independently, but some require coordination. For example, synchronizing on a method requires all threads that call the methoid to wait for other threadsto fionish before continuing. You also saw earlier in the chapter that threads in a CyclicBarrier will each wait for the barrier limit to be reached before continuing. What happens to the application while all of these threads are waiting? In many cases, the waitinhg is ephemeral and the user has very little idea that any dealy has occurred. In other casees, though, the waiting may b
+As you have seen in this chapter, many thread operations can be performend independently, but some require coordination. For example, synchronizing on a method requires all threads that call the methoid to wait for other threadsto fionish before continuing. You also saw earlier in the chapter that threads in a CyclicBarrier will each wait for the barrier limit to be reached before continuing. What happens to the application while all of these threads are waiting? In many cases, the waiting is ephemeral and the user has very little idea that any dealy has occurred. In other cases, though, the waiting may be extremely long, perhaps infinite.
+
+*Liveness* is the ability of an application to be able to execute in a timely manner. Liveness problems, then, are those in which the application becomes unresponsive or in some kind of "stuck" state. For the exam, there are three types of liveness issues with which you should be familiar; deadlock, starvation and livelock.
+
 ## Deadlock
+*Deadlock* occurs when two or more threads are blocked forever, each waiting on the other. We can illustrate this principle with the following example. Imagine that our zoo has two foxes; Foxy and Tails. Foxy likes to eat first and then drink water, while Tails like to drink water first and then eat. Furthermore, netiher animal likes to share, and they will finish their meal only if they have exclusive access to both food and water. The zookeeper places the food on one side of the environment and the water on the other side. Although our foxes are fast, it still takes them 100 milliseconds to run from one side of the environment to the other. What happens if Foxy gets the food first and Tails gets the water first? The following application models this behaviour:
+
+```java
+import java.util.concurrent.*;
+
+public class Food(){}
+
+public class Water{}
+
+public class Fox{
+  
+  public void eatAndDrink(Food food, Water water){
+    synchronized(food){
+      System.out.println("Got Food");
+      move();
+      
+      synchornized(water){
+        System.out.println("Got Water");
+      }
+    }
+  }
+
+  public void drinkAndEat(Food food, Water water){
+    synchronized(water){
+      System.out.println("Got Water");
+      move();
+      
+      synchronized(food){
+        System.out.println("Got Food");
+      }
+    }
+  }
+  
+  public void move(){
+    try{
+      Thread.sleep(1000);
+    }catch(InterruptException e){
+      //Handle exception
+    }
+  }
+  
+  public static void main(Stirng[] args){
+    //create participants and resource
+    Fox foxy = new Fox();
+    Fox tails = new Fox();
+    Water water = new Water();
+    Food food = new Food();
+    
+    //process data
+    ExecutorService service = null;
+    
+    try{
+      service = Executor.newSchedulesThreadPool(10);
+      service.submit(() -> foxy.eatAndDrink(food, water));
+      service.submit(() -> tails.drinkAndEat(food, water));
+      
+    }finally{
+      if(service != null) service.shutdown();
+    }
+  }
+}
+
+```
+In this example, foxy obtains the food and then moves to the other side of the environment to obtain water. Unfortunately, Tail has already drunken the water and is waiting for the food to become available. The result is that our program outputs the following and it hangs indefinitely:is example is consireded a deadlock because both participants are permanently blocked, waiting on resources that will never become available. The result is that our program putputs the following and hangs indefinitely:
+
+```
+Got Food!
+Got Water!
+```
+
+This example is considered a deadlock because both participants are permanetly blocked, waiting on resources that will never happen again.
+
+**Preventing Deadlocks**
+
+How to fix it once it happens? The answer is that you can't in most situations. On the other hand, there are numerous strategies to help prevent a deadlock from ever happening in the first plance. One common strategy to avoid deadlock is for all threads to order their resources requests. For example, if both foxes have a rule that they need to obtain the food before water, then the previous deadlock scenario will not happen again. Once one of the foxes obtain the lock, the second fox would wait, leaving the water resource available. There are some advanced techniques that try to detect and resolve a deadlock in real time, but they are quite often difficult to implement and have limited success in practice. In fact, many operating systems ignore the problem altogether and pretend that *deadlocks never happen*  
+
 ## Starvation
+
 ## Livelock
+
 ## Managing Race Condition
