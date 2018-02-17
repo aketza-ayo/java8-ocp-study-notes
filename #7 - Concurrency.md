@@ -1655,3 +1655,20 @@ How to fix it once it happens? The answer is that you can't in most situations. 
 If Foxy and Tails continue this process forever, it is referred to as livelock. Both Foxy and Tails are active, running back and forth across their area, but neither is able to finish their meal. Foxy and Tails are executing a form of failer deadlock recovery. Each fox notices that they are potentially entering a deadlock state that responds by releasing all of its lock resources. unfortunately, the lock and unlock process is cyclical, and the two foxes are conceptually deadlocked. In practice, livelock is often very difficult issue to detect. Threads in a livelock state appera actice and able to respond to requests, even when they are in fact stuck in an endless cycle. 
 
 ## Managing Race Condition
+A *race condition* is an udesirable result that occurs when two tasks, which should be completed sequentially, are completed at the same time. We encountered two examples of race conditions earlier in the chapter when we introduced, synchronization and parallel streams. Imagine two zoo patrons. olivia and Sophia, are signing up for an account on the zoo's new visitor website. Both of them want to use the same username, ZooFan, and they each send requestes to create the account at the same time.
+
+What result does the web server return when both users attempt to create an account with the same username?
+
+Possible outcomes for this Race Condition
+
+- Both users are able to create accounts with username ZooFan
+- Both users are unable to create accounts with username ZooFan, returning an error message to both users.
+- One user is able to create the account with username ZooFan, while the other user receives an error message.
+
+Which of these results is most desirable when designing a website for our server ? The first possiblity, in which both users are able to create an account with the same username, could cause serious problems and break numerous invariants in the system. Assuming that the username is required to log into the website, how can they both log in with the same username. This is the worst possible outcome as the server will not be able to differenciate in between both of these users.
+
+What about the second scenario? They will receive an error and ask to try again. in this scenario the data is protected. The users are free to try again with the same username, ZooFan, since no one has been granted access to it. When users try again the chances of hitting a race condition again tend to disminish. For example, if one user submist the request a few seconds before the second user they might avoid another race condition entirely by the system informing the second user that the account name is already in use.
+
+The third scenario in which one user obtains the account while the other does not, is often considered the best solution to this type of condition. Like the second situation, we preserve the data integrity, but unline the second stituation, at least one user is able to move forward on their first request, avoiding additional race condition scenarios. Also unlkike the previous scenario, we can provide the user who didn't win the race with a clear error message beacuse we are noe sure that the account username is no longer available in the system.
+
+For the exam you should understand that race conditions lead to invalid data if they are not properly handled. Even the solution where both participantsfail to proceed is preferable to one in which invalid data is permitted to enter the system. Race conditions tesnd to appear in higly concurrent applications. As a softaware system grows and more users are added, they tend to appear more frecuently. One solution is to use a monitor to synchronize on the relevant overlapping task. In the previous example, the relevatn task is the method that determines whether an account username is in use and reserves it in the system if it is available. We could also use singletons, to coordinate access to shared resources.
