@@ -1647,7 +1647,9 @@ This example is considered a deadlock because both participants are permanetly b
 How to fix it once it happens? The answer is that you can't in most situations. On the other hand, there are numerous strategies to help prevent a deadlock from ever happening in the first plance. One common strategy to avoid deadlock is for all threads to order their resources requests. For example, if both foxes have a rule that they need to obtain the food before water, then the previous deadlock scenario will not happen again. Once one of the foxes obtain the lock, the second fox would wait, leaving the water resource available. There are some advanced techniques that try to detect and resolve a deadlock in real time, but they are quite often difficult to implement and have limited success in practice. In fact, many operating systems ignore the problem altogether and pretend that *deadlocks never happen*  
 
 ## Starvation
+*Starvation* occurs when a single thread is perpetually denied access to shared resource or lock. The thread is still active, but it is unable to complete its work as a result of other threads constatly taking the resource that they try to access. In our fox example, imagine that we have a pack of very hungry, very competitive foxes in our environment. Every time Foxy stands up to go get food, one of the other foxes sees her and rushes to eat before her. Foxy is free to roam around the enclosure, take a nap, and howl for a zookeeper but is never able to obtain access to the food. In this example, Foxy literally and figuratively experiences starvation. Good thing that this is just theoretical example!    
 
 ## Livelock
+
 
 ## Managing Race Condition
