@@ -5,6 +5,9 @@ A repository to keep track of the study guide on the OCP Java 8 book
 
 The book I am going to cover here is the second part of the guide for Java 8 certification. The first guide covers OCA exam (which I already passed) and this guide covers OCP exam (1Z0-809 exam).
 
+# Official Oracle documentation
+https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html
+
 # OCA guide
 My experience after reading the OCA study guide is positive and has encourage me to continue with the second part of the certification. It covers 100% of what you need to know to nail the exam but most importantly helps grasping the content in an effective way.  
 
