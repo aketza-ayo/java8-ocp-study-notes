@@ -1685,3 +1685,14 @@ We concluded the chapter by discussing potential threading issues with which yu 
 
 # Official Oracle documentation 
 https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html
+
+# Review Quesitons
+
+It took me a while to go through the questions in order to figure out what the code does. In fact I did the questions in two separate days. I struggled to go through and does not surprise me failing the reivew question's test.
+
+![Chapter seven questions](img/testChapterSeven.png)
+
+- Definitions of livelock, race condition and deadlock
+- CopyOnWriteArrayList class is designed to preserve the original list on iteration. The ConcurrentSkipListSet class allows modifications while iterating.
+- A Callable takes no argument in the lambda expression same as Runnable. But the first returns a generic type.
+A Callable takes no argument in the lambda expression same as Runnable. But the first returns a generic type.
