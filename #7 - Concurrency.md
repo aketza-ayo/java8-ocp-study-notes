@@ -1682,3 +1682,6 @@ We presented techniques for organizing tasks among multiple threads using atomic
 We then instroduced the notion of parallel streams and showed you how using them can improve performance in your application. Parallel streams can also cause unexpected results, since the results are no longer ordered. We also reviewed parallel reduction and showed how they differed from reduction and serial streams.
 
 We concluded the chapter by discussing potential threading issues with which yu should be familiar for the exam including deadlock, starvation, livelock and race conditions. You need to know only th basic theory behind these concepts for the exam. In professional software development, however, finding and resolving such problems is often quite challenging
+
+# Official Oracle documentation 
+https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html
