@@ -51,6 +51,80 @@ In this example we create a path that is equivalent to our previous example, usi
 ## Working with a File Object
 The File class contains numerous useful methods for interacting with files and directories within the file system. We represent the most commonly used one in the table below. Although this table may seem loke alot to learn, many of them are self explanatory:
 
+**Method Name**    | **Description**
+-------------------|---------------
+exists()           | Returns true if the file or directory exists
+getName()          | Returns the name of the file or directory denoted by this path
+getAbsolutePath()  | Returns the absolute pathname string of this path
+isDirectory()      | Returns true if the file denoted by this path is directory.
+isFile()           | Returns true if the file denoted by this path is a file
+length()           | Returns the number of bytes in the file. For performance reasons, the file system may allocate more bytes on disk than the file actually uses
+lastModified()     | Returns the number of milliseconds since the epoch when the filke was last modified
+delete()           | Deletes the file or directoryu. If this pathname denotes a directory, then the directory must be empty in order to be deleted
+reanmeTo(File)     | Renames the file denoted by this path
+mkdir()            | Creates the directory named by this path
+mkdirs()           | Creates the directory named by this path
+getParent()        | Returns the abstract pathname of this path including any nonexisitent parent directories.
+lastFiles()        | Returns a File[] array denoting the files in the directory
+
+The following is a sample program that given a file path outputs information about the file or directory, such as whther it exists, what files are contained within it and so forth:
+
+```java
+import hava.io.File;
+
+public class ReadFileInformation{
+  public static void main(String[] args){
+    File file = new File("C:\\data\\zoo.txt");
+    System.out.println("File exists: " + file.exists());
+    
+    if(file.exists()){
+      System.out.println("Absilute Path: " + file.getAbsolutePath());
+      System.out.println("Is Directory: " + file.isDirectory());
+      System.out.println("Parent Path: " + file.getParent());
+      
+      if(file.isFile()){
+        System.out.println("File Size: " + file.length());
+        System.out.println("File Last Modified: " + file.lastModified());
+      }else{
+        for(File subfile : file.listFiles()){
+          System.out.println("\t" + subfile.getName());
+        }
+      }
+    }
+  }
+}
+
+```
+If the path provided did not point to a file, it would output the following
+
+```
+File Exists: false
+```
+
+If the path provided pointed to a valid faile, it would putput something similar ro the following:
+
+```java
+File Exists: true
+Absolute Path: C:\data\zoo.txt
+Parent Path: C:\data
+Is Directory: false
+File Size: 12382
+File lastModified: 104215000000
+```
+
+Finally, if the path provided pointed to a valid directory, such as C:\data, it would output something similar to the following:
+
+```java
+File Exists: true
+Absolute Path: C:\data
+Parent Path: C:\
+
+Is Directory
+  employee.txt
+  zoo.txt
+  zoo-backup.txt
+
+```
 
 
 # Introducing Streams
