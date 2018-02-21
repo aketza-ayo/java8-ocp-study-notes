@@ -11,8 +11,47 @@ A *path* is a string representation of a file or directpry within a file system.
 ![Directory and File Hierarchy](img/directoryHierarchy.png)
 
 ## Introducing the File Class
+The first class the we will discuss is one of the most commonly used in the java.io API, the java.io.File class. The File class is used to read information about existing files and directories, list the contents of a directory, and create/delete files and directories.
+An instance of a File class represents the pathname of a particular file or directory on the file system. The File class cannot read and write data within a file, altough it can be passed as reference to many stream classes to read or write data. 
+
+:yin_yang: one common mistake new Java developers make is forgetting that File class can be used to represent directoris as well as files.
+
 ## Creating a File Object
+A File object often initilizes with String containing either an absolute or relative path to the file or directory within the file system. Different operative systems vary in their format of path names. For example, Unix based systems use the forward slash / for paths, whereas Windows-based systems use the backslash \ character. That said, many programming languages and file systems support both types of slashes when writing path statements. For convenience, Java offers two options to retrieve the local separator character: a system property and a static variable defined in the File class. Both of the following examples will output the separator character:
+
+```
+System.out.println(System.getProperty("file.separator"));
+
+System.out.println(java.io.File.separator);
+```
+
+The following code creates a File object and determines if the path it referenes exists within the file system:
+
+```java
+import java.io.File;
+
+public class FileSample{
+  public static void main(String[] args){
+    File file = new File("/home/smith/data/zoo.txt");
+    System.out.println(file.exists());
+  }
+}
+
+```
+
+This example uses the absolute path to a file and outputs true or false, depending on whther the file exists or not.The most common File construcot we will use takes a single String as an argument representing a relative of absolute path. The are other constructors such as the one that joins an exising File path with a relative child path, as shown in the following example:
+
+```
+File parent = new File("/home/smith");
+File child = new File(aprent, "data/zoo.txt");
+```
+
+In this example we create a path that is equivalent to our previous example, using a combination of a child and a parent path. If the parent object happens to be null, then it would be skipped and the method would revert to our Sstring constructor.
+
 ## Working with a File Object
+The File class contains numerous useful methods for interacting with files and directories within the file system. We represent the most commonly used one in the table below. Although this table may seem loke alot to learn, many of them are self explanatory:
+
+
 
 # Introducing Streams
 ## Stream Fundamentals
