@@ -8,7 +8,7 @@ A *file* is record within a file system that stores user and system data. Files 
 
 A *path* is a string representation of a file or directpry within a file system. Each file system defines own path separator character that is used between directory entries. In most file systems, the value of the left of the separator is the parent of the value of the right of the separator. For example, ```/user/home/zoo.txt``` means that zoo.txt is inside the home directory, with the home directory inside the user directory. You will see that paths can be absolute or relative later in the Chapter. In the figure below we show how a durectory and a file system is organized in hierarchical manner. In this example, directories are rectangles and files as ovals. Directories can be empty, as shown with tyhe c:\zoo and c:\app\employees directories.
 
-[Directory and File Hierarchy](img/directoryHierarchy.png)
+![Directory and File Hierarchy](img/directoryHierarchy.png)
 
 ## Introducing the File Class
 ## Creating a File Object
