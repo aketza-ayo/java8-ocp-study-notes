@@ -307,9 +307,54 @@ TRS
 You may notice in this example that calling the skip() operation is equivalent to calling read() and discarding the output. For skipping a handful of bytes, there is virtually no difference. On the other hand, for skipping a large number of bytes, skip() will often be faster, because it will use arrays to read the data.
 
 # Working with Streams
+Now that we have reviewed the types of streams and their properties it's time to jump in and work with some stream code! Some of the techniques for accessing streams may seem a bit new to you, but as you will see they are very similar among different stream classes.
+
 ## The FileInputStream and FileOutputStream Classes
+These two are used to read bytes from a file or write bytes to a file, respectively. These classes include constructors that take a File object or a String, representing a path to the file.
+
+The data in a FileInoutStream object is commonly accessed by successive calls to the read() method until a value of -1 is returned, indicating that the end of the stream - in this case the end of the file - has been reached. Although less common, you can choose to stop reading the stream early just by exiting the loop, such as if some search String is found. Note that when reading a single value of a FileInputStream instance, the read() method returns primitive int value rather than a byte value. It does this so that it has an additional value avaialable to be returned, specifically -1, when the end of the file is reached. For compatibility, the FileOutputStream also uses int instead of byte for writing a single byte to a file.
+
+The FileInputStream class also contains overloaded versions of the read() method, which takes a pointer to a byte array where the data is written. The method returns an integer value indicating how many bytes can be read into the byte array. It is also used by Buffered classes to improve performance, as you shall see in the next section.
+
+A FileOutputStream object is accessed by writing successive bytes using the write(int) method. Like the FileInputStream class, the FileOutputStream also cotains overloaded versions of the write() method that allow a byte array to be passed and can be used by Buffered classes. The following code uses FileInputStream and FileOutputStream to copy a file:
+
+```java
+import java.io.*;
+
+public class CopyFileSample{
+  public static void copy(File source, File destination) throws IOException{
+      try(InputStream in = new FileInputStream(source); 
+          OutputStream out = new FileOutputStream(destination)){
+            int b;
+            while((b = in.read()) != -1){
+              out.write(b);
+            }
+      }
+  }
+  
+  public static void main(String[] args) throws IOException{
+    File source = new File("Zoo.class");
+    File destination = new File("ZooCopy.class");
+    copy(source, destination);
+  }
+}
+```
+
+The main method creates two File objects, one for the source file to copy from and one for the destination file to copy to. If the destination file already exists, it will be overridden by this code. Both File objects are created using relative paths, so application would search for the Zoo.class in the current directory to read from, throwing a FileNotFoundException if the file is not found, which is a subclass of an IOException.
+
+The copy() method creates instances of FileInputStream and FileOutputStream, and it proceeds to read the FileInputStream one byte at a time, copying the value to the FileOutputStream as it's read. As soon as the in.read() returns a -1 value, the loop ends. Finally, both streams are closed using the try-with-resources syntax. Note that performance for this code, epecifically for large files, would not be particularly good because the sample does not use any byte arrays.As you shall see in the next section, we can improve the implementation using byte arrays and buffered streams. 
+
 ## The BufferedInputStream and BufferedOutputStream Classes
+We can enhance our implementation with only a few minor a few minor code changes by wrapping the FileInputStream and FileOutputStream classes that you saw in the previous example, with the BufferedInputStream and BufferedOutputStream classes respectively. Instead of reading the data one byte at a time, we use the underlying ```read(byte[])``` method of BufferedInputStream, which returns the number of bytes read into the provided byte array. The number of bytes read is important for two reasons. First, if the value returned is 0, then we know that we have reached the end of the file and can stop reading from the BufferedInutStream. Second, the last read of the file will likely only partially fill the byte array, since it is unlikely for the file size to be an exact multiple of our buffer array size. For example, if the buffer size is 1024 bytes and the file size 1054 bytes, then the last read will only be 30 bytes. The length value tells us how many of the bytes in the array were actually read from the file. The remaining bytes of the array will be filled with leftover data fro the previous read that should be discarded. The data is written into the BufferedOutputStream using the ```write(byte[],int,int)``` method, which takes as input a byte array, an offset, and a length value, respectively. The offset value is the number of values to skip before writing characters, and it is often set to 0. The length value is the number of characters from the byte array to write.
+
+**Why use the Buffered Classes?** It's quite common to use Buffered classes anytime you are reading or writing data with byte arrays. The Buffered classes contain numerous performance enhancements for managing stream data in memory.
+
+For example, the BufferedInputStream class is capable of retrieving and storing in memory more data than you might request with a single read() call. For successive calls to the read() method with small byte arrays, this would e faster in a wide variety of situations, since the data can be returned directly from memory without going to the file system. 
+
+
+
 ## The FileReader and BufferedWriter Classes
+
 ### Comparing the Two Copy Applications
 ## The ObjectInputStream and ObjectOutputStream Classes
 ## The Serializable Interface
