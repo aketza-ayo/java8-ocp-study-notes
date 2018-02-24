@@ -255,7 +255,56 @@ When data is written to an OutputStream, the underlying operative system does no
 You do not need to call the flush() method explicitly when you have finished writing to a file, since the close() method will atomatoically do this. in some cases, calling the flush() method intermittently while writing a large file, rather than performing a single large flush when the file is closed, may appear to improve performance by stretcthing the disk access over course of the write process.
 
 ### Making the Stream
+The InputStream and Reader classes include mark(int) and reset() methods to move the stream back to an earlier position. Before calling either of these methods, you should call the markSupported() method, which returns true only if mark() is supported. Not all java.io input stream classes support this operation, and trying to call mark(int) or reset() on a class that doesn not support these operations will throw an exception at runtime.
+
+Once you've verified that the stream can support these operations, you can call mark(int) with a read-ahead limit value. You can then read as many bytes as you want up to the limit value. If at any point you want to go back to the earlier position where you last called mark(), then you just call reset() and the stream will "revert" to an earlier state. In practice, it's not actually putting the data back into the stream but storing the data that was already read into memory for you to read again. Therefore, you should not call the mark() operation with too large a value as this could take up a lot of memory. Assume that we have an InputStream instance whose next values are ABCD. Consider the following code snippet:
+
+```java
+InputStream is = ...
+System.out.println((char) in.read());
+if(is.markSupported()){
+  is.mark(100);
+  System.out.print((char) is.read());
+  System.out.print((char) is.read());
+  is.reset();
+}
+System.out.print((char) is.read());
+System.out.print((char) is.read());
+System.out.print((char) is.read());
+```
+
+The code snippet will output the following if the mark() operation is supported:
+
+```
+ABCBCD
+```
+
+It first outputs A before the if statement. Since we are given that the stream supports the mark() operation, it will enter the if statement and read two characters, BC. It then calls the reset() operation, moving our stream back at the state that it was in after the A was read, comes out of the if statement and BC are read again, followed by D.
+If the mark operation is not supported it will output this instead, skipping the if statement entirely:
+
+```
+ABCD
+```
+
+Notice that regardless of whether the mark() operation was supported, we took care to have the stream end at the same position. Finally, if you call reset() after you have passed your mark() read limit, an exception may be thrown at runtime since the marked position may become invalidated. We say "an exception may be thrown" as some implementations may use a buffer to allow extra data to be read before the mark is invalidated  
+
 ### Skipping over Data
+The InputStream and Reader classes also include ```skip(long)``` method, which as you might expect skips pver a certain number of bytes. It returns a long value, which indicates the number of bytes that were actually skipped. If the return value is zero or negative, such as if the end of the stream was reached, no bytes were skipped. Assume we have an InputStream instance whose next values are TIGERS. Consider the following code snippet:
+
+```java
+InputStream is = ...
+System.out.println((char) is.read());
+is.skip(2);
+is.read();
+System.out.println((char) is.read());
+System.out.println((char) is.read());
+```
+The code will read one character, T, skip two characters, IG and then read three more characters, ERS, only the last two of which are printed to the user, which results in the following output.
+
+```
+TRS
+```
+You may notice in this example that calling the skip() operation is equivalent to calling read() and discarding the output. For skipping a handful of bytes, there is virtually no difference. On the other hand, for skipping a large number of bytes, skip() will often be faster, because it will use arrays to read the data.
 
 # Working with Streams
 ## The FileInputStream and FileOutputStream Classes
