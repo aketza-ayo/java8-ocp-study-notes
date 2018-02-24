@@ -190,9 +190,56 @@ The reason that Buffered streams tend to perform so well in practice is that fil
 
 
 ## Stream Base Classes
+The java.io library defines abstract classes that are the parents of all stream classes defined within the API: InputStream, OutputStream, Reader and Writer. For convenience, the authors of the Java API include the name of the abstract parent class as the suffix of the child class. For example, ```ObjectInputStream``` ends with ```InputStream``` meaning it has InputStream as an inherited parent class. Although most stream classes in java.io follow this pattern, PrintStream, which is an OutputStream, does not. The constructor of high-level streams often take a reference to the abstract class. For example. BufferedWriter takes Writer object as input, which allows it to take any subclass or Writer. The advantage of using a reference to the abstract parent class in the class constructor should be apparant in the previous high-level stream example. With high level-streams, a class may be wrapped multiple times. Furthermore, developers may define their own stream subclass that performs custom filtering. By using the abstract parent class as input, the high level stream classes can be used much more often without concern for the particular underlying stream subclass.
+
+Once common area where the exam likes to play tricks on you is mixing and macthing stream classes that are not compatible with each other. For example, take a look at each of the following examples and see if you can determine why they do not compile. 
+
+```java
+new BufferedInputStream(new FileReader("zoo-data.txt"));      //DOES NOT COMPILE
+
+new BufferedWriter(new FileOutputStream("zoo-data.txt"));     //DOES NOT COMPILE
+
+new ObjectInputStream(new FileOutputReader("zoo-data.txt"));  //DOES NOT COMPILE
+
+new BufferedInputStream(new InputStream());                   //DOES NOT COMPILE
+
+```
+
+The first two examples do not compile because they mix Reader/Writer classes with InputStream/OutputStream classes, respectively. The third example does not compile because we are mixing an OutputStream with an InputStream. Although it is possible to read data from and InputStream abd write it to an OutputStream, wrapping the stream is not the way to do so. As you shall see later in this chapter the data must be copied over, often interatively. Finally the last example does not compile because InoutStream is an abstract class, and therefore you cannot instantiate an instance of it.
 
 ## Decoding Java I/O Class Names
+Given that there are so many different java.io stream classes, it is reasonable to think that you might encounter one on the exam whose name you may have forgotten. Luckily, the function of most stream classes can be understood by decoding the name of the class. We summarize these properties in the following list.
+
 ### Review of java.io Class Properties
+- A class with the word InputStream or OutputStream in its name is used for reading or writing binary data, respectively.
+- A class with the word Reader or Writer in its name is used for reading or writing character or string data, respectively.
+- Most, but not all, input classes have corresponding output class.
+- A low level stream connects directly with the source of the data.
+- A high-level stream is built on top of another stream using wrapping.
+- A class with Buffered in its name reads or writes data in groups of bytes or characters and often improves performance in sequential file systems.
+
+When wrapping a stream you can mix and match only types that inherits from the same abstract parent stream. The table below describes those java.io streams you should be familiar with for the exam. Note that most of the information about each stream, such as whether it is an input or output stream or whether it accesses data using bytes characters, can be decoded by the name alone.
+
+**Method Name**    | **Low/High Level**   |    **Description**
+-------------------|----------------------|--------------------------------------------
+InputStream        |  N/A                 | The abstract class all InputStream classes inherit from
+OutputStream       |  N/A                 | The abstract class all OutputStream classes inherit from
+Reader             |  N/A                 | The abstract class all Reader classes inherit from
+Writer             |  N/A                 | The abstract class all Writer classes inherit from
+FileInputStream    |  Low                 | Reads file data as bytes
+FileOutputStream   |  Low                 | Writes file data as bytes
+FileReader         |  Low                 | Reads file data as bytes
+FileWriter         |  Low                 | Writes file data as characters
+BufferedReader     |  High                | Reads charater data from an exisiting Reader in a buffered manner, which improves efficiency and perfrmance
+BufferWriter       |  High                | Writes charater data from an exisiting Writer in a buffered manner, which improves efficiency and perfrmance
+ObjectInputStream  |  High                | Deserializes primitive Java data types and graphs of Java objetcs to an existing InputStream
+ObjectOutputStream |  High                | Serializes primitive Java data types and graphs of Java objetcs to an existing OutputStream
+InputStreamReader  |  High                | Reads character data from existing InputStream
+OutputStreamWriter |  High                | Writes character data to an exisiting OutputStream
+PrintStream        |  High                | Writes formatted representations of Java objects to a binary stream
+PrintWriter        |  High                | Writes formatted representation of Java objects to a text-based output stream
+
+We will discuss these java.io classes in more details including examples in upcoming sections.
 
 ## Common Stream Operations
 ### Closing the Stream
