@@ -351,7 +351,31 @@ We can enhance our implementation with only a few minor a few minor code changes
 
 For example, the BufferedInputStream class is capable of retrieving and storing in memory more data than you might request with a single read() call. For successive calls to the read() method with small byte arrays, this would e faster in a wide variety of situations, since the data can be returned directly from memory without going to the file system. 
 
+Here is a modified form of our copy() methid, which uses byte arrays and BufferedStream classes:
 
+```java
+import java.io.*;
+
+public class CopyBufferFileSample{
+  public static void copy(File source, File destination) throws IOException{
+    try (
+      InputStream in = new BufferedInputStream(new FileInputStream(source));
+      OutputStream out = new BufferedOutputStream( new FileOutputStream(destination))){
+      byte[] buffer = new byte[1024];
+      int lengthRead;
+      while((lengthRead = in.read(buffer)) > 0){
+        out.write(buffer, 0, lengthRead);
+        out.flush();
+      }
+    }
+  }
+}
+
+```
+
+You can see that this sample code that uses byte arrays is very similar to the nonbuffered sample code, although the performance improvement for using both the Buffered classes and byte arrays is an order of magnitude faster in practice. We also added a flush() command in the loop, as previously discussed, to ensure that the written data actually makes it to disk before the next buffer of data is read.
+
+**Buffer Size Tuning** we chose a buffer size of 1024 in this example, as this is appropriate for a wide variety of circumstances, although in practice you might see a better performance with a higher or lower buffer size. This depends of several number of factors like the system block size and the CPU hardware. It is also common to choose a power of 2 for the buffer size, since most underlying hardware is structured with file block and cache sizes that are power of 2. The Buffered classes allow you to specify the number in the constructor and if none is provided they use a default value which is a power of 2. Regardless the buffer size you choose the biggest performance you will see is moving from nonbuffer to buffred file access. Adjusting the buffer size may improve slightly but it is unlikely to have a significant impact.
 
 ## The FileReader and BufferedWriter Classes
 
