@@ -432,7 +432,26 @@ This example is similar to the file copy example that you saw previously, with s
 Next, instead of immediatelly copying the data we read from the file into the output file, we store it in a List of String objects in the readFile() method. This allows us to both display and modify the data, prior to writing it to disk later. For example, let's say we wanted to replace one persons name in a text file with another. We would just use the String.replaceAll() method on the data as we wrote it to the disk, and the new file would have the replacement. By working with String values instead of of byte values, we have access to all of the String methods to manipulate data. The major difference between this version and previous one is the code that is written in the readFile() method. Unlike the previous example where we had to write the code one byte at a time or by using byte array, we can write the entire string in a single call. The write(String) method is quite convenient in practice. We then use the writer.newLine() method to insert a line break into the copied file, as our reader.redLine() method split on line breaks. Note that we used .csv file extension in this example to represent comma-separated values files, as these are are commonly text based. This example also assumes that the CSV file is small enough to fit entirely in memory. Let's say that the file is so large that it cannot fit in memory. If you wanted to write it directly to disk, rathen than sorting it in a List object, you could take our earlier copy file stream example and replace it with Reader/Writer methods. 
 
 ### Comparing the Two Copy Applications
+Although both of this examples and the previous InputStream/OutputStream solution can successfully copy the file, only the Reader/Writer solution gives us structured access to the text data. In order to accomplish the same feat with the InputStream/OutputStream classes the application would have to detect the end of each line, which would be a lot of extra work. For example, if we are using BufferedInputStream, multiple end-of-line characters could appear in the buffer array, meaning that we would have to go searching for them and then reconstruct the strings contained within the buffer array manually. We would also have to write code to detect and process the character encoding. The character encoding determines how characters are encoded and stored in bytes and later read back or decoded as characters. Although this may seem simple, Java supports a wide variety of character encodings, ranging from ones that may use one byte for Latin characters, UTF-8 and ASCII for example, to using two or more bytes per character, such as UTF-16. For the exam you dont need to memorize he character encodings, but you should be familiar with the names if you come accross them on the exam.
+
+**Character encoding in Java** Character encoding can be specified using the Charset class by passing a name value to the static Charset.forName() method, such as in the following examples:
+
+```
+Charset usASsciiCharset = Charset.forName("US-ASCII");
+
+Charset utf8Charset = Charset.forName("UTF-8");
+
+Charset utf16Charset = Charset.forName("UTF-16");
+
+```
+
+Java supports numerous character encoding, each specified by a different standard name values. 
+
+The key point here is that although you can use InputStream/OutputStream instead of Reader/Writer to read and write text files, it is inappropriate to do so. Recall that the character stream classes were convenience, and you should certainly take advantage of them when working with text data.
+
 ## The ObjectInputStream and ObjectOutputStream Classes
+
+
 ## The Serializable Interface
 ## Serializing and Deserializing Objects
 ## Understanding Object Creation
