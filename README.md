@@ -8,6 +8,10 @@ The book I am going to cover here is the second part of the guide for Java 8 cer
 # Official Oracle documentation
 https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html
 
+# Other Resources
+Another guide for preparing Java 8 Programmer II exam
+http://ocpj8.javastudyguide.com/
+
 # OCA guide
 My experience after reading the OCA study guide is positive and has encourage me to continue with the second part of the certification. It covers 100% of what you need to know to nail the exam but most importantly helps grasping the content in an effective way.  
 
