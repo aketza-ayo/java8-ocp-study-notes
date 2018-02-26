@@ -18,8 +18,8 @@ January 23                | Answer Chapter 5 Review Questions               | 30
 January 27 - January 28   | Read Chapter 6                                  | 8 hrs to read the material and take notes
 January 28                | Answer Chapter 6 Review Questions               | 30 min to answer + another 15 min to revise
 February 3 - February 17  | Read Chapter 7                                  | Lost track of how many hours it took but certainly more than the other chapters to go through the material
-February 17-18            | Answer Chapter 7 Review Questions               | It took me couple of days to complete the questions 
-March 10 - March 18       | Read Chapter 8                                  |
+February 17-18            | Answer Chapter 7 Review Questions               | It took me couple of days to complete the questions. Found the material and the questions quite challenging. More time will have to be spent on this topic
+February 24 - March 18    | Read Chapter 8                                  |
 March 18                  | Answer Chapter 8 Review Questions               |
 March 24 - April 1        | Read Chapter 9                                  |
 April 1                   | Answer Chapter 9 Review Questions               |
