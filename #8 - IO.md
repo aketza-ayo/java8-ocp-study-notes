@@ -598,11 +598,50 @@ As expected, you can see that the values for name and age are lost on serializat
 ## The PrintStream and PrintWriter Classes
 These are the high level stream classes that write formatted representation of Jva objects to a text-based output stream. As you may have noticed by the name, the PrintStream class operates on OutputStream instances and writes data as bytes, whereas the PrintWriter class operates on Writer instances and writes data as characters. For convenience, both of these classes include construcotrs that can be open and write to files directly. Furthermore, the PrintWreiter class even has a constructor that takes an OutputStream as input, allowing you to wrap a PrintWriter class aroud an OutputStream. These classes are primarily convenience classes in that you could write the low-level primitive or object directly to a stream without a PrintStream or PrintWriter class, although using one is helpful in a wide variety of situations. In fact, the primary method class we have been using to output information to the screen throughout this book uses a PrintStream object! For the exam, you should be aware that System.out and System.err are actually PrintStream objects! 
 
-Because a PrintStream inherits 
+Because a PrintStream inherits OutputStreams  and PrinterWriter inherist Writer, both support the underlying write() method while providing a slew of print-based methods. For the exam, you should be familiar with the print(), println(), format() and printf() methods. Unlike the underlying write() method, which throws a checked IOException that must be caught in your application, these print based methods do not throw any checked exceptions. If they did , you would have been required to catch a checked exception anytime you called System.out.println() in your code. Both classes provide a method, checkError(), that can be used to detect the presence of a problem after attempting  to write data to the stream. For the rest of this section, we will use a PrintWriter in our examples, as writing String data as characters instead of byte values is recommended. Keep in mind that the same examples could be easily rewritten with PrintStream object.
+
+Note that for the exam you should be aware that the Console class includes two methods, format() and printf() which take an optional vararg and format output, although you are no longer required to know the various rules for formatting for the exam. For this chapter, we will provide the first String argument to these methods only.
 
 ### print()
-### println()US-ASCII
+The most basic of the print methods is this one, which is overloaded with all Java primitives as well as String and Object. In general, these methods perform String.valueOf() on the argument and call the underlying  stream's write() method, although they also handle character encoding automatically. For example, the following sets of print/write code are equivalent:
+
+```java
+PrintWriter out = new PrintWriter("zoo.log");
+
+out.print(5);  //PrintWriter method
+out.write(String.valueOf(5))   //Writer method
+
+out.print(2.0);  //PrintWriter method
+out.write(String.valueOf(2.0))   //Writer method
+
+Animal animal = new Animal();
+out.print(animal);     //PrintWriter method
+out.write(animal == null ? "null" : animal.toString());   //writer method
+
+```
+
+You may remember from your OCA study material that valueOf() applied to an object calls the object's toString() method or returns null if the obeject is not set. As these examples show , you could write to the same stream without the PrinterWriter methods, but having the convenience of methods that convert everyting to String values for you is extremely useful in practice.
+
+### println()
+The next method available in the PrinterStream and PrintWriter classes are the println() a methods, which are virtually identical to the print() methods, except that they insert a line break after the string value is written. The classes also include a version of println() that takes no arguments, which terminates the current line by writing a line separator. 
+
+These methods are specially helpful, as the line break or separator character is JVM dependent. For example, in some systems a line feed symbol, \n signifies a line break whereas other systems use a carriege return synbol followed by a line feed synbol, \r\n, to signify a line break. As you saw earlier in the chapter with file.separator, the line.separator value is available as a Java system property at any time:
+
+```
+System.getProperty("line.separator");
+```
+Although ypu can use pirnt() instead of println and insert all the line breaks manually, it is not recommended in practice. As the line break character is OS dependant, it is recommended to rely in the println() for inserting line breaks since it makes your code more lightweight and portable.
+
 ### format() and printf()
+Like the String.format() methods discussed in chapter 5 the format() method in PrintStream and PrintWriter takes a String an opetional locale, and a set of arguments and it writer a formatted string to the stream based on the input, In other workdsm it is a convenience method for formatting directly to the stream, Refer to chapter 5 for more details about how string values can be formatted in Java.
+
+For convenience, as well as to make C developers fell more home in Java, the PrintStream and PrintWriter API also include a set to printf() methods, which are straight pass through methods to the format() methods. For example, although the names of the following two methods to the format() methods. For exampl, although the names of the following two methods differ their input values, outout value, and behavious are identical in Java. They can be used interchangeably:
+
+```java
+public PrintWriter format(String format, Object args...);
+public PrintWriter printf(String format, Object args...);
+```
+
 ## Sample PrintWriter Application
 ## Review of Stream Classes
 ## Other Stream Classes
