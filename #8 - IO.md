@@ -596,6 +596,10 @@ As we said earlier, transcient means that the value woun't be included in the se
 As expected, you can see that the values for name and age are lost on serialization and not set again during deserialization. The JVM initializes these variables with the default values based on the data types String and int, which are null and 0, respectively. Since the type variable is static, it is not serialized to disk. The sample program displays a value for type, as the variable is shared by all instances of the class and is the last value in our sample program. For the exam, make sure that you understand that the constructor and any default initilizations are ignored during the deserialization process.
 
 ## The PrintStream and PrintWriter Classes
+These are the high level stream classes that write formatted representation of Jva objects to a text-based output stream. As you may have noticed by the name, the PrintStream class operates on OutputStream instances and writes data as bytes, whereas the PrintWriter class operates on Writer instances and writes data as characters. For convenience, both of these classes include construcotrs that can be open and write to files directly. Furthermore, the PrintWreiter class even has a constructor that takes an OutputStream as input, allowing you to wrap a PrintWriter class aroud an OutputStream. These classes are primarily convenience classes in that you could write the low-level primitive or object directly to a stream without a PrintStream or PrintWriter class, although using one is helpful in a wide variety of situations. In fact, the primary method class we have been using to output information to the screen throughout this book uses a PrintStream object! For the exam, you should be aware that System.out and System.err are actually PrintStream objects! 
+
+Because a PrintStream inherits 
+
 ### print()
 ### println()US-ASCII
 ### format() and printf()
