@@ -559,6 +559,42 @@ The getAnimals() method is a little more complex, as we must take special care t
 We conclude the discussion of the Object stream classes by noting that they do support reading and writing  null objects. Therefore, it is important to check for null values when reading from a serilized data stream. In our sample application, we rely on the property of the instance operatir always to return false for null values to skip explicitly needing to check for null values.
 
 ## Understanding Object Creation
+For the exam you need to be aware of how a deserilized object is created. When you deserilize an object, the constructor of the serialized class is not called. In fact, Java calls the first no-arg constructor for the first non-serializable parent class, skipping the constructor of any serialized class in between. Furthermore, any static variables or default initilizations are ignored. Let's take a look at a modified version of the Animal class and see how the output of the ObjectStreamSample program would change with some modifications to our attributes and add a new constructor:
+
+```java
+public class Animal implements Serializable{
+  private static final long serialVersionUID = 2L;
+  private transcient String name;
+  private transcient int age = 10;
+  private static char type = 'C';
+  {this.age = 14;}
+  
+  public Animal(){
+    thismname = "Unknown";
+    this.age = 12;
+    this.type = 'Q';
+  }
+  
+  public Animal(String name, int age, char type){
+    this.name = name;
+    this.age = age;
+    this.type =type;
+  }
+  
+  // some methods as before...
+
+}
+
+```
+
+As we said earlier, transcient means that the value woun't be included in the serialization process, so it's safe to assume name and age will be left out of the serialized file. More interestengly, the values of age beign set to 10, 12 or 14 in the class are all ignored when the object is deserialized, as no class constructor or default initilizations are used. The following is the output of the ObjectStreamSample program with the new Animal class definition:
+
+```
+[ Animal [name=null, age=0,type=P], Animal [name=null, age=0,type=P]]
+```
+
+As expected, you can see that the values for name and age are lost on serialization and not set again during deserialization. The JVM initializes these variables with the default values based on the data types String and int, which are null and 0, respectively. Since the type variable is static, it is not serialized to disk. The sample program displays a value for type, as the variable is shared by all instances of the class and is the last value in our sample program. For the exam, make sure that you understand that the constructor and any default initilizations are ignored during the deserialization process.
+
 ## The PrintStream and PrintWriter Classes
 ### print()
 ### println()US-ASCII
