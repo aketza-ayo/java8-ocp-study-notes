@@ -683,6 +683,9 @@ We conclued this part of the chapter with figure below which shows the various j
 ![Diagram of java.io classes](img/DiagramJavaIO.png)
 
 ## Other Stream Classes
+The high-level InputStreamReader and OutputStreamWriter presented in the figure above are out of scope for the exam but usefil in practice. The InputStreamReader class takes an InputStream instance and returns a Reader object. Likewise, the OutputStremWriter class takes an OutputStrem instance and returns a Writer object. In this manner, these classes convert data between character and byte streams, These classes are also unique in that they are the only java.io stream clases to have both Stream and Reader/Writer in their name.
+
+Likewise, the DataInputStream and DataOutputStream are no longer required for the exam. They function quite similarly to the Object stream classes but are tailored to write only primitives and String values. In practice, they are rarely used as they require values example, if you wrote a String followed bu an int and then a float, you would need to repeat in this order exactly to read the data properly. In this manner, the files created by the DataOutputStream methods tend to be too rigid and too cumbersome to use in professional software developement. Finally, the parent classes FilterInputStream and FilteredOutputStream are not discussed in this section, but they are also presented in the figure above since we did discuss classes that inherit from them. The Filter clases are the superclass of all classes that filter or tranform data. These classes will not be on the exam.
 
 # Interacting with Users
 ## The Old Way
