@@ -861,3 +861,20 @@ public class PasswordCompareSample{
 ```
 
 You can see that this sample application uses both overloaded versions of the console.readPassword() method. For security reasosn, we immediately clear the character arrays that store the password as soon as they are no longer needed in the application. Note that you could also use Arrays.fill(password, 'x') to wipe an array's data.
+
+# Review Questions
+Took me about an hour to go through the questions. In general in was ok but some of the classes needed and methods needed to be memorized. 
+
+![Test chapter seven](img/testChapterSeven.png)
+
+- Remeber the figure of strem classes review
+- The console class method’s return types
+- The exceptions that might be thrown by appen() and if console is not available a NullPointerException is thrown.
+- A File class might refer to a path that does not exist withi the filesystem
+- Reqirements for a class to be Serilized; Remember it has to inplement the Serilizable interface. The delaration of the static serialVersionUID is optional. All intance member objects have to implement serializable or be marked as transcient.
+- Remember the methods in the File class
+- Java requires a backslash to be scaped with another backslash. Java converts the slash to the correct one
+- Any class, abstract, concrete or final can be marked Serializable. Serializing an object throws away the static class data.
+- Console defines two output method, format() and printf() that are identical in function. You can use writer() method to gain access to the Console’s  PrinterWriter object.
+- When a variable is marked transcient means that it will not be taken into account when serializing and when deserializing it will use the default values. Static variables is not serilized, it will be available on the class after deserilization.
+- Not all java.io streams support mark(); therefore without calling markSupported() on the stream, the result is unknown until runtime
