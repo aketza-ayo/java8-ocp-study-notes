@@ -688,9 +688,63 @@ The high-level InputStreamReader and OutputStreamWriter presented in the figure 
 Likewise, the DataInputStream and DataOutputStream are no longer required for the exam. They function quite similarly to the Object stream classes but are tailored to write only primitives and String values. In practice, they are rarely used as they require values example, if you wrote a String followed bu an int and then a float, you would need to repeat in this order exactly to read the data properly. In this manner, the files created by the DataOutputStream methods tend to be too rigid and too cumbersome to use in professional software developement. Finally, the parent classes FilterInputStream and FilteredOutputStream are not discussed in this section, but they are also presented in the figure above since we did discuss classes that inherit from them. The Filter clases are the superclass of all classes that filter or tranform data. These classes will not be on the exam.
 
 # Interacting with Users
+The java.io API includes numerous classes for interacting with the user. For example, you might want to want to write an application the asks the user to log in and reads their loging details. In this section we will cover the java.io.Console class.
+The Console class was introduced in Java 6 as a more evolved form of System.in and System.out stream classes. It is now the recommended technique for interacting with and displaying information to the user in a text-based environment.
+
 ## The Old Way
+Before we crack on with the Console class, let's review the old way of obtaining text input from the user. Similar to how System.out returns PrintStream and is used to output text data to the user, System.in returns an InputStream and is used to retrieve text input from the user. It can be chained to a BufferedReader to allow input that terminates with the Enter key. Before we can apply the BufferedReader, though, we need to wrap the System.in object using the InputStreamReader class, which allows us to build Reader object out of an exisiting InputStream instance. The result os shown in the following application:
+
+```java
+import java.io.*;
+
+public class SystemInSample{
+  public static void main(String[] args) throws IOException{
+    BufferedReader reader = BufferedReader(new InputStreamReader(System.in));
+    
+    String userInput = reader.readLine();
+    System.out.println("You entered the following: " + userInput);
+  }
+
+}
+
+
+```
+
+When run, this application fetches a single line of text from the user and then outputs it to the user before terminating. Norice that we did not close the stream, as closing System.in would prevent our application from accepting user input for the reminder of the application execution.
+
 ## The New Way
+The System.in and System.out objects have been available since the earliest versions of Java. In Java 6, the java.io.Console class was introduced with far more features and abilities than the original techniques. After all, System.in and System.out are just raw streams, whereas Console is a class with multiple convenience methods.
+
+To begin, the Console class is a singleton, and means that there is only one version of the object available in the JVM. It is created automatically for you by the JVM and accessed by calling the System.console() method. Be aware that this method will return null in envorionment where texrt interaction are not supported.
+
+Next, let's look at out single code rewritten using the Console class:
+
+```java
+import java.io.Console;
+
+public class ConsoleSample{
+  public static void main(Stirng[] args){
+    Console console = System.console();
+    if(console != null){
+      String userInput = console.readLine();
+      console.writer().println("You entered the following: " + userInput);
+    }
+  }
+
+}
+
+
+```
+
+The sample code first retrieves an instance of the Console singleton and determines if the Console is available by checking it for null value. If the Console is available, it then retrieves a line of input from the user using the readLine() method, and it outputs the result using Console's built-in PrintWriter objects, accessed via the writer() method.
+
+As you can see, the sample with System.in and System.out is very similar to the COnsole example by design. We will now review the various methods available in the Console class you should be familiar with in the exam.
+
 ### reader() and writer()
+The Console class provides access to an instance of Reader and PrintWriter using the methods reader() and writer(), respectively. Access to these classes is analogous to calling System.in and System.out directly, although they use reader/Writer classes instead of the InputStream/OutputStream classes, which are more appropriate for working with character and String data. In this manner, they handle the ubderlying character encoding autmatically.
+
+These reader() abd writer() methods are the most general ones in the Console class, and they are used by developers who need raw access to the user input and output stream or who may be in the process of migrating away from System.in.
+
 ### format() and printf()
 ### flush()
 ### readLine()
