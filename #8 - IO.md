@@ -746,7 +746,118 @@ The Console class provides access to an instance of Reader and PrintWriter using
 These reader() abd writer() methods are the most general ones in the Console class, and they are used by developers who need raw access to the user input and output stream or who may be in the process of migrating away from System.in.
 
 ### format() and printf()
-### flush()
-### readLine()
-### readPassword()
+For formatting data to the user , you can use PrinterWriter writer() object or use the convenience format(String, Object...) method directly. The format() method takes a String format and list of arguments, and it behaves in the exact same manner as String.format() described in chapter 5. For convenience to C developers, there is also printf() method i the Console class, which is identical in every way but name to the format() method, and it can be used in any place format() is used. Note that the Console class defines only one format() method, and it does not define a format() method that takes a local variable. In this manner, it is used the default system locale to establish the formatter. Of course, you could always use a custome locale by retrieving the Writer object and passing your own locale instance, such as in the following example:
 
+```java
+Console console = System.console();
+Console.writer().format(new Locale("fr", CA), "Hello World");
+
+```
+
+The following sample Console application prints information to the user:
+
+```java
+import java.io.*;
+
+public class ConsoleSamplePrinter{
+  public static void main(String[] args) throws NumberFormatException, IOException{
+    Console console = System.console();
+    if(console == null){
+      throw new RuntimeException("Console not available");
+    }else{
+      console.writer().println("Welcome to our zoo!");
+      console.format("Our zoo has 391 animals and employs 25 people");
+      console.writer().println();
+      console.printf(The zoo spans 128.21 acres.");
+    }
+  }
+}
+```
+You can see that a wide variety of methods are available to present text data to the user, inclusing using the underlying console.writer() instances directly.
+
+### flush()
+The flush() method forces any buffered output to be rewritten immediately. It is recommended that you call the flush method prior to calling any readLine() or readPassword() methods in order to ensure that no data is pending during the read. Failure to do so could result in a suer prompt for input with no preceding text, as the text prior to the prompt may still be in a buffer.
+
+### readLine()
+The basic readLine() method retrieves a single line of text fro the user, and the user presses the Enter key to terminate it. The Console class also supports an overloaded version of the readLine() method with the signature readLine(String format, Object... args), which displays a formatted prompt to the user prior to accepting text.
+
+The following sample application reads information for the user and writes it back to the screen:
+
+```java
+import java.io.*;
+
+public class ConsoleReadInputSample{
+   public static void main(String[] args) throws NumberFormatException, IOException{
+    Cponsole console = Syste.console();
+    if(console == null){
+      throw new RuntimeException("Console not available");
+    }else{
+      console.writer().print("how excited are you about your trip today?");
+      console.flush();
+      String excitementAnswer = console.readLine();
+      String name = console.readLine("Please entre your name: ");
+      
+      Integer age = null;
+      console.writer().print("What is your age?");
+      console.flush();
+      
+      BufferedReader reader = new BufferedReader(console.reader());
+      String value = reader.readLine();
+      
+      age = Integer.valueOf(value);
+      console.writer().println();
+      i
+      console.writer().println();
+      console.fomrat("Yor age is" + age);
+      console.printf("Your excitement level is: " + excitementAnswer);
+    }
+   }
+}
+
+```
+
+The example includes multiple ways to read input from the user including the console.readLine() method, as well as creating a BufferedReader out of the console.read() object. The information is printed back to the user via a variety of different writer methods available in the Console class.
+
+### readPassword()
+The readPassword() method is similar to the readLine() method, except that echoing is disabled. By disabling echoing, the user does not see the text they are typing, meaning that their password is secure if someone happens to be looking at their screen.
+Alos like readLine() method, the Console class offers an overloaded version of the readPassword() method with the signature readPassword(String format, Object... args) used to dislpaying a formatted prompt to the user prior to accepting text. Unlike the readLine() method, though, the readPassword() method returns an array of characters instead of a String.
+
+**Why does the readPassword() return a Character array?** As you may rememeber for the OCA study material, String values are added to a shared memory pool for the performance reasons in Java. This means that if a password that a user typed in were to be returned to the process as a String, it might be available in the String pool long after the user entered it. If the memory in the application is ever dumped to disk, it means that the password could be recovered by a malicious individual after the user has stopped using the application. The advantage of the readPassword() method using a character array shoukd be clear. As soon as the data is read and used, the sensitive password data in the array can be "erased" by writing garbage data to the element of the array. This would remove the password form memory long before it would be removed by garbage collection if a String value value were used.
+
+The last sample application that we will present retrieves two passwords from the user and verifies that they are correct:
+
+```java
+import java.io.*;
+import java.util.Arrays;
+
+public class PasswordCompareSample{
+  pulic static void main(String[] args) throws NumberFormatException, IOException{
+    Console console = System.console();
+    if(console == null){
+      throw new RuntimeException("Console not available");
+    }else{
+      char[] password = console.readPassword("Enter you password ");
+      console.format("Enter your password again: ");
+      console.flush();
+      char[] verify = console.readPassword();
+      boolean match = Arrays.equals(password, verify);
+      
+      //immeditely clear passwords from memory
+      for(int i = 0; i < passwords.length; i++){
+        password[i] = 'x';
+      }
+      
+      for(int i = 0; i < verify.length; i++){
+        verify[i] = 'x';
+      }
+      
+      console.format("Your password was" + (match ? "correct" : "incorrect"));
+    }
+  
+  }
+
+}
+
+```
+
+You can see that this sample application uses both overloaded versions of the console.readPassword() method. For security reasosn, we immediately clear the character arrays that store the password as soon as they are no longer needed in the application. Note that you could also use Arrays.fill(password, 'x') to wipe an array's data.
