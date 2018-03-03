@@ -65,7 +65,7 @@ reanmeTo(File)     | Renames the file denoted by this path
 mkdir()            | Creates the directory named by this path
 mkdirs()           | Creates the directory named by this path
 getParent()        | Returns the abstract pathname of this path including any nonexisitent parent directories.
-lastFiles()        | Returns a File[] array denoting the files in the directory
+listFiles()        | Returns a File[] array denoting the files in the directory
 
 The following is a sample program that given a file path outputs information about the file or directory, such as whther it exists, what files are contained within it and so forth:
 
