@@ -863,7 +863,7 @@ public class PasswordCompareSample{
 You can see that this sample application uses both overloaded versions of the console.readPassword() method. For security reasosn, we immediately clear the character arrays that store the password as soon as they are no longer needed in the application. Note that you could also use Arrays.fill(password, 'x') to wipe an array's data.
 
 # Review Questions
-Took me about an hour to go through the questions. In general in was ok but some of the classes needed and methods needed to be memorized. 
+Took me about an hour to go through the questions. In general it was ok.
 
 ![Test chapter eight](img/testChapterEight.png)
 
