@@ -865,7 +865,7 @@ You can see that this sample application uses both overloaded versions of the co
 # Review Questions
 Took me about an hour to go through the questions. In general in was ok but some of the classes needed and methods needed to be memorized. 
 
-![Test chapter seven](img/testChapterSeven.png)
+![Test chapter eight](img/testChapterEight.png)
 
 - Remeber the figure of strem classes review
 - The console class method’s return types
