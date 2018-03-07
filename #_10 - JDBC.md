@@ -11,6 +11,8 @@ Our smaple database has two tables. One has a row for each species that is in ou
 
 ![Tables in our relational database](img/tablesInDB.png)
 
+As you can see we have two tables. One is species and the other ios named animal. Each table has a primary key. After all two animals might have the same name but they cannot have the same ID. In this case the primary is just one column in some situations it is a combination of columns. For example, a student identifier and year might be a key.
+
 ## Writing Basic SQL Statements
 
 # Introducing the Interfaces of JDBC
