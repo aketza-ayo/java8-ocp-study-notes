@@ -77,8 +77,48 @@ You have probably noticed that we didn't tell you what the implementing classes 
 
 ![Key JDBC interfaces](img/keyJDBCInterfaces.png)
 
+What do these four interfaces do? On a very high level, we have the following:
+
+Driver: Knows how to get a connection to the database
+Connection: Knows how to communicate with the database
+Statement: Knows how to run the SQL
+ResultSet: knows what was retruned by a SELECT query
+
+All database classes are in the package ```java.sql``` so will omit the imports going foward.
+
+In thisnext example, we show you what JDBC code looks like end to end. If you are new to JDBC, just notice that three of the four interfaces are in the code. If you are experienced, this is what JDBC looks like accoridng to the OCP exam. Yes we know - you wouldn't and shouldn't write code like this. We wouldn't either. It's OK. Grumblr to yourself and it out of your system.
+
+```java
+package com.wiley.ocp.connection;
+
+import java.sql.*;
+
+public class MyFirstDatabaseConnection{
+  public static void main(String[] args){
+    String url = "jdbc:derby:zoo";
+    try(Connection conn = DriverManager.getConnection(url);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select name from animal")){
+    
+        while(rs.next()){
+          System.out.println(rs.getString(1));
+        }
+    }
+  }
+}
+
+```
+
+If the URL were using our imaginary Foo driver, DriverManager would return an instance of FooConnection. Calling createStatement() would return an instance of FooStatement, and calling executeQuery() would return an instance FooResultSet. Since the URL uses derby instead, it returns the implementations that derby has provided for these interfaces. You don't need to know their names. In the rest of the chpater, we will explain hoto use all four of the interfaces and go into more detail about what they do. By the end of the chapter, you will be writting code like this yourself.
+
 # Connecting to a Database
+The first step in doing anything with a database is connecting to it. First we will show you how toi build the JDBC URL. Then we will show yuu how the exam wants you to get a Connection to the database.
+
 ## Building a JDBC URL
+To access a website, you need to know the URl if the website.To access you emails, you need to know username and passwprd. JDBC is no different. In order to access a database, you need to know this information about it. Unlike web urls, JDBC URL has a variety of formats. They have three parts in common, as shown in figure below. There are three if you can count third one as beign in commmon, The first piece is always the same. It is the protocol jdbc. The secodn part is the name of the database such as derby, mysql or postgres. The third part is the rest of it, which is database specific format. Colons separate the three parts.
+
+![The JDBC URL format](img/urlFormat.png)
+
 ## Getting a Database Connection
 
 # Obtaining a Statement
