@@ -75,7 +75,7 @@ The figure below shows four key interfaces that you need to know. It also shows 
 
 You have probably noticed that we didn't tell you what the implementing classes are called in any real database. The main point is that you shouldn't know. With JDBC, you use only interfaces in your code and never implementation classes directly. In fact they might not even be public classes.
 
-[Key JDBC interfaces](img/keyJDBCInterfaces.png)
+![Key JDBC interfaces](img/keyJDBCInterfaces.png)
 
 # Connecting to a Database
 ## Building a JDBC URL
