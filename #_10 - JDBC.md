@@ -119,6 +119,36 @@ To access a website, you need to know the URl if the website.To access you email
 
 ![The JDBC URL format](img/urlFormat.png)
 
+The third part typically contains the location and the name of the database. The syntax varies. You need to know about the three main parts. You don't need to memorize the vendor specific part. Phew! You've already seen one such URL:
+
+```
+jdbc:derby:zoo
+```
+
+Notice the three parts. It starts with jdbc, then comes derby and it ends with the database name. Other examples are shown here:
+
+```
+jdbc:postgres://localhost/zoo
+
+jdbc:oracle:thin:@123.123.123.123:1521:zoo
+
+jdbc:mysql://localhost:3306/zoo?profileSQL=true
+```
+
+You can see that each of these begin with jdbc, followed by a colon, and then followed by the vendor/product name. After that it varies. Notice how all of them include the location of the datbase, which are localhost, 123.123.123.123:1521 and localhost:3306, respectively. Also notice that the port is optional when using the default. Finally, notice that all of them include the name of the datbase, which is zoo.
+To make sure you get this, do you see what is wrong with each of the following?
+
+```
+jdbc:postgresql://local/zoo
+
+jdbc:mysql://1234567/zoo
+
+jdbc;oracle;this;/lcoalhost/zoo
+```
+
+The first one uses local instead of localhost. Localhost is a specially defined name. You can't just make up a name. Granted it is possible for ourserver to be named local, but the exam will not have you assume names. If the database has a special name, the question will let you know. The second one says that the location of the database is 123456. This doesn't make sence. A localtion can be localhost or a IP address or a domain name. It can't be any random number. The third one is no good because it uses semicolons instead of colons.
+In some databases, you use an alias rather than the database name. For the purpose of the exam, consider the alias to be logical database name.
+
 ## Getting a Database Connection
 
 # Obtaining a Statement
