@@ -67,6 +67,15 @@ DELETE FORM species WHERE name = 'Asian Elephant';
 And yet again, the WHERE clause is optional. If it is omitted, the entire table will be emptied. So be careful! All of the SQL shown in this section is common across the database. 
 
 # Introducing the Interfaces of JDBC
+For the exam you need to know four key interfaces of JDBC. The interfaces are declared in the JDK. This is just like all of the other interfaces and classes that you have seen in this book. List is in the JDK, Path is in the JDK and so forth.
+
+As you know, interfaces need a concrete class to implement them in order to be useful. These concrete classes come from the JDBC driver. Each database has a different JAR file with these classes. For example. PostgreSQL's JAR is called somthing like ```postgresql-9.4-1201-jdbc4.jar``` Whereas MySQL's JAR is called something like ```mysql-connector-java-5.1.36.jar``` The exact name depends on the version of the driver JAR. This driver JAR contqains an implementation of these key interfaces alonmg with a number of others. The key is that the provided implementation know how to communicate with a database. There are different types of drives: luckily, you don't need to know about this for the exam.
+
+The figure below shows four key interfaces that you need to know. It also shows that the implementation is provided by an imaginary Foo driver JAR. They cleverly stick the name Foo in all classes.
+
+You have probably noticed that we didn't tell you what the implementing classes are called in any real database. The main point is that you shouldn't know. With JDBC, you use only interfaces in your code and never implementation classes directly. In fact they might not even be public classes.
+
+[Key JDBC interfaces](img/keyJDBCInterfaces.png)
 
 # Connecting to a Database
 ## Building a JDBC URL
