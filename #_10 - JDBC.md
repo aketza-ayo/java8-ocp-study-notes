@@ -8,6 +8,9 @@ A *Database* is an organized collection of data. In the real world, a type cabin
 
 ## Indentifying the Structure of a Relational Database
 Our smaple database has two tables. One has a row for each species that is in our zoo. The other has a row for each animal. These two relate to each other because an animal belong to a species. These relationships are why this type of databases is called a relational database. The figure below shows the structure if the database.
+
+![Tables in our relational database](img/tablesInDB.png)
+
 ## Writing Basic SQL Statements
 
 # Introducing the Interfaces of JDBC
