@@ -563,6 +563,44 @@ A scrollable ResultSet allows you to position the cursor at any row. In this sec
 
 ![First and Last](img/firstLast.png)
 
+Ready to see methods in action?
+
+```java
+Statement stat = conn.createStatement(
+  ResultSet.TYPE_SCROLL_INSENSITIVE,
+  ResultSet.CONCUR_READ_ONLY);
+ResultSet rs = stat.executeQuery("select id from species order by id");
+rs.afterLast();
+System.out.println(rs.previous());     //true
+System.out.println(rs.getInt());       //2
+System.out.println(rs.previous());     //true
+System.out.println(rs.getInt(1));      //1
+System.out.println(rs.last());         //true
+System.out.println(rs.getInt(1));      //2
+System.out.println(rs.first());        //true
+System.out.println(rs.getInt(1));      //1
+rs.beforeFirst();
+System.out.println(rs.getInt(1));       // throws SQLException
+
+```
+
+The type of statement that we created above was of scrollable type so that we can call these extra methods. Make sure the type is scrollable whenever you see methods other than next(). 
+
+Now look at an example where the query does not return any rows:
+
+```java
+Statement stat = conn.createStatement(
+  ResultSet.TYPE_SCROLL_INSENSITIVE,
+  ResultSet.CONCUR_READ_ONLY);
+ResultSet rs = stat.executeQuery("select id from species where id = -99") ;
+System.out.println(rs.first());   //false
+System.out.println(rs.last());    //false
+
+```
+
+When the cursors moves to the "first" or "last" row, the method returns false. There aren't any rows, which makes it impossible to point to a row of data. Another method that you need to know is absolute(). It takes the row numer to which you want to move the cursor as a parameter. A positive number moves the cursor to that numbered row. Zero moves the cursor to a location immediately before the first row. Figure below shows the row numbers starting from zero.
+
+![Absolute rows](img/absoluteRows.png)
 
 # Closing Database Resources
 
