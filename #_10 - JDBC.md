@@ -535,7 +535,28 @@ All three of these values came from the same column in the database. Table below
 
 ![JDBC date abd time types](img/dateTimeTypes.png)
 
+Finally the getObject() method can return any type. For a primitive, it uses the wrapper class. Let's look at an example:
 
+```java
+ResultSet rs = stat.executeQuery("select id, name fro species");
+while(rs.next()){
+  Object idField = rs.getObject("id");
+  Object nameField = rs.getObject("name");
+  
+  if(idField instanceof Integer){
+    int id = (Integer) idField;
+    System.out.println(id);
+  }
+  
+  if(nameField instanceof String){
+    String name = (String) nmaeField;
+    System.out.println(name);
+  }
+ 
+}
+
+```
+The fiest two lines get the column as whatever type of Object is most appropariate. The first if condition show how to confirm that the type is Integer before casting and unboxing it into an int. The second if condition show how to confirm that the type is String and cast it as well. You probably will not use getObject() when writting code for a job, but it is good to know about it for the exam.
 
 
 ## Scrolling ResultSet
