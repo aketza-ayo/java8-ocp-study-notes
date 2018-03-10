@@ -749,4 +749,34 @@ try(Connection conn = DriverManager.getConnection(url);
 The correct answer is 4. On rs2 line, rs is closed because the same statement runs another query. On the last line, rs2 is closed because the same Statement runs another SQL statement. This shows you that both a query and an update cause the previous ResultSet to be closed. Then the try-with-resources statement runs and closes the statement and Connection objects. It is important to close resources iun the right order.
 
 # Dealing with Exceptions
+Up until this point in the chapter, we have lived in a perfect world. Sure we mentioned that a checked SQLException might be thrown by any JDBC method - but we never actually caught it. We just declared it and let the caller deal with it. Now let's catch the expection:
 
+```
+String url = " jdbc:derby:zoo";
+try(Connection conn = DriverManager.getConnection(url);
+    Statement stat = conn.createStatement();
+    ResultSet rs = stat.executeQuery("select not_a_column from animal")){
+    
+    while(rs.next()){
+      System.out.println(rs.getString(1));
+    }
+
+}catch(SQLException e){
+  System.out.println(e.getMessage());
+  System.out.println(e.getSQLState());
+  System.out.println(e.getErrorCode());
+ 
+}
+
+```
+
+The output looks like this:
+```
+ERROR: column "not_a_column" does not exist
+  position: 8
+42703
+0
+```
+Each of these methods gives you a different piece of information. The getMessage() method returns a human-readable message as to what went wrong. The getSQLState() method returns a code as to what went wrong. You can Google the name of your database and the SQL state to get more information about the error. By comparison, getErrorCode() is a database-specific code. On this database, it doesn't do anything.
+
+Note that on the exam, either you will be told the names of the columns in a table or you can assume that they are correct. Similarly, you can assume that all SQL is correct.
