@@ -284,6 +284,20 @@ Table below sumps up what you need to know about the ResultSet types.
 
 
 ## Choosing a ResultSet Concurrency Mode
+By default, a ResultSet is in CONCUR_READ_ONLY mode. This is what you need most of the time. It means that you can't update the result set. Most of the time, you will use INSERT, UPDATE or DELETE SQL statements to change the database rather than a ResultSet.
+
+There is one other mode that you can request when creating a Statement. Unsurprisingly, it lets you modify the database through the ResultSet. It is called CONCUR_UPDATABLE.
+
+Note that you have to know read only mode in detail for the exam. For updatable, you only have to know the name and that it is not universally supported.
+
+Databases and JDBC drivers are not required to support CONCUR_UPDATABLE. Unlike TYPE_SCROLL_SENSITIVE, an updatable result set is at least used on rare occasions. Most of the time, it is the wrong choice for your program, though.
+Again, if the mode you request isn't available, the driver can downgrade you. This means that if you ask for CONCUR_UPDATABLE, you will likely get a statement that is CONCUR_READ_ONLY.
+
+The table below sums up what you need to know about the result set concurrency modes:
+
+![Result Set concurrency mode options](img/resultSetConcurrencyModes.png)
+
+
 
 # Executing a Statement
 
