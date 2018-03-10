@@ -558,8 +558,11 @@ while(rs.next()){
 ```
 The fiest two lines get the column as whatever type of Object is most appropariate. The first if condition show how to confirm that the type is Integer before casting and unboxing it into an int. The second if condition show how to confirm that the type is String and cast it as well. You probably will not use getObject() when writting code for a job, but it is good to know about it for the exam.
 
-
 ## Scrolling ResultSet
+A scrollable ResultSet allows you to position the cursor at any row. In this section, we will show you the options for doing so. You have already learnet the next() method. There is also a previous method, which does the opposite. It moves backwards one row and returns true if pointing to a valid row of data. There are also methods to start at the beginning and end of the ResultSet. The first() and last() methods return a boolean for whether they were successful at finding a row. The beforeFirst() and afterLast() methods have a return type of void, since it is always possible to get to a spot that doesn't have data. Figure below show these methods. You can see that beforeFirst() and afterLast() don't point to rows in the ResultSet.
+
+![First and Last](img/firstLast.png)
+
 
 # Closing Database Resources
 
