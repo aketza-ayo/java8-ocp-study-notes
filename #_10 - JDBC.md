@@ -254,7 +254,35 @@ Having a META-INF/service/java.sql.Driver inside the JAR became mandatory with J
 ![JDBC 3.0 vs 4.0 drivers](img/jdbcDrivers.png)
 
 # Obtaining a Statement
+In order to run SQL, you need to tell a Statement about it. Getting a Statement from a Connection is easy:
+
+```
+Statement stmt = conn.createStatement();
+```
+
+As you will remember, Statement is one of the four core interfaces on the exam. It represents a SQL statement that you want to run using the Connection.
+That's the simple signature. There's another one that you need to know before the exam:
+
+```
+Statement stat = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+```
+This signature takes two paramenter. The first is the ResultSet type, and the other is the ResultSet concurrency mode. You have to know all of the choices for these parameters and the order in which they are specified. Let's look at the choices for these parameters.
+
 ## Choosing a ResultSet Type
+Bydefault, a ResultSet is in TYPE_FORWARD_ONLY mode. This is what you need most of the time. You can go through the data once in the order in which it was retrieved. The two other types are TYPE_SCROLL_INSENSITIVE and TYPE_SCROLL_SENSITIVE. Both allow you go through the data in any order. You can go forward and backward. You can even go to a specific spot in the data. Think of these like scrolling in a browser. You can scroll up and down. You can go to a specific spot in the result.
+The difference between this scroll types is what happens when data changes in the actual database while you are busy scrolling. With TYPE_SCROLL_INSENSITIVE, you have a static view of what the resultSet looked like when you did the query. If the data changed in the table, you will see it as it was when you did the query. With TYPE_SCROLL_SENSITIVE, you would see the latest data when scrolling through the ResultSet. 
+
+Note that you have to know forward only and scroll insensitive in detail for the exam. For scroll sentive, you only have to know the name and that it isn't well supported. You don't need to read or write code with it.
+
+We say "would" because most databases and database drivers don't actually support the TYPE_SCROLL_SENSITIVE mode. That's right. You have to learn something for the exam that you are almost guaranteed never to use in practice.
+
+If the type you request isn't available, the driver can "helpfully" downgrade to one that is. This means that if you ask for TYPE_SCROLL_SENSITIVE, you will likely get a Statement that is TYPE_SCROLL_INSENSITIVE. Isn't that great? 
+
+Table below sumps up what you need to know about the ResultSet types.
+
+![ResultSet type options](img/resultSetTypes.png)
+
+
 ## Choosing a ResultSet Concurrency Mode
 
 # Executing a Statement
