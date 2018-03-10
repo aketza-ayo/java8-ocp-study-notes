@@ -653,5 +653,100 @@ To review the methods that you can use when traversing a ResultSet are listed in
 ![navigating a ResultSet](img/navigatingResultSet.png)
 
 # Closing Database Resources
+As you saw in prevoius chaperts 8 and 9 it is important to close resources when you are finished with them. This is true for JDBC as well. JDBC resources, such as a Connection are expensive to create. Not closing them creates a resource leak that will eventually slow down your program.
+
+Repeating the example from earlier in the Chapter, we have the following:
+
+```java
+public static void main(Stirng[] args) throws SQLException{
+  String url = " jdbc:derby:zoo";
+  try(Connection conn = DriverManager.getConnection(url);
+      Statement stat = conn.createStatement();
+      ResultSet rs = stat.executeQuery("select name from animal")){
+      
+      while(rs.next()){
+        System.out.println(rs.getString(1));
+      }
+  }
+}
+
+```
+
+Notice how this code uses the try-with-resources syntax from chapter 6. Remember that try-with-resources statement closes the resources in the reverse order from which they were opened. This means that the ResultSet is closed first followed by the statement, and then the Connection. This is the standard order to close resources.
+
+**Closing Database resources without try-with-resources statements*** Prior to java 7, you had to write a lot of code to close the JDBC resources properly. It looked like this:
+
+```java
+public static void main(String[] args) throws SQLException{
+  String url = "jdbc:derby:zoo";
+  Connection conn = null;
+  Statement stat = null;
+  ResultSet rs = null;
+  try{
+    conn = DriverManager.getConnection(url);
+    stat = conn.createStatement();
+    rs = stat.executeQuery("select name from animal");
+    while(rs.next()){
+      System.out.println(rs.getString(1));
+    }finally{
+      closeResultSet(rs);
+      closeStatement(stat);
+      closeConnection(conn);
+    }
+  }
+}
+
+private static void closeResultSet(ResultSet rs){
+   try{
+    if(rs != null){
+      rs.close();
+    }  
+   }catch(SQLException e){}
+}
+
+private static void closeStatement(Statement stat){
+   try{
+    if(stat ! null){
+      stat.close();
+    }
+   }catch(SQLException e){}
+}
+
+private static void closeConnection(Connection conn){
+   try{
+    if(conn != null){
+      conn.close();
+    }
+   }catch(SQLException e){}
+}
+
+```
+
+This example closes the three resources in the same order as the Java 7 example. Each of the helper methods have a try catch that ignores any sqlException thrown on closing. This is another reason why the Java 8 example is better. It doesn't lose such exceptions, instead treating them as suppresed exceptions. The helper methods also check if the resource is null in case the variable was never set.
+
+While it is a good habit to close all three resources, it isn't striclty necessary. Closing a JDBC resource should close any resources that it created. In particular, the following are true:
+- Closing a Connection also closes the Statement and ResultSet
+- Closing a Statement also closes a ResultSet.
+
+There another way to close a result set. **JDBC automatically closes a result set when you run another SQL statement from the same Statement** How many resources are closed in this code?
+
+```java
+String url = "jdbc:derby:zoo";
+try(Connection conn = DriverManager.getConnection(url);
+    Statement stat = conn.createStatement();
+    ResultSet rs = stat.executeQuery("select count(*) from animal")){
+    
+    if(rs.next()) System.out.println(rs.getInt(1));
+    
+    ResultSet rs2 = stat.executeQuery("selcet count(*) from animal");
+    
+    int num = stat.executeUpate(update animal set name = 'clear' where name = 'other'");
+
+}
+
+```
+
+The correct answer is 4. On rs2 line, rs is closed because the same statement runs another query. On the last line, rs2 is closed because the same Statement runs another SQL statement. This shows you that both a query and an update cause the previous ResultSet to be closed. Then the try-with-resources statement runs and closes the statement and Connection objects. It is important to close resources iun the right order.
 
 # Dealing with Exceptions
+
