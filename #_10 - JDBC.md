@@ -610,6 +610,48 @@ You can see that -1 is the last row. To better understand absolute(), we will us
 
 ![Animal table](img/tablesInDB.png)
 
+Try to follow along with this code examples:
+
+```java
+Statement stat = conn.createStatement(
+  ResultSet.TYPE_SCROLL_INSENSITIVE,
+  ResultSet.CONCUR_READ_ONLY);
+ResultSet rs = stat.executeQuery("select id from animal order by id");
+System.out.println(rs.absolute(2));             //true
+System.out.println(rs.getString("id"));         //2
+System.out.println(rs.absolute(0));             //false
+System.out.println(rs.absolute(5));             //true
+System.out.println(rs.getString("id"));         //5
+System.out.println(rs.absolute(-2));            //true
+System.out.println(rs.getString("id"));         //4
+
+```
+
+absolute(0) puts the cursor before the result set, so it resturns false.
+
+Finally there is a relative() method that moves forward or backward the requested number of rows. It returns a boolean if the cursor is pointing to a row with data, Here is an example:
+
+```java
+Statement stat = conn.createStatement(
+  ResultSet.TYPE_SCROLL_INSENSITIVE,
+  ResultSet.CONCUR_READ_ONLY);
+ResultSet rs = stat.executeQuery("select id from animal order by id");
+System.out.println(rs.next());                  //true
+System.out.println(rs.getString("id"));         //1
+System.out.println(rs.relative(2));             //true
+System.out.println(rs.getString("id"));         //3
+System.out.println(rs.relative(-1));            //true
+System.out.println(rs.getString("id"));         //2
+System.out.println(rs.relative(4));             //false
+
+```
+
+The first relative(2) moves the cursor two rows  and relative(-1) moves the cursor back to row 2. relative(4) tries to move forward 4 lines which will position the cursor by row 6. There is no row 6, so this is just after the last row. Since there are no row 6, the method returns false. 
+
+To review the methods that you can use when traversing a ResultSet are listed in the table below:
+
+![navigating a ResultSet](img/navigatingResultSet.png)
+
 # Closing Database Resources
 
 # Dealing with Exceptions
