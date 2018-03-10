@@ -496,6 +496,48 @@ There are lost of getsomething() methods on the ResultSet interface. The ones th
 
 ![ResultSet ge methods](img/getMethods.png)
 
+You might have noticed that not all the primitives are in the table. There are getByte and getFloat methods, but you don't need to know about them for the exam. There is no getChar method. Luckily you dont need to remember this. The exam it is not going to trick you with a method name that does not exis for JDBC. That takes care of the primitives. What about the other data types? In the database, we have the data/time of birth of one of our animals as 2001-05-06 02:15. Let's look at the three ways to get pieces of this information. First, we want to know what date Elsa the elephant was born:
+
+```java
+ResultSet rs = stat.executeQuery("select date_born from animal where name = 'Elsa'");
+if(rs.next()){
+  java.sql.Date sqlDate = rs.getDate(1);
+  LocalDate localDate = sqlDate.toLocalDate();
+  System.out.println(localDate);    //2001-05-06
+}
+```
+
+When cancelling getDate, JDBC returns just the date part of the value. This is the year, month, and date. It returns a java.sql.Date object. This is an older class, but Java 8 adds a method to convert it to the new LocalDate type.
+
+Now we want to know what time of the day Elsa was born:
+
+```java
+ResultSet rs = stat.executeQuery("select date_born from animal where name = 'Elsa'");
+if(rs.next()){
+  java.sql.Time sqlDate = rs.getTime(1);
+  LocalTime localTime = sqlDate.toLocalTime();
+  System.out.println(localTime);    //02:15
+}
+``` 
+
+When calling getTime() JDBC returns just the time part of the value. This is the hours and minutes. It also optionally includes more granular pieces like seconds.Finally, let's suppose that we want to know both the date and time where Elsa was born:
+
+```java
+ResultSet rs = stat.executeQuery("select date_born from animal where name = 'Elsa'");
+if(rs.next()){
+  java.sql.TimeStamp sqlTimeStamp = rs.getTimeStamp(1);
+  LocalDateTime localDateTime = sqlTimeStamp.toLocalDateTime();
+  System.out.println(sqlTimeStamp);    //2001-05-06T02:15
+}
+``` 
+
+All three of these values came from the same column in the database. Table below reviews this mapping:
+
+![JDBC date abd time types](img/dateTimeTypes.png)
+
+
+
+
 ## Scrolling ResultSet
 
 # Closing Database Resources
