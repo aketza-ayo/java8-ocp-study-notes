@@ -150,6 +150,108 @@ The first one uses local instead of localhost. Localhost is a specially defined 
 In some databases, you use an alias rather than the database name. For the purpose of the exam, consider the alias to be logical database name.
 
 ## Getting a Database Connection
+There are two main ways to get a Connection: DriverManager or DataSource. DriverManager is the one covered on the exam. Do not use a DriverManager in code someone is paying you to write. A DataSource is a factory, and it has more features than DriverManager. For example, it can pool connections or store the database connection info outside the application.
+
+The DriverManager class is in JDK, as it is an API that comes with Java. It uses the factory pattern, which means that you call static method to get a Connection. As you learned in Chapter 2, "Design Patterns and Principles" the factory pattern means that you can get any implementation on the interface when calling the method. The good news is that the method has an easy-to-remember name - getConnection(). To get a connection form the embedded database, you write the following: 
+
+```
+import java.sql.*;
+
+public class TestConnect{
+  public static void main(String[] args) throws SqlException{
+    Connection conn = DriverManager.getConnection("jdbc:derby:zoo");
+    System.out.println(conn);
+  }
+}
+```
+Running this example as java TestConnect will give you an error that begins with this:
+
+```
+Exception in thread "main" java.sql.SQLException: No suitable driver found for jdbc:derby:zoo 
+```
+
+The class SQLException means "something went wrong when connecting to or accessing the database". In this case, we didn't tell java where to find the database driver JAR file. Remeber that the implementation class for Connection is found inside a driver JAR. We try this again by adding the classpath with ```java -cp <java_home>/db/lib/derby.jar``` TestConnect. Remember to substitute the location of where Java is installed on your computer for "java_home". (If you are on Windows, replace the colon woth semicolon) This time the program runs successfully and prints something like the following:
+```
+org.aparache.derby.impl.jdbc.EmbeddedConnection40@1377654657
+(XID = 156), (SESSIONID = 1), (DATABASE = zoo), (DRDAID = null)
+```
+
+The details of the output arent important. Just notice that the class is not Conneciton. It is a vendor implementation of Connection. There is also a signature that takes a suername and password:
+
+```java
+import java.sql.*;
+
+public class TestExternal{
+  public static void main(String[] args) throws SQLException{
+    Connection conn = DriverManager.getConnection(
+      "jdbc:postgresql://localhost:5432/ocp-book",
+      "username",
+      "password");
+      
+    System.out.println(conn);
+  }
+}
+
+```
+
+Notice the three params that are passed to getConnection(). The first is the JDBC URL that you learned about in the previous section. The second is the username for accessing the database, and the third is the password for accessing the database. It should go without saying that our password is not "password". Also, don't put your password in real code. It is horrible practice and Oracle should not be encouraging.
+
+This time, now that we have included the drived file, the pogram rins successfully and prints something like this:
+
+```
+org.postgresql.jdbc4.Jdbc4Connection@eed1f14
+```
+
+Again, notice that it is driver-specific implementation class. You can tell from the package name. Since the package is org.postgresql.jdbc4, it is part of the PostgresSQL driver. The command line tells Java where to find the driver JAR. It also includes the current directory so Java can find TestConnect itself!
+
+Unless the exam specifies a command line, you can assume the the correct JDBC driver JAR is in the classpath. The exam creators explicitly ask about the driver JAR if they want you to think about it.
+
+The nice thing about a factory is that it takes care of the logic of creating a class for you. You don't need to know the name of the class that implements Connection, and you don't need to know it is created. You are probably a bit curious, though.
+
+The DriverManager class looks through the classpath for JARs that contains a Driver. DriverManager knows that a JAR is a driver because it contains a file called java.sql.Driver in the directory META-INF/services. In other words, a driver might contain this information: 
+
+META-INF
+-service
+-java.sql.Driver
+com
+-wiley
+-MyDriver.class
+
+Inside the java.sql.Driver file is one line. If it is a fully qualified package name of the Driver implementation class. Remember thouse four key interfaces? Driver is the first one. DriverManager then looks through any driver it can find to see if they can handle the JDBC URL. If so, it creates a Connection using that Driver. If not it gives up and throws a SQLException.
+
+**Real World Scenario** Using a DataSource. In real applications you should use a DataSource rather than a DriverManager to get a Connection. For one thing, there is no reason why you should have to know the database password. It's far better if the database team or another team can set up a data source that you can reference. Another reason is thta a DataSource mantains a connection pool so that you can keep reusing the same connection rather than needing to get a new one each time. Even the JavaDoc says DataSource is preferred over DriverManager. But DriverManager is in the exam objectives, so you still have to know it.
+
+You might see Class.forName() used in older code before getting a Connection. It looks like this:
+
+```
+public static void main(String[] args) throws SQLException, ClassNotFoundException{
+  Class.forName("org.posgressql.Driver");
+  Connection conn = DriverManager.getConnection(
+    "jdbc:postgresql://localhost:5432/ocp-book",
+    "username",
+    "password");
+}
+
+```
+Class.forName() loads a class. This lets DriverManager use a Driver, even if the JAR doesn't have META-INF/services/java.sql.Driver file. There is no harm in including Class.forName(), even if the newer driver doesn't have a file. When Class.forName() is used, the error about an invalid class occurs on that line and throws a ClassNotFoundExpection:
+
+```
+public static void main(String[] args) throws ClassNotFoundException{
+  Class.forName("not.a.driver");
+}
+
+```
+
+Obviosuly, this is not a valid driver name. The output begins with the following code:
+
+```
+Exception in thread "main" java.lang.ClassNotFoundExpection: not.a.driver
+...
+
+```
+Having a META-INF/service/java.sql.Driver inside the JAR became mandatory with JDBC 4.0 in Java 6. Before that, some drivers included it and some didn't. Table below sums up the current state of affairs:
+
+![JDBC 3.0 vs 4.0 drivers](img/jdbcDrivers.png)
 
 # Obtaining a Statement
 ## Choosing a ResultSet Type
