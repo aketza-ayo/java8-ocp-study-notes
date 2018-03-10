@@ -394,9 +394,108 @@ Again, we get an exception because the driver can't translate the query into the
 ![SQL runnable by execute method](img/executeMethods.png)
 
 ![Return types of executes](img/executeReturnTypes.png)
+
 # Getting Data from a ResultSet
+By far the most common type of a result set is of type forward-only. We will start by showing you how to get the data from one of these. Then after going through the different methods to get a columns by type, we will show you how to work with a scrollable ResultSet. 
+
 ## Reading a ResultSet
+When working with a forward-only ResultSet most of the time you will write a loop to look at each row. The code looks like this:
+
+```java
+Map<Integer,String> idToNameMap = new HashMap();
+ResultSet rs = stat.executeQuery("select id, name from species");
+while(rs.next()){
+  int id = rs.getInt("id");
+  String name = rs.getString("name");
+  idToNameMap.put(id, name);
+}
+System.out.println(idToNameMap);    //{1=African Elephant, 2=Zebra}
+
+```
+There are few things to notice here. First, we use the executeQuery() method on line 2, since we want a result set to be returned. On line 3 we looop through the results. Each time through the loop represents one row in the result set. Line 4 and 5 show you the bets way to get the column for a given row. A result set has a cursor, which points to the current location in the data. The cursor advances past the end of the data, The false signifies that there is no data available to get.
+
+There is another way to access the columns. You can use an index instead of a column name. The column name is better because it is clearer what is going on when reading the code. It also allows you to change the SQL to reorder the columns. Rewriting this same example with column numbers looks like the following:
+
+```java
+Map<Integer,String> idToNameMap = new HashMap<>();
+ResultSet rs = stat.executeQuery("select id, name from especies");
+while(rs.next){
+  int id = rs.getInt(1);
+  String name = rs.getString(2);
+  idToNameMap.put(id,name);
+}
+System.out.println(idToNameMap);   //{1=African Elephant, 2=Zebra}
+```
+This time, you can see the column positions in lines 4 and 5. Notice how the columns are counted starting with 1 rather than 0. This is really important, so we will repeat it.
+
+Note that JDBC starts counting with one rather than zero.
+
+Sometimes you want to get only one row from the table. Maybe you need only one piece of data. Or maybe the SQL is just returning the number of rows in the table. When you want only one row, you can use if statement rather than a while loop.
+
+```java
+ResultSet rs = stat.executeQuery("select count(*) from animal");
+if(rs.next()){
+  System.out.println(rs.getInt(1));
+}
+```
+It is very imprtant that rs.next() returns true before trying to call a getter on the ResultSet. Than would throw a SQLException, so the if statement checks that it is safe to call. Alternatively, you can use the column name:
+
+```java
+ResultSet rs = stat.executeQuery("select count(*) from animal");
+if(rs.next()){
+  System.out.println(rs.getInt("count"));
+}
+```
+
+The following code throws a SQLException:
+
+```
+int id = rs.getInt(0);    //BAD CODE
+```
+
+Attempting to access a column that does not exist throws a SQlException, as does getting data from a resultSet when it isn't pointing at a valid row. You need to be able to recognize such code. Here a few examples to watch out for. Do you see what is wrong here when no rows match?
+
+```java
+ResultSet rs = stat.executeQuery(
+  "select * from animal where name = 'Not in table'");
+rs.next();
+rs.getInt(1);     //throws SQLException
+
+```
+
+Calling rs.next() works. It returns false. However calling a getter after does throw a SQLException because the result set cursor does not point to a valid position. If there actually were a macth returned, this code would have worked. Do you see what is wrong with the following?
+
+```java
+ResultSet rs = stat.executeQuery("select count(*) from animal");
+rs.getInt(1);   //throws SQLException
+```
+
+This is not calling rs.next() at all is the problem. The result set cursor is still pointing to a location before the first row, so the getter has nothing to point to. How about this one?
+
+```java
+ResultSet rs = stat.executeQuery("select count(*) from animal");
+rs.next();
+rs.getInt(0);  //throws SQLException
+
+```
+
+Since column indexes begin with 1, there is no column 0 to point to and a SQLException is thrown. One more try, what is wrong with this one?
+
+```java
+ResultSet rs = stat.executeQuery("select count(*) from animal");
+rs.next();
+rs.getInt("badColumn");  //throws SQLException
+```
+
+Trying to get a column that isn't in the ResultSet is just as invalid column incex, adn it also throws a SQLException. To sum up this section, it is very important to remember the following:
+- Always use an if statement or while loop when calling rs.next();
+- column indexes begin with 1
+
 ## Getting Data for a Column
+There are lost of getsomething() methods on the ResultSet interface. The ones that you need to know for the exam are easy to remeber since they are called get, followed by the name of the type you are getting. Table below shows the get method that you need to know. The first column shows the method name, and the second column shows the type that Java returns. The third column shows the method name, and the secod column shows the type that Java returns. The third column shows the type name that could be in the database. There is some variations by databases, so check your specific database documentation. You need to know only the first two columns for the exam.
+
+![ResultSet ge methods](img/getMethods.png)
+
 ## Scrolling ResultSet
 
 # Closing Database Resources
