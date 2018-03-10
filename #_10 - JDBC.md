@@ -297,10 +297,103 @@ The table below sums up what you need to know about the result set concurrency m
 
 ![Result Set concurrency mode options](img/resultSetConcurrencyModes.png)
 
-
-
 # Executing a Statement
+Now that we have a Statement, we can run a SQL statement. The way you run SQL varies depending on what kind of SQL it is. Remember that you arent expected to be able to read SQL, but you do need to know what the first keyword means.
+Let's start out with statements that change the data in a table. That would be SQL statements that begin with DELETE, INSERT, or UPDATE. They typically use a method called executeUpdate(). The name is a little tricky because SQL UPDATE statement is not the only statement that uses this method. The method takes the SQL statetement to run as a parameter. It returns the number of rows that were inserted, deleted, or changed. Here's an example ofall three update types:
 
+```java
+Statement stat = conn.createStatement();
+int result = stat.executeUpdate(
+  "insert into species values(10,'Deer',3)");
+System.out.println(result);   // 1
+
+result = stat.executeUpdate(
+  "update species set name = '' where name = 'None'");
+System.out.println(result);   // 0
+
+result = stat.executeUpdate(
+  "delete from species where id = 10");
+System.out.println(result);   // 1
+```
+
+For the exam, you dont need to read SQL. The question will tell you how many rows are affected if you need to know. Second line runs an statement to insert one row. Therefore the results returns 1 because one row was affected. Line 6 checks the whole table, but no records match therefore returns 0. Line 10 deletes the row created on line 2. Again one row is affected, so the result is 1.
+
+Next, let's look at a SQL statement that begins with SELECT. This time, we use the **executeQuery()** method as opposed to before where we used the **executeUpdate()**:
+
+```java
+ResultSet rs = stat.executeQuery("select * from species");
+```
+
+Since we are running query to get a result, the return type is ResultSet. In the next section, we will show you how to process the ResultSet. There is a thrird method called **execute()** that can run either a query or an update. It returns a boolean so that we know whether thre is a result set. That way, we can call the proper method to get more detail. The pattern looks like ths:
+
+```java
+boolean isResultSet = stat.execute(sql);
+if(isResultSet){
+  ResultSet rs = stat.getResultSet();
+  System.out.println("ran a query");
+}else{
+  int result = stat.getUpdateCount();
+  System.out.println("ran an update");
+}
+```
+
+If sql is a SELECT, the boolean is true and we can get the ResultSet. If it is not a SELECT, we can get the number of rows updated.
+
+**Importance of a PreparedStatement** on the exam, only the Statement is covered. In real life you should not use it directly. You should use the subclass called PreparedStatement. This subclass has three advantages: performance, security, readability.
+
+- Performance: in most programs you run similar queries multiple times. A PreaparedStatement figures out a plan to run the SQL well and remembers it.
+- Readability: it is nice not to have to deal with string concatenation in building a query string with lots of variables.
+- Security: Suppose you have this method.
+
+  ```
+  private static void scaryDelete(Connection conn, String name) throws SQLException{
+    Statement stat = conn. createStatement();
+    String sql = "delete from animal where name = '" + name + "'";
+    System.out.println(sql);
+    stat.executeUpdate(sql);
+  }
+  
+  ```
+
+This method appears to delete the row that matches the given name. Imagine that this program lets a user type in the name. If the users string is "Asia Elephant" this works out well and one row get deleted. What happens if the users string is "any or 1 = 1 or name = 'any'" the generated sql is
+
+```
+delete from animal where name = 'any' or 1 = 1 or name = 'any'
+```
+
+This deletes every row in the table. That is not good. In fact it so bad that it has a name - SQL injections. Upon first glance, the solution is to prevent single quotes in the user's input. It turns out to be more complicated than that because the bad guys know many ways of doing bad things. Luckily, you can just write this:
+
+```java
+PreparedStatement ps = conn.preparedStatement("delete from animal where name = ?");
+ps.setString(1, name);
+ps.execute();
+```
+
+The JDBC driver takes care of all the scaping for you. This is convenient.
+
+What do you think happens if we use the wrong method for SQL statement? Let's take a look:
+```
+Connection conn = DriverManager.getConnection("jdbc:derby:zoo");
+Statement stat = conn.createStatement();
+int result = stat.executeUpdate("select * from animal");
+```
+
+This throws a SQLException similar to the following:
+```
+A result was returned when none was expected
+```
+
+We can't get a compiler error since the SQL is a string. We can get an exception, though, and we do. We also get a SQLException when using executeQuery() with SQL that changes the database:
+
+```
+No results were returned by the query
+```
+
+Again, we get an exception because the driver can't translate the query into the expected return type. To review make usre that you know the tables below. 
+
+![SQL runnable by execute method](img/executeMethods.png)
+
+![Return types of executes](img/executeReturnTypes.png)
 # Getting Data from a ResultSet
 ## Reading a ResultSet
 ## Getting Data for a Column
