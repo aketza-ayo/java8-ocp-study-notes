@@ -604,7 +604,7 @@ When the cursors moves to the "first" or "last" row, the method returns false. T
 
 A negative number means to start counting from the end of the result set rather than fro the begining. The fifure below shows negative row numbers.
 
-![Negative absolute rows](img/negativeAbsoluteRow.png)
+![Negative absolute rows](img/negativeAbsoluteRows.png)
 
 You can see that -1 is the last row. To better understand absolute(), we will use the data in the figure below.
 
