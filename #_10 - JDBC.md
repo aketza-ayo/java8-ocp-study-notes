@@ -608,7 +608,7 @@ A negative number means to start counting from the end of the result set rather 
 
 You can see that -1 is the last row. To better understand absolute(), we will use the data in the figure below.
 
-![Animal table](img/animalTable.png)
+![Animal table](img/tablesInDB.png)
 
 # Closing Database Resources
 
