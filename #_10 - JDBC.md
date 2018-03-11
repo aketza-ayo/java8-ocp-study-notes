@@ -780,3 +780,9 @@ ERROR: column "not_a_column" does not exist
 Each of these methods gives you a different piece of information. The getMessage() method returns a human-readable message as to what went wrong. The getSQLState() method returns a code as to what went wrong. You can Google the name of your database and the SQL state to get more information about the error. By comparison, getErrorCode() is a database-specific code. On this database, it doesn't do anything.
 
 Note that on the exam, either you will be told the names of the columns in a table or you can assume that they are correct. Similarly, you can assume that all SQL is correct.
+
+# Review Questions
+
+Probably the easiest chapter in the book. Took me around 30 min to answer the questions.
+
+![Review questions chapter ten](img/testChapterTen.png)
