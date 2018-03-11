@@ -786,3 +786,13 @@ Note that on the exam, either you will be told the names of the columns in a tab
 Probably the easiest chapter in the book. Took me around 30 min to answer the questions.
 
 ![Review questions chapter ten](img/testChapterTen.png)
+
+- The Driver, Connection, Statement and ResultSet interfaces are part of the JDK.The concrete DriverManager is also part of the JDK. The implementation of Driver and Statement are part of the Database-specific jars
+- The JDBC URL has three parts: jdbc string, the second is the vendor/product name like mysql, oracle… The third part is the database specific, but includes database name. The location such as IP address and port are optional. 
+- The JDBC URL the parts are separated by single colon and the first part is always jdbc
+- A connection is created using a static method on DriverManager. It does not use a constructor
+- When a statement is requested with an unsupported mode, the JDBC driver will downgrade. And no exception is thrown
+- The JDBC resources should be closed in the reverse other that were created that is ResultSet, Statement and Connection
+- A statement automatically closes the open result set when another sql statement is run.
+- ResultSet columns are indexed with 1 not 0.
+- Most of the ResultSet methods return a boolean apart from beforeFirst() and afterLast() of which are void
