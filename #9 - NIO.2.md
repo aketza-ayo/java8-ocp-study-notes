@@ -133,11 +133,21 @@ Throuout this section, we introduce numerous methods for interacting with files 
 
 ![Common Optional Arguments in NIO.2](img/commonOptionalArgumentsNIO2.png)
 
+For simplicity as well as better readability, we purposely omit the enum class names to which the values belong throughout the text, although we do include them in any practice questions. For example, the copy methods take a list of CopyOption interface values, of which StandardCopyOption is an enum that implements the intreface and includes StandardCopyOption.COPY_ATTRIBUTES as an option. As we said, for simplicity, we omit these details as the exam won't require you to understand this relationship. The ATOMIC_VALUE might be new to you. An *atomic operation* is an operation that is performed as a single indivisable unit of execution, which appears to the rest of the system as occurring instantaneously. Furthermore, an atomic move is one in which any process monitoring the file system never sees an incomplete or partially written files. If the file system does not support this feature , an AtomicMoveNotSupportedException will be thrown. For the reminder of the chapter, we leave out these enumn values in the method definitions so that you can focus on the core functionality. For the exam, you should understand their effect if you see them providede to a method.    
+
 ## Using Path Objects
-## Viewving the Path with toString(), getNameCount(), and getName()
-## Accesing Path Components with getFileName(), getParent(), and getRoot()
-## Checking Path Type with isAbsolute() and toAbsolutePath()
-## Creating a New Path with subpath()
+The Path interface includes numerous methods for using Path objects. You have alrady seen two of them, toFile() and toUri(), used to convert Path objects to other types of resources. Many of the methods in the Path interface transform the path value in some way and return a new Path object, allowing the method to be chained. We demonstrate chaning in the following example, the details of which we will discuss in this section of the chapter.
+
+```
+Paths.get("/zoo/../home").getParent().normalize().toAbsolutePath();
+```
+If you start to feel overwhelmed by the number of methods available in the Path interface, just remember: the function of many of them can be inferred by their method name, such as getParent(), getNameCount(), toAbsolutePath() and so on. In this section, we organize the methods by related functionality.
+
+### Viewing the Path with toString(), getNameCount(), and getName()
+### Accesing Path Components with getFileName(), getParent(), and getRoot()
+### Checking Path Type with isAbsolute() and toAbsolutePath()
+### Creating a New Path with subpath()
+
 ## Using Path Symbols
 ### Delivering a Path with relativize()
 ### Joining Path Objects with resolve()
