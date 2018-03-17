@@ -117,10 +117,17 @@ For backwards compatibility, the Path interface also contains a method toFile() 
 Path path = Paths.get("cuddlt.txt");
 File file = path.toFile();
 
-``
+```
 
 As you can see the Java API is quite flexible, and it allows easy conversion between legacy code using the File class and newer code using Path. Although Java suppors both methods for working with files, it is generally recommended that you rely on the Path API in your applications going forward as it is more feature rich and has built-in support for various file systems and symbolic links.
+
 # Interacting with Paths and Files
+Now that we've covered how to obtain an instance of the Path object, you might ask, what can we do with it? The NIO.2 API provides a rich plethora of methods and classes that operate on Path objects - far more that we are available in the java.io API. We will discuss the methods that you should know for the exam in this section.
+
+**Path Object vs Actual File** One thing to keep in mind when reading this section is that a Path object is not a file but a prepresentation of a location within the file system. In this manner, most operations available in the Path and Paths classes can be accomplished  regardless of whether the underlying file that the Path object references actually exists. For example, retrieving the parent or root directory of a Path object does not require the file to exists, although the JVM may access the underlying file system to know how to process the path information.
+
+As you shall see in this section, a handful of operations in the Path and Paths classes, such as Path.toRealPath() do require the file to exist and will throw a checked execption if the file is not available.
+
 ## Providing Optional Arguments
 ## Using Path Objects
 ## Viewving the Path with toString(), getNameCount(), and getName()
