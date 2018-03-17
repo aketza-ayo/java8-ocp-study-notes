@@ -129,6 +129,10 @@ Now that we've covered how to obtain an instance of the Path object, you might a
 As you shall see in this section, a handful of operations in the Path and Paths classes, such as Path.toRealPath() do require the file to exist and will throw a checked execption if the file is not available.
 
 ## Providing Optional Arguments
+Throuout this section, we introduce numerous methods for interacting with files and directories in NIO.2. Many of the mehods in the NIO.2 API that interact with real files and directories take additional option flags in the form of a vararg. For the exam, you do not need to memorize which of the dozens of NIO.2 methods take which optional arguments, but you should be able to recognize what they do when you see them on the exam. The table below lists the values that you should know for the exam. Note that these descriptions apply to both files and directories. If you are not familiar with the operations to which these attributes apply, don't worry; we'll explain them later in this chapter.
+
+![Common Optional Arguments in NIO.2](img/commonOptionalArgumentsNIO2.png)
+
 ## Using Path Objects
 ## Viewving the Path with toString(), getNameCount(), and getName()
 ## Accesing Path Components with getFileName(), getParent(), and getRoot()
