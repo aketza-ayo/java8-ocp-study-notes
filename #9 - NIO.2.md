@@ -223,6 +223,35 @@ Root is: null
 Reviewing the sample output, you can see the difference in the behaviour of getRoot() on absolute and relative paths. Also notice that traversing the second path stopped at the top of the relative directory. As you can see in the example, it does not traverse relative directories outside of the working directory.
 
 ### Checking Path Type with isAbsolute() and toAbsolutePath()
+The Path interface contains two methods for assisting with relative and absolute paths. The first method, isAbsolute() returns true if the path the object references is absolute and false if the path the object references is relative. 
+
+The second method, toAbsolutePath() converts a relative Path object to an absolute Path object by joining  it to the current working directory. If the path object is already absolute, then the method just returns an equivalent copy of it.
+
+The following code snippets shows usage of both of these methods:
+
+```
+Path path1 = Paths.get("C:\\birds\\egert.txt");
+System.out.println("Path1 is absolute?" + path1.isAbsolute());
+System.out.println("Absolute Path1: " + path1.toAbsolutePath());
+
+
+Path path2 = Paths.get("birds/condor.txt");
+System.out.println("Path2 is absolute?" + path2.isAbsolute());
+System.out.println("Absolute Path2: " + path2.toAbsolutePath());
+```
+The output for the code snippet is shown in the following sample code. Since the precise output is file system dependent, we will treat the first example as beign run on windows based system, whereas the second example is run in a Linux or Mac based system with the current working directory of /home·
+
+```
+Path1 is Absolute? true
+Absolute Path1: C:\birds\egret.txt
+
+Path2 is Absolute? false
+Absolute Path2 /home/birds/condor.txt
+
+```
+
+Keep in mind that if the Path object already represents an absolute path, then the putput is new Path object with the same value·
+
 ### Creating a New Path with subpath()
 
 ## Using Path Symbols
