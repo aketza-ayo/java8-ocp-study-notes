@@ -82,11 +82,45 @@ URI uri4 = path4.toUri();
 ```
 
 ### Accesing the Underlying FileSystem Object
-The Path.getPath()
+The Paths.get() method used throughout the previous example is actually shorthand for the class java.nio.file.FileSystem method getPath(). The FileSystem class has a protected constructor, so we use the plural FileSystem factory class to obtain an instance of FileSystem, as shown in the following example code:
+
+```
+Path path1 = FileSystems.geDefault().getPath("pandas/cuddly.png");
+
+Path path2 = FileSystems.getDefault().getPath("c:","zooinfo", "November","employees.txt");
+
+Path path3 = FileSystems.getDefault().getPath("/home/zoodirector");
+
+```
+
+Again, we are able to rewrite our previous set of examples, with this code behaving in the exact same manner as before. While most of the time we want access to a Path object that is within the local file system, the FileSystems factory class does give us the ability to connect to a remote file system, as shown in the following sample code:
+
+```
+FileSystem fileSystem = FileSystems.getFileSystem(new URI("http://www.selikoff.net"));
+
+Path path = fileSystem.getPath("duck.txt");
+```
+
+This code is useful when we need to construct Path objects frequently for a remote file system. The power of the NIO.2 API here is that it lets us rely on the default file system for files and directories as before, while giving us the ability to build more complex applications that reference external file systems.
 
 ### Working with Legacy File Instances
+When Path was added in Java 7, the legacy java.io.File class was updated with a new method, toPath(), that operates on an instance of File variable.
 
-# Interactiung with Paths and Files
+```
+File file = new File("pandas/cuddly.png");
+Path path = file.toPath();
+
+```
+For backwards compatibility, the Path interface also contains a method toFile() to return a File instance:
+
+```
+Path path = Paths.get("cuddlt.txt");
+File file = path.toFile();
+
+``
+
+As you can see the Java API is quite flexible, and it allows easy conversion between legacy code using the File class and newer code using Path. Although Java suppors both methods for working with files, it is generally recommended that you rely on the Path API in your applications going forward as it is more feature rich and has built-in support for various file systems and symbolic links.
+# Interacting with Paths and Files
 ## Providing Optional Arguments
 ## Using Path Objects
 ## Viewving the Path with toString(), getNameCount(), and getName()
