@@ -250,12 +250,107 @@ Absolute Path2 /home/birds/condor.txt
 
 ```
 
-Keep in mind that if the Path object already represents an absolute path, then the putput is new Path object with the same value·
+Keep in mind that if the Path object already represents an absolute path, then the putput is new Path object with the same value. As discussed earlier in this chapter, absolute and relative path types are actually file system dependent. In fact, you might be surprised by the output of the following lines of code on various operating systems:
+
+```
+System.out.println(Paths.get("/stripes/zebra.exe").isAbsolute());
+
+System.out.println(Paths.get("c:/goats/Food.java").isAbsolute());
+
+```
+Although the first line outputs true on a Linux or Mac based system, it outputs false on a windows based system since it is missing a drive letter prefix. IN the same manner, the second path outputs true on Windows but false on a linux or mac systems, as it is missing the root slash /.
 
 ### Creating a New Path with subpath()
+The method subpath(int,int) returns a relative subpath of a Path object, referenced by an inclusive start index and an exclusive end index. It is useful for constructing a new relative path from a particular parent path element to another parent path element, as shown in the following example.
+
+```
+Path path = Paths.get("/mammal/carnivore/raccoon.image");
+System.out..println("Path is " + path);
+
+System.out.println("Subpath from 0 to 3 is: " + path.subpath(0,3));
+System.out.println("Subpath from 1 to 3 is: " + path.subpath(1,3));
+System.out.println("Subpath from 1 to 2 is: " + path.subpath(1,2));
+
+```
+
+You might notice that the subpath() and getName(int) methods are similar in that they both return a Path object that represents a component of an exisiting Path. The difference is that the subpath() method may include multiple path components, whereas the getName(int) method only includes one. The output of this code snippet is the following:
+
+```
+Path is : /mammal/carnivore/raccoon.image
+Subpath from 0 to 3 is: mammal/carnivore/raccoon.image
+Subpath from 1 to 3 is: carnivore/raccoon.image
+Subpath from 1 to 2 is: carnivore
+```
+
+This code demonstrates that the subpath(int, int) method does not inlcude the root of the file. Notice that the 0-indexed element is mammal in this example and not the root directory: therefore, the maximum index that can be used is 3. The following two examples both throw java.lang.IllegalArgumentException at runtime:
+
+```
+System.out.println("Subpath from 0 to 4 is:" + path.subpath(0,4));  //THROWS EXCEPTION AT RUNTIME
+System.out.println("Subpath from 1 to 1 is:" + path.subpath(1,1));  //THROWS EXCEPTION AT RUNTIME
+
+```
+
+The first example throws an exception at runtime, since the maximum index value allowed is 3. The second example throws an exception since the start and end indexes are the same, elading to an empty value.
 
 ## Using Path Symbols
+Many file systems support paths that contain relative path information in the form of path symbols. For example, you might want a path that refers to the parent directory, regardless of what a current directory is. In this scenario the double period value .. can be used to reference the parent directory. In addition, the single period value . can be used to reference the current directory within a path.
+
+For example, the path value ../bear.txt refers to a file named bear.txt in the parent of the current directory. Likewise the path value ./penguin.txt refers to a file named penguin.txt in the curent directory. These symbols can also be combined for greater effect. For example, ../../lion.data refers to a file lion.data that is two directories up from the current working directory. 
+
 ### Delivering a Path with relativize()
+The Path interface privides a method relativize(Path) for constructing the relative Path from one Path object to another. Consider the following relative and absolute path examples using the relativize() method.
+
+```
+Path path1 = Paths.get("fish.txt");
+Path path2 = Paths.get("birds.txt");
+System.out.println(path1.relativize(path2));
+System.out.println(path2.relativize(path1));
+```
+
+The code snippet produces the following output when executed:
+
+```
+..\birds.txt
+..\fish.txt
+```
+If both path values are relative, then the relativize() mehod computes the paths as if they are in the same current working directory. Notice that ../is included at the start of the first set of examples. Since our path value points to a file, we need to move to parent directory that contains the file.
+
+Alternatively, if both path values are absolute, then the method computes the realtive path from one absolute location to another, regarless of the current working directory. The following example demonstrates this property:
+
+```
+Path path3 = Paths.get("E:\\habitat");
+Path path4 = Paths.get("E:\\sanctuary\raven");
+System.out.println(path3.relativize(path4));
+System.out.println(path4.relativize(path3));
+```
+
+This code snippet produces the following output when executed:
+
+```
+..\sanctuary\raven
+..\..\habitat
+```
+
+In this set of examples, the two path values are absolute, and the relativize() method constructs the relative path between the two absolute path values within the file system. Note that the file system is not accessed to perform this comparison. For example, the root path element E: may not exist in the file system, yet the code would execute without issue since Java is referencing the path elements and not the actual file values.
+
+The relativize() method requires that both paths be absolute or both relative, and it will throw an IllegalArgumentException if a relative path value is mixed with an absolute path value. For exaample, the following would thorw an exception at runtime.
+
+```
+Path path1 = Paths.get("/primate/chimpanzee");
+Path path2 = Paths.get("bananas.txt");
+path1.relativize(path2);      // THROWS AN EXPECTION AT RUNTIME
+
+```
+
+On windows based systems, it also requires that if absolute paths are used, then both paths must have the same root directory or drive letter. For example, the following would also throw an IllegalArgumentException at runtime in a Windows based system since they use different roots:
+
+```
+Path path3 = Paths.get("c:\\primate\\chimpanzee.txt");
+Path path4 = Paths.get("d:\\storage\\bananas.txt");
+path3.relativize(path4);    //THROWS EXCEPTION AT RUNTIME
+
+
+```
 ### Joining Path Objects with resolve()
 ### Cleaning Up a Path with normalize()
 ### Checking for File Existence with toRealPath()
