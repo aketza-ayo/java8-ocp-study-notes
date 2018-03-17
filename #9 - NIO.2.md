@@ -144,6 +144,39 @@ Paths.get("/zoo/../home").getParent().normalize().toAbsolutePath();
 If you start to feel overwhelmed by the number of methods available in the Path interface, just remember: the function of many of them can be inferred by their method name, such as getParent(), getNameCount(), toAbsolutePath() and so on. In this section, we organize the methods by related functionality.
 
 ### Viewing the Path with toString(), getNameCount(), and getName()
+The Path interface contains three methods to retrieve basic information about the path representative. The first method, toString() returns an String representation of en entire path. In fact, it is the only method in the Path interface to return a String. Most of the other methods that we will discuss in this section return a new Path object. The second and third methods, getNameCount() and getName(int) are often used in conjunction to retrieve the number of elements in the path and and a reference to each element, respectively. For greater compatibility with other NIO.2 methods, the getName(int) method returns the component of the Path as a new Path object rather than a String. 
+
+The following sample code uses these methods to retrieve path data:
+
+```
+Path path = Paths.get("/land/hippo/harry.happy");
+System.out.println("The path name is: " + path);
+
+for(int i=0; i < path.getNameCount(); i++){
+  System.out.println("Element " + i + " is: " + path.getName(i));
+}
+
+```
+
+As you might remember from our discussion of PrintStream/PrintWriter in Chapter 8, printing an object automatically invokes the object's toString(). The output of this code snippet is the following:
+
+```
+The Path Name is : /land/hippo/harry.happy
+  Element 0 is: land
+  Element 1 is: hippo
+  Element 2 is: harry.happy
+```
+
+Notice that the root element / is not included in the list of names. If the path object represents the root elements itself, then the number of names in the Path objects returned by getNameCount() will be 0. What if we ran the preceding code using the relative path land/hippo/harry.happy ? the output would be as follows:
+
+```
+The path name is: land/hippo/harry.happy
+  Element 0 is: land
+  Element 1 is: hippo
+  Element 2 is: harry.happy
+```
+Notice that the individual names are the same. For the exam, you should be aware that the getName(int) method is zero-indexed, with the file system root executed from the path components
+
 ### Accesing Path Components with getFileName(), getParent(), and getRoot()
 ### Checking Path Type with isAbsolute() and toAbsolutePath()
 ### Creating a New Path with subpath()
