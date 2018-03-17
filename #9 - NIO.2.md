@@ -178,6 +178,50 @@ The path name is: land/hippo/harry.happy
 Notice that the individual names are the same. For the exam, you should be aware that the getName(int) method is zero-indexed, with the file system root executed from the path components
 
 ### Accesing Path Components with getFileName(), getParent(), and getRoot()
+The Path interface contains numerous methods for retrieving specific information subelements of a Path object, returned as Path objects themselves. The first method, getFileName() returns a Path  instance representing the filename, which is the farthest element from the root.  Like most methods in the Path interface, getFileName() returns  a Path instance representing the parent paths or null if there us no such parent. If the instance of the Path object is relative, this method will stop at the top-level element defined in the Path object. In other words, it will not traverse outside the working directory to the file system root.
+The last method getRoot() returns the root element for the Path object or null if the Path object is relative. We represent a sample application that traverses absolute and relative Path objects to show how each handles the root differently:
+
+```java
+import java.nio.file.*;
+
+public class PathFilePathTest{
+  public static void printPathInformation(Path path){
+    
+    System.out.println("File is: " + path.getFileName());
+    System.out.println("Root is: " + path.getRoot());
+    
+    Path currentPath = path;
+    while((currentParent = currentParent.getParent()) != null){
+      System.out.println(" current parent is: " + currentParent);
+    } 
+  }
+  
+  public static void main(String[] args){
+    printPathInformation(Paths.get("/zoo.armadillo/shells.txt"));
+    System,out.println();
+    printPathInformation("armadillo/shells.txt");
+  }
+}
+
+```
+The while loop in the printPathInformation() method continues until getParent() returns null. This sample application produces the following output:
+
+```
+File name is: shells.txt
+Root is: /
+  Current parent is: /zoo/armadillo
+  Current parent is: /zoo
+  Current parent is: /
+
+
+File name is: shells.txt
+Root is: null
+  Current parent is: armadillo
+
+```
+
+Reviewing the sample output, you can see the difference in the behaviour of getRoot() on absolute and relative paths. Also notice that traversing the second path stopped at the top of the relative directory. As you can see in the example, it does not traverse relative directories outside of the working directory.
+
 ### Checking Path Type with isAbsolute() and toAbsolutePath()
 ### Creating a New Path with subpath()
 
