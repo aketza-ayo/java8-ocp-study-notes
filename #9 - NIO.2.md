@@ -348,12 +348,101 @@ On windows based systems, it also requires that if absolute paths are used, then
 Path path3 = Paths.get("c:\\primate\\chimpanzee.txt");
 Path path4 = Paths.get("d:\\storage\\bananas.txt");
 path3.relativize(path4);    //THROWS EXCEPTION AT RUNTIME
+```
 
+### Joining Path Objects with resolve()
+The Path interface includes a resolve(Path) method for creating a new Path by joining an existing path to the current path. To put it another way, the object on which the resolve() method is invoked becomes the basis of the new Path object, with the input argument being appended onto the Path. Let's see what happens if we apply resolve() to an absolute path and a relative path:
 
 ```
-### Joining Path Objects with resolve()
+final Path path1 = Paths.get("/cats/../panther");
+final Path path2 = Paths.get("food");
+System.out.println(path1.resolve(path2));
+```
+
+The code snippet generates the following outputs:
+
+``` /cats/../pather/food```
+
+For the exam, yopu should be aware that, like the relativize() method, the resolve() method does not clean up path symbols, such as the parent durectory .. symbol. For that, you will need to use the normalize() method, which we will cover next. In this example, the input argument to the resolve() method  was a relative path, but what if had been an absolute path?
+
+```
+final Path path1 = Paths.get("/turkey/food");
+final Path path2 = Paths.get("/tiger/cage");
+System.out.println(path1.resolve(path2));
+```
+
+Since the input parameter path2 is an absolute path, the output would be the following:
+
+``` /tiger/cage ```
+
+For the exam, you should be cognizant of mixing absolute and relative paths with the resolve() method. If an absolute path is provided as input to the method, such as path1.reosolve(path2), then path1 would be ignored and a copy of path2 would be returned.
+
 ### Cleaning Up a Path with normalize()
+As you saw with the relativize() method, file system can construct relative paths using .. and . values. There are times, however, when relative paths are combined such that there are redundancies in the path value. Luckily, Java provides us with the normalize(Path) method to eliminate the redundancies in the path.
+For example, lets take the output of one of our previous examples that resulted in the path value ../user/home and try to reconsititute the original absolute path using the resolve() method:
+
+```
+Path path3 = Paths.get("E:\\data");
+Path path4 = Paths.get("E:\\user\\home");
+
+Path relativePath = path3.relativize(path4);
+System.out.println(path3.resolve(relativePath));
+```
+
+The result of this sample code would be the following output:
+
+``` E:\data\..\user\home ```
+
+You can see that this path value contains a redundancy. Worse yet, it does not match our original value, E:\user\home. We can resolve this redundancy by applying the normalize() method as shown here:
+
+```
+System.out.println(path3.resolve(relativePath).normalize())
+```
+
+The modified last line of code nicely produces our original path value:
+
+```
+E:\user\home
+```
+
+Like relativize(), the normalize() method does not check that the file actually exists. As you shall see with our final Path  method, toRealPath(), Java provides a way to verify the file does exactly exist.
+
 ### Checking for File Existence with toRealPath()
+The toRealPath(Path) method takes a Path object that may or may not point to an existing file within the file system, and it returns a reference to a real path within the file syste. It is similar to the toAbsolutePath() method in that it can convert a relative path to an absolute path except that it also verifies that the file referenced by the path actually exists, and thus it throws a checked IOException at runtime if the file cannot be located. It is also the only Path method to support the NOFOLLOW_LINKS option.
+The toRealPath() method performs additional steps, such as removing redundant path elements. In other words, it implicitly calls normalize() on the resulting absolute path. 
+
+Let's say that we have a file system in which we have a symbolic link from food.source to food.txt, as described in the following relationship:
+
+```
+/zebra/food.source -> /horse/food.txt
+```
+
+Assuming the our current working durectory is /horse/schedule, then consider the following code:
+
+```java
+try{
+  System.out.println(Paths.get("/zebra/food.source").toRealPath());
+  
+  System.out.println(Paths.get(".././food.txt").toRealPath());
+}catch(IOException e){
+  //handle file I/O exception ...
+}
+
+```
+
+Notice that we have to catch IOException, since unlike the toAbsolutePath() method, the toRealPath() method interacts with the file system to check if the path is valid. Given the symbolic link and current working directory as described, then the output would be the following:
+
+```
+/horse/food.txt
+
+/horse/food.txt
+```
+
+In these examples, the absolute and relative paths both resolve to the same absolute file, as the symbolic link points to a rela file within the file system. Finally we can also use the toRealPath() method to gain access to the current working durectory such as shown here:
+
+```
+System.out.println(Paths.get(".").toRealPath());
+```
 ## Interacting with Files
 ### Testing a Path with exists()
 ### Testing uniqueness with isSameFile()
