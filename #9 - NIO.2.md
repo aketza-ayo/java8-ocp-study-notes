@@ -444,8 +444,51 @@ In these examples, the absolute and relative paths both resolve to the same abso
 System.out.println(Paths.get(".").toRealPath());
 ```
 ## Interacting with Files
+Great! We now have access to a Path object, and we can find out a ton of information about it, but what can we do with the file it references? For starters, many of the same operations available to java.nio.file.Path via a helper class called java.nio.file.Files. Unlike the methods in the Path and Paths class, most of the operations within the Files class will throw an exception if the file to which the Path refers does not exist.
+
+**Be wary of File vs Files on the exam** as you saw earlier with Path and Paths, Java is fond of singular names for container classes and plural names for factory and helper classes. In this situation, though, the NIO.2 Files hlper class is in no way related to the File class, as Files class operates on Path instances, not File instances. Kepp in mind that File belongs to the legacy java.io API, while Files belong to the NIO.2 API.
+
+The Files class contains numerous static methods for interacting  with files, with most taking one or two Path objects as arguments. Some of these methods are capable of throwing the checked IOExcepotion at runtime, often when the file referenced does nit exist within the file system, as you saw with Path method toRealPath().
+
 ### Testing a Path with exists()
+The Files.exists(Path) method takes a Path object and returns true if, and only ifg, it references a file that exists in the file system.
+
+Let's take a look at some sample code:
+
+```
+Files.exists(Paths.get("/ostrich/feathers.png"));
+
+Files,exists(Paths.get("/ostrich"));
+
+```
+
+The first example checkes wheather a file exists, while the second example checkes whether a directory exists. You can see that this method does not throw an expection if the file does not exists, as doing so would prevent this method from ever running false at runtime.
+
 ### Testing uniqueness with isSameFile()
+The Files.siSameFile(Path,Path) method is useful for determining if two Path objects relate to the same file within the same file system. It takes two Path objects as input and follows symbolic links. Despite the name, the method also determines if two Path objects refer to the same directory.
+
+The isSameFile() method first checks if the Path objects are equal in termns of equal(), and if so, it automatically returns true without checking to see if either file exists. If the Path object equals() comparison returns false, then it locates each file to which the path refers in the file system and determines if they are the same, throwing a checked IOException if either file doest not exist. Note that the method does not compare the content of the file. For example two files may have indetical content and attributes, but if they are in different locations, then this method will return false.
+
+Let's assume that all of the files in the following examples exists within the file system and that cobra is a symbolic link to the snake file. What would be the output of the following code snippet?
+
+```
+try{
+  System.out.println(Files.isSameFile(Paths.get("/user/home/cobra"), Paths.get("/user/home/snake")));
+  
+  System.out.println(Files.isSameFile(Paths.get("/user/tree/../monkey"), Paths.get("/user/monkey")));
+  
+  System.out.println(Files.isSameFile(Paths.get("/leaves/./girafe.exe"), Paths.get("/leaves/giraffe.exe")));
+  
+  System.out.println(Files.isSameFile(Paths.get("/flamingo/tail.data"), Paths.get("/cardinal/tail.data")));
+
+}catch(IOException e){
+  //handle file I/O expcetion
+}
+
+```
+
+Since cobra is a symbolic link to the snake file, the first example outputs true. In the second example, the symbol .. cancels out the tree path of the paths, resulting in the method, so the results is true as well. In the third example, the symbol . leave the path unmodified, so the result is tru as well. The final example returns false, asuming that neither file is a synbolic link to the other. Even if the files have the same name and the same contents, if they are different locations, they are considered different files within the file system.
+
 ### Making Directories with createDirectory() and createDirectories()
 ### Duplicating File Contents with copy()
 ### Copying Files with java.io and NIO.2
