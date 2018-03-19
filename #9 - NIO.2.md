@@ -527,7 +527,29 @@ try{
 ```
 
 The first example deletes the features.txt file in the vulture directory, and it throws a NoSuchFileException if the file or directory does not exist. The second example deletes the pigeon directory assuming it is empty. If the pigeon directory does not exist, then the second line will not throw an exception.
+
 ### Reading and Writing a File Data with newBufferedReader() and newBufferedWriter()
+The NIO.2 API includes methods for reading and writing file contents using java.io streams. In this manner, the NIO.2 API bridges information about streams, which you learned about in Chapter 8; the Path and File classes are covered in this chapter.
+
+The first method, Files.newBufferedReader(Path, Charset), reads the file specified at the Path location using java.io.BufferedReader object. It also requires a Charset value to determine what character encoding to use to read the file. You may remember that we briefly discussed character encoding and charset in chapter 8. For this chapter, you just need to know that characters can be encoded in bytes in a variety of ways. It may also be useful to know that charset.defaultCharset() can be used to get default charset for the JVM.
+
+We now represent an example of this example:
+
+```
+Path path = Paths.get(""/animal/gopher.txt);
+try(BufferedReader reader = Files.newBufferedReader(path, charset.forName("US-ASCII"))){
+  //read from the stream
+  String currentLine = null;
+  while((currentLine = reader.readLine()) != null){
+    System.out.println(currentLine);
+  }
+
+}catch(IOException e){
+  //Handle file I/O exception...
+}
+
+```
+
 ### Reading Files with readAllLines()
 
 # Understanding File Attributes
