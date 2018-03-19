@@ -553,8 +553,32 @@ try(BufferedReader reader = Files.newBufferedReader(path, charset.forName("US-AS
 ### Reading Files with readAllLines()
 
 # Understanding File Attributes
+In the previous section, we reviewed methods that could create, modify, read or delete a file or directory. The Files class also provides numerous methods methods accessing file and directory metadata, referred to as file attributes. Put simply, metadata is data that describes other data. In this context, file metadata is data about the file or directory record within the file system and not the contents of th file. 
+For exmple, a file or directory may be hidden within a file system or marked with a permisison that prevents the current user form reading it. The Files class provides methods for determining this information from within Java applications.
+
+The one thing to keep in mind while reading file metadata in Java is that some methods are operating system dependent. For example, some operating systems may have not have notion of user-level permissions, in which case users can read only files tthat hey have permissions to read.
+
 ## Discovering Basic File Attributes
-### Reading Common Attributes with isDirtectory(), isRegularFile(), and isSymbolicLink()
+We begin the discussion of file attributes by representing the basi methods, defined directly within the Files class, for reading file attributes. These methods are usable within any file system although they may have limited meaning in some file systems. In the next section, we will repsent a more generalized approach using attributes views and show that they not only improve performance but also allow us to access fle system-dependent attributes.
+
+### Reading Common Attributes with isDirectory(), isRegularFile(), and isSymbolicLink()
+The Files class includes three methods for determining if a path refers to a directory, a regular file, or a symbolic link. The method to accomplish this are named Files.isDirectory(Path), Files.isRegularFile(Path), and Files.isSymbolicLink(Path) respectively.
+
+Java defines a regular file as one that contains contents, as opposed to symbolic link, directory, resource, or other non-regular file that may be present in some operating systems. If the symbolic link points to a real file or directory, Java will perform the check on the target of the symbolic link. In other words, it is possible for isRegularFile() to return true for a symbolic link, as long as the link resolves to a regular file.
+
+Let's take a look at some sample code:
+
+```
+Files.isDirectory(Paths.get("/canine/coyote/fur.jpg"));
+
+Files.isRegularFile(Paths.get("/canine/types.txt"));
+
+Files.isSymbolicLink(Paths.get("/canine/coyote"));
+
+```
+
+The first example returns true if fur.jpg is a directory or a symbolic link to a directory and false otherwise. Note that directories can have extensions in many file systems, so it is possible for fur.jpg to be the name of a directory. The second example returns true if types.txt points to a regular file or alternatively a symbolic link that points toa regular file.
+
 ### Checking File Visibility with isHidden()
 ### Testing File Accessibility withisReadable() and isExecutable()
 ### Reading File Length with size()
