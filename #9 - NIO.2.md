@@ -510,6 +510,23 @@ try{
 ### Copying Files with java.io and NIO.2
 ### Changing a File Location with move()
 ### Removing a File with delete() and deleteIfExists()
+The Files.delete(Path) method deletes a file or empty directory within the file system. The delete() method throws the checked exception IOException under the variety of circumstances. For example, if the path represents a non-empty directory, the operation will throw the runtime DirectoryNotEmptyException. If the target of the path is a symbol link, then the symbolic link will be deleted, not the target of the link.
+
+The deleteIfExists(Path) method is identical to the delete(Path) method, except that it will not throw an exception if the file or directory does not exist, but instead it will return a boolean value of false. It will throw an exception if the file or directory does exist but fails, such as in the case of the directory not beign empty.
+
+We now provide sample code that performs delete() operations:
+
+```
+try{
+  Files.delete(Paths.get("/vulture/feathers.txt"));
+  Files.deleteIfExists(Paths.get("/pigeon"));
+}cathc(){
+  // hangle file I/O Exception...
+}
+
+```
+
+The first example deletes the features.txt file in the vulture directory, and it throws a NoSuchFileException if the file or directory does not exist. The second example deletes the pigeon directory assuming it is empty. If the pigeon directory does not exist, then the second line will not throw an exception.
 ### Reading and Writing a File Data with newBufferedReader() and newBufferedWriter()
 ### Reading Files with readAllLines()
 
