@@ -490,6 +490,22 @@ try{
 Since cobra is a symbolic link to the snake file, the first example outputs true. In the second example, the symbol .. cancels out the tree path of the paths, resulting in the method, so the results is true as well. In the third example, the symbol . leave the path unmodified, so the result is tru as well. The final example returns false, asuming that neither file is a synbolic link to the other. Even if the files have the same name and the same contents, if they are different locations, they are considered different files within the file system.
 
 ### Making Directories with createDirectory() and createDirectories()
+To create directories in the legacy java.io API, we called mkdir() on a File object. In the NIO.2 API, we can use the Files.createDirectory(Path) method to create a directory. There is also a plural form of the method called Files.createDirectories(), which like mkdirs() creates the target directory along with any nonexistent parent directories leading up to the target directory in the path. The directory-creation methods can throw the checked IOException, such as when the directory cannot be created or already exists. For example, the first method, createDirectory() will throw an exception if the parent directory in which the new directry resides does not exist.
+
+Both of these methods also accept an optional list of FileAttribute<?> values to set on the newly created directory or directories. We will discuss file attributes in the next section. We now present a code snippet that shows how to create directories using NIO.2:
+
+```
+try{
+  Files.createDirectory(Paths.get("/bison/field"));
+  
+  Files.createDirectory(Paths.get("/bison/field/pasture/green"));
+  
+}cacth(IOException e){
+  //handle file I/O Exception
+}
+
+```
+
 ### Duplicating File Contents with copy()
 ### Copying Files with java.io and NIO.2
 ### Changing a File Location with move()
