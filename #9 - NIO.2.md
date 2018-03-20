@@ -683,13 +683,116 @@ We illuminate these concepts in table below. For this table assume that the file
 
 ![isDirectory(), isRegularFile(), isSymbolicLink() examples](img/isDirectoryExamples.png)
 
+You see that the value of isDirectory() and isRegular() in table above cannot be determined on the symbolic link /coyotes without knowledge of what the symbolic link points to.
+
 ### Checking File Visibility with isHidden()
-### Testing File Accessibility withisReadable() and isExecutable()
+The Files class includes the Files.isHidden(Path) method to determine whther a file or directory is hidden within the file system. In Linux or Mac based sytems, this is often denoted by file or directory entries that begin with a period character (.), while in Windows-based systems this requires the hidden attribute to be set. The isHidden() method throws the checked IOException, as thre may be an I/O error reading the underlying file information. We present illustrative usage of this method in the following sample code:
+
+```
+try{
+  System.out.println(Files.isHidden(Paths.get("/walrus.txt")))
+}cathc(){
+  // handle file I/O exception
+}
+
+```
+If the walrus.txt file is available and hidden within the file system, this method will return true.
+
+### Testing File Accessibility with isReadable() and isExecutable()
+The Files class includes two methods for reading file accessibility: Files.isReadable(Path) and Files.isExecutable(Path). This is important in file systems where the filename can be viewed within a directory, but the user may not have persmission to read the contents of the file or execute it. We now presetn usage of each method:
+
+```
+System.out.println(Files.isReadable(Paths.get("/seal/baby.png")));
+
+System.out.println(Files.isExecutable(Paths.get("/seal/baby.png")));
+
+```
+
+The first example returns true if the baby.png exists and its content are readable, based on the permission rules of the underlying file system. The second example returns trye if the baby.png file is marked executable within the file system. Note that the file extension does not necessary determine whether a file is executable. For example, an image file that ebnds in .png could be marked exectuable within a Linux based system. Like the isDurectory(), isRegularFile() and isSymbolicLink() methods, the isReadable() and isExecutable() methods do not throw exceptions if the file does not exist but instead return false 
+
 ### Reading File Length with size()
+The File.size(Path) method is used to determine the size of the file in bytes. The size returned by this method represents the conceptual siexe of the data, and this may differ from the actual size on the persistence storage device due to file systems compression and organization. The size() method throws the checked IOException if the file does not exists or if the process is unable to read the file information.
+The following is a sample call to the file information:
+
+```
+try{
+  System.out.println(Files.size(Paths.get("/zoo/c/animals.txt")));
+}cath(IOException e){
+  //handle file I/O exception...
+}
+
+```
+
+The example outputs the number of bytes in the file, expressed as a long value. As you may have already realized, we are repeating a lot of the methods defined in java.io.File, as discussed in Chapter 8. Since the NIO.2 API was defined as a replacement for the java.io API, it includes many of the same methods in one form or another.
+
+Note that the FIles.size() method is defined only on file. Calling Files.size() on a directory is system dependent and undefined. If you need to determine the size of a directory and its contents, you will ned to walk the directory tree, described later in this chapter.
+
 ### Managing File Modifications with getLastModifiedTime() and setLastModifiedTime()
+Most operating systems support tracking a last modified dat/time values with each file. Some applications use this to determine when the file should be read again. For example, there might be a program that performs an operation anytime the file data changes. In the majority of curcustances, it is a lot faster to check a single file medatada attribute than to reaload the entire contents of the file, expecially if the file is large.
+The Files class provides the method FIles.getLastModifiedTime(Path) which returns a FileTime object to accomplish this. The FileTime class is a simepl container class that stores the data/time information about when a file was accessed, modified or created. For convenience, it has a toMillis() method that returns the epoch time.
+The Files class also provides a mechanism for updating the last modified date/time of a file using the Files.setLastModifiedTime(Path, FileTime) method. The FileTime class also has a static fromMillis() method that converts from epoch time to a FileTime object.
+Both of these methods have the ability to throw a checked IOException when the file is accessed or modified.
+
+we now present examples of both methods:
+
+```
+try{
+  final Path path = Paths.get("/rabbit/food.jpg");
+  
+  System.out.println(Files.getLastModifiedTime(path).toMillis());
+  
+  Files.setLastModifiedTime(path, FileTime.fromMillis(System.currentTimeMillis()));
+  
+  System.out.println(Files.getLastModifiedTime(path).toMillis());
+}catch(IOException e){
+  //handle file I/O exception
+}
+
+```
+The first part of the code reads and outputs the last-modified time value of the food.jpeg file. The next line sets a last modified date/time using the current time value. Finally, we repeat our earlier line and output the newly set last-modified value.
+
 ### Managing Ownership with getOwner() and setOwner()
+Many file systems support the notion of user-owned files and directories. In this manner, the Files.getOwner(Path) method returns an instance of UserPrincipal that represents the owner of the file within the file system.
+as you may have already guessed, there is also a method to set the owner, called Files.setOwner(Path, UserPrincipal). Note that perating system may intervene when youtry to modify the owner of a file and block the operation. For example, a proicess running under oine user may not be allowed to take ownership of a file owned by another user. Both the getOwner() and setOwnder() methods can throw the checked exception IOException in case nay issue accessing or modifying the file.
+In orer to set a file owner to an arbitraty user, the NIO.2 API provides a USerPrincipalLookupService helper class for finding a UserPrincipal record for a particular user within a file system. In order to use the helper class, you first need to obtain an instance of a FileSystem objects, either by using the FIleSystems.getDefault() method or by calling getFileSystem() on the Path object with which you are working, as shown in the following two examples:
+
+```
+UserPrincipal owner = FileSystems.getDefault().getUSerPrincipalLookupService().lookupProncipalByName("jane");
+Path path = ...
+UserPrincipal owner = path.getFileSystem().getUserPrincipalLookupService().lookupPrincipalByName("jana");
+```
+We now present examples of the getOwner() and setOwner() methods, including an example of how to use the UserPrincipalLookupService:
+
+```
+try{
+  //Read owner of file
+  Path path = Paths.get("/chicked/feathers.txt");
+  System.out.println(Files.getOwner(path).getName());
+  
+  //Change owner of file
+  UserPrincipal owner = path.getFileSYstem().getUserPrincipalLookupService().lookupPrincipalByName("jane");
+  Files.setOwner(path, owner);
+  
+  //output the updated owner information
+  System.out.println(Files.getOwner(path).getName());
+  
+}catch(IOexception e){
+  //Handle I/O exception
+}
+
+```
+
+The first set of lines reads the owner of the file and outputs the name of the user. The secodn set of lines retrieves a user named jane within the related file system and uses it to set a new owner for the file. Finally, we read owner name again that is has been updated.
+
 ### Improving Access with Views
+Up until now, we have been accessing individual file attriv=butes with single method calls. While this is functionally correct, there are often costs associated with accessing the file that make it far mor efficient to retrieve all file metadata ina single call. Furthermore, some attributes are file system specific and cannot be easily generalized for all file systems.
+
+The NIO.2 API addresses both of these concerns by allowing you to construct views for various file systems ina single method call. A view is a group of related attributes for a particular file system type. A file may support multiple views, allowing you to retrieve and update various sets of inforamtion about the file. 
+If you need to read multiple attributes of a file or a directory at a time, the performance advantage of suing a view may be substantial. Although more attributes are read than in a single method call, there are fewer round trips between Java and the operating system, whereas reading the same attributes with previously described single method calls would require many such trips. In parctice, the number of trips between Java and the operating system is more important in determining performance than the number of attributes read.
+Tha's not to say that the single mehod calls we just finished discussing do not have their applications. If you only need to read exactly one file attribute, then there is little or no performance difference. The also tend to be more convenient to use given their concise nature.
+
 ### Understanding Views
+
 ### Reading Attributes
 #### BasicFileAttributes
 ### Modiying Attributes
