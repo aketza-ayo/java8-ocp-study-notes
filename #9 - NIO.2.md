@@ -633,6 +633,24 @@ The code snippet creates a new File with the specified contents, overwriting the
 Since both of these methods create resources, we can use try-with-resource syntax as described in CHapter 6, as we did when working withn stream in Chapter 8. Also, note that both of these methods use buffered streams rather than low level file streams. AS we mentioned earlier in the chapter the buffered stream classes are much moire performant in parctice, so much so that the NIO.2 API includes methods the specifically retun these stream classes, in part to encourage you always to use bufferd streams in your application.
 
 ### Reading Files with readAllLines()
+The Files.readAllLines() method reads all of the lines of a text file and return the results as an ordered List of String values. The Nio.2 API includes an overloaded version that takes an optional Charset value. The following sample code reads the lines of the file and outputs them to the user:
+
+```
+Path path = Paths.get("/fish/sharks.log");
+try{
+  final List<String> lines = Files.readAllLines(path);
+  for(String line : lines){
+    System.out.println(line);
+  }
+  
+}catch(IOException e){
+  //Handle file I/O exception...
+}
+
+```
+The code snippet reads all of the lines of the file and then iterates over them, As you might have expected, the method may throw an IOException if the file cannot be read.
+
+Be aware that the entire file is read when readAllLines() is called, with the resulting String array storing all of the contents of the file in memory at one. Therefore, if the file is significantly large, you may encounter an OutOfMemoryError trying to load all of it into memory. Later on in the chapter, we will revisit this method and present a new stream based NIO.2 method that is far more performant on large file.
 
 # Understanding File Attributes
 In the previous section, we reviewed methods that could create, modify, read or delete a file or directory. The Files class also provides numerous methods methods accessing file and directory metadata, referred to as file attributes. Put simply, metadata is data that describes other data. In this context, file metadata is data about the file or directory record within the file system and not the contents of th file. 
@@ -660,6 +678,10 @@ Files.isSymbolicLink(Paths.get("/canine/coyote"));
 ```
 
 The first example returns true if fur.jpg is a directory or a symbolic link to a directory and false otherwise. Note that directories can have extensions in many file systems, so it is possible for fur.jpg to be the name of a directory. The second example returns true if types.txt points to a regular file or alternatively a symbolic link that points toa regular file.
+
+We illuminate these concepts in table below. For this table assume that the file system with the directory /canine/coyote and file canine/types.txt exists. Furthermore, assume that /coyotes is symbolic link within the file system that points to another path within the file system.
+
+![isDirectory(), isRegularFile(), isSymbolicLink() examples](img/isDirectoryExamples.png)
 
 ### Checking File Visibility with isHidden()
 ### Testing File Accessibility withisReadable() and isExecutable()
