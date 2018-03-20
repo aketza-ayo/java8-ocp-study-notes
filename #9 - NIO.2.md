@@ -505,10 +505,72 @@ try{
 }
 
 ```
+The first example creates a new directory, field, in the directory /bison, assuming /bison exists; or else an exception is thrown. Contrast this with the second example that creates the directory green along with any of the following parent directories if they do not already exist, such as /bison, /bison/field, or /bison/pasture.
 
 ### Duplicating File Contents with copy()
+Unlike the legacy java.io.File class the NIO.2 Files class provides a set of overloaded copy() methods for copying files and directories within the file system. The primary one that you should know about for the exam is File.copy(Path, Path), which copies a file or directory from one location to another. The copy() method throws the checked IOException, such as when the file or directory does not exist or cannot be read.
+
+Directory copies are shallow rather than deep, meaning that files and subdirectories within the directory are not copied. To copy the contents of a directory, you would need to create a function to traverse the directory and copy each file and subdirectory individually:
+
+```
+try{
+  Files.copy(Paths.get("/panda"), Paths.get("/panda-save"));
+  
+  Files.copy(Paths.get("/panda/bamboo.txt"). Paths.get("/panda-save/bamboo.txt"));
+}catch(IOException e){
+  //handle file I/O exception...
+}
+
+```
+
+The first example performs a shallow copy of the panda directory, creating a new panda-save directory but it does not copy any contents of the original directory. The second example copies the bamboo.txt file from the directory panda to the directpry panda-save.
+
+By default, copying files and directories will traverse symbolic links, although it will not overwrite a file or directory if it already exists, nor will it copy file attributes. These behaviours can be altered by providing the additional options NOFOLLOW_LINKS, REPLACE_EXISTING, and COPY_ATTRIBUTES, respectively, as discussed earlier in the chapter.
+
 ### Copying Files with java.io and NIO.2
+The NIO.2 Files API class contains two overloaded copy() methods for copying files using java.io streams, as described in Chpeter8. The first copy() method takes a source using java.io,InputStream along with a target Path object. It reads the contents from the stream and writes the output to a file represented by a Path object
+
+The second copy() method takes a source Path object and target java.io.OutputSteam. It reads the contents of the file and writes the output to the stream. The following are examples of each copy() method:
+
+```
+try(InputStream is = new FileInputStream("source-data.txt"); 
+    OutputStream out = new FileOutputStream("output-data.txt")){
+    
+    //copy stream data to file
+    FIles.copy(is, Paths.get("c:\\mammals\\wolf.txt"));
+    
+    //copy file data to stream
+    Files.copy(Paths.get("c:\\fish\\clown.xsl"), out);
+
+}catch(){
+  //Handle file I/O exception ...
+}
+
+```
+In this example, the InputStream and OutputStream parameters could refer to any valid stream, including website connection, in-memory stream resources, and so forth.
+
+Like the first copy() method, the copy(InputStream, Path) method also supports optional vararg options, since the data is being written to a file represented by a Path object. The second method, copy(Path, OutputStream), does not support vararg values, though, since the data is beiogn written to a stream that may not represent a file system resource.
+
 ### Changing a File Location with move()
+The Files.move(Path, Path) method moves ro renames a file or directory within the file system. Like the copy() method, the move() method also throws the checked IOException in the event that the file or directory could not be found or moved.
+
+The following is some sample code that uses the move() method:
+
+```
+try{
+  Files.move(Paths.get("c:\\zoo"), Paths.get("c:\\zoo-new"));
+  
+  Files.move(Paths.get("c:\\user\\addresses.txt"), Paths.get("c:\\zoo-new\\addresses.txt"));
+}cath(IOException e){
+  //handle I/O exception ...
+}
+
+```
+
+The first example renames the zoo directory to zoo-new directory, keeping all of the original conmtents from the source directopry. The second example moves the addresses.txt file from the directory user to the directory zoo-new and it renames it to the addresses2.txt. By default the move method will follow links, throw an exception if the file already existss, and not perform an atomic move. These behaviours can be changed by providing the optional values NOFOLLOW_LINKS, REPLACE_EXISTING, or ATOMIC_MOVE, respectively, to the method. If the file system does not support atomic moves, an AtomicMoveNotSupportedException will be thrown at runtime.
+
+Note that the Files.move() method can be applied to anon-empty directories only if they are on the same underlying drive. While moving an empty directory across a drive us supported, moving a non-empty directory accross a drive will throw an NIO.2 DirectoryNotEmptyException.
+
 ### Removing a File with delete() and deleteIfExists()
 The Files.delete(Path) method deletes a file or empty directory within the file system. The delete() method throws the checked exception IOException under the variety of circumstances. For example, if the path represents a non-empty directory, the operation will throw the runtime DirectoryNotEmptyException. If the target of the path is a symbol link, then the symbolic link will be deleted, not the target of the link.
 
@@ -549,6 +611,26 @@ try(BufferedReader reader = Files.newBufferedReader(path, charset.forName("US-AS
 }
 
 ```
+
+This example reads the contents of the files using a BufferedReader and outputs the contents to the user. AS you shall see in the next section, there is a much simpler way to accomplish this, which uses funtional programming streams.
+
+The second method, Files.newBufferedWriter(Path, Charset) writes to a file specified at the Path location suing a BufferedWriter. Like the reader method, it also takes a Charset value:
+
+```
+Path path = Paths.get("/animals/gorilla.txt");
+List<String> data = new ArrayList();
+
+try(BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-16")){
+  writer.write("Hello world");
+}catch(IOException e){
+
+  //handle I/O Exception...
+}
+
+```
+The code snippet creates a new File with the specified contents, overwriting the file if it already exists. The newBufferedWriter() method also supports taking additional enum values in an optional vararg, such as appeding to an existing file instead of overwriting it, although you do not need to memorize this list for the exam.
+
+Since both of these methods create resources, we can use try-with-resource syntax as described in CHapter 6, as we did when working withn stream in Chapter 8. Also, note that both of these methods use buffered streams rather than low level file streams. AS we mentioned earlier in the chapter the buffered stream classes are much moire performant in parctice, so much so that the NIO.2 API includes methods the specifically retun these stream classes, in part to encourage you always to use bufferd streams in your application.
 
 ### Reading Files with readAllLines()
 
