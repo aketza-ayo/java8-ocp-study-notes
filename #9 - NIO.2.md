@@ -1059,3 +1059,6 @@ Files.lines(path).filter(s -> s.length() > 2).forEach(System.out::println);
 The first line does not compile because the filter operation cannot be applied to a Colection without first converting it to a Stream using the stream() method.
 
 # Comparing Legacy File and NIO.2 Methods
+We conclude this chapter with the table below which shows a comparison between some of the legacy java.io.File methods described in Chapter 8 and the new NIO.2 methods described in this chapter. In this table, file refers to an instance of java.io.FIle class, while path refers to an instance of a NIO.2 Path interface.
+
+![Comparison of legacy File and NIO.2 methods](img/legacyFileAndNIO2methods.png)
