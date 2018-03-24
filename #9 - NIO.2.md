@@ -798,17 +798,149 @@ Table below lists the common used attributes and view classes: note that the fir
 
 ![The attributes and view classes](img/attributesAndViewClasses.png)
 
+For the exam, you should be familiar with the ```BasicFileAttributes``` and ```BasicFileAttributeView``` classes and their common methods, such as creationTime(), lastModifiedTime(), and so forth. You don't need to memorize the methods available to the DoesFile and PosixFile clases for the exam, although you should be aware that they exist in case you come across them.
+
 ### Reading Attributes
+The NIO.2 API provides a File.readAttributes(Path, Class<A>) method, which returns read-only version of a file view. The second parameter uses generic such that the return type of the method will be an instance of the provided class.
+
 #### BasicFileAttributes
+All attributes classes extend from BasicFileAttributes; therefore it contains attributes common to all supported file systems. It includes many of the file attributes that you previously saw as single-line method calls in the FIles class, such as Files.isDirectory(), Files.getLastModifiedTime(), and so on. We now present a sample application that retrieves BasicFileAttributes on a file and outputs various metadata about the file:
+
+```java
+import java.io.IOException;
+import java.nio.File;
+import java.nio.file.attribute.BasicFileAttributes;
+
+public class BasicFileAtributesSample{
+  
+  public static void main(String[] args){
+    Path path = Paths.get("/turtles/sea.txt");
+    BasicFileAttributes data = Files.readAttributes(path, BasicFileAttributes.class);
+    
+    System.out.println("Is a path a directory ?" + data.isDirectory());
+    System.out.println("Is a path a regular file ?" + data.isRegularFile());
+    System.out.println("Is a path a symbolic link" + data.isSymbolicLink());
+    System.out.println("Path not a file, directory, nor symbolic link?" + data.isOther());
+    
+    System.out.println("Size (in bytes)" + data.size());
+    
+    System.out.println("Creation date/time " + data.creationTime());
+    System.out.println("Last modified date/time " + data.lastModifiedTime());
+    System.out.println("Creation date/time " + data.lastAccessTime());
+    System.out.println("Unique file identifier (if available) " + data.fileKey());
+  }
+}
+
+```
+
+The majority of these attributes should be familiar to you, as they were covered in the previous section of this chapter. The only one that are new are isOther(), lastAccessTime(), creationTime() nad fileKey(). The isOther() method is used to check for paths that are not files, directories, or symbolic links, such as paths that refer to resources or devices in some file systems. The lastAccessTime() and creationTime() methods return other data/time information about the file. The fileKey() method returns a file system value that represents a unique indentifier of the file within the file system or null if it is nor supported by the file system.
+
 ### Modiying Attributes
+While the Files.readAttributes() method is useful for readig file data, it does not provide a direct mechanism for modifying file attributes. The NIO.2 API provides the Files.getFileAttributeView(Path, Class<V>) method, which returns a view object that can use to update the file system-dependent attributes. We can also use the view object to read the associated file systems attributes by calling readAtributes() on the view object.
+
 #### BasicFileAttributeView
+BasicFileAttributeView is used to modify a file's set of date/time values. In general, we cannot modify the other basic attributes directly, since this would change the property of the file system object. For example, we cannot set a property to change a directory into a file, since this leaves the files in the future in an ambiguous state. Likewise, we cannot change the size of the objects without modifying its contents.
+
+We now present a sample application that reads a file's basic attributes and increments the file's last modified date/time values by 10,000 milliseconds or 10 seconds:
+
+```
+import java.io.IOException;
+import java.nio.File;
+import java.nio.file.attribute.*;
+
+public class BasicFileAttributeViewSample{
+  
+  public static void main(String[] args) throws IOException{
+     Path path = Paths.get("/turtles/sea.txt");
+     BasicFileAttributeView view = Files.getFileAttributeView(path, BasicFileAttributeView.class);
+     BasciFileAttributes data = view.readAttributes();
+     
+     FileTime lastModifiedTime = FIleTime.fromMillis(data.lastModifiedTime().toMillis() + 10_000);
+     
+     view.setTime(lastModifiedTime, null, null);
+     
+  }
+
+}
+
+```
+Notice that although we called FIles.getFileAttributeView(), we were still able to retrieve a BasicFileAttributes object by calling readAttributes() on the resulting view. Since there is only one update method, setTimes(FIleTime lastModifiedTime, FileTime lastAccessTime, FIleTime createTime) in the BasicFileAttributeView class, and it takes these arguments, we need to pass three values to the method.
+
+The NIO.2 API allows us to pass null for any date/time value that we don't wish to modify. For example, the following line of code would change only the last-modified date/time, leaving the other file date/time values unaffected:
+
+```
+view.setTime(lastModifiedTime, null, null);
+```
 
 # Presenting the New Stream Methods
+Prior to Java 8, the techniques used to perform complex file operations in NIO.2, such as searching for a file within a directory tree, were a tad verbose and often required  you to define an entire class to perform a simple task. When Java 8 was released, new methods that rely on streams were added to the NIO.2 specification that allow you to perform many of these complex operations witha single line of code.
+
 ## Conceptualizing Directory Walking
+Before delving the new NIO.2 streams methods, let's review some basci concepts about file systems. When originally described a directory in Chapter 8, we mentioned that it was organized in hierarchical manner. For example, a directory can contain files and other directories, which can in turn contain other files and directories. Every record in a file system has exactly one parent, with the exception of the rrot directory, which sits atop everything. This is commonly visualized as a tree with a single root node and many branches and leaves.
+
+A common task in the file system is to iterate over the descendants of a particular file path, either recording information about them or, filtering them for a specific set of files. For example, you may want to search  a folder and print a list of all of the .java files. Furthermore, file systems store file records in a hierarchical manner. Generally speaking, if you want to search for a file, you have to start with a parent directory, read its child elements, then read their children and so on.
+
+Walking or traverse a directory is the process by which you start with a parent directory and iterate over all of its decendants until some condition is met or there are no more elements over which to iterate. Then starting paths is usually a relevant directory to the application: after all, it would be time consuming to search the entire file system if your application uses only a single directory! 
+
 ## Selecting a Search Strategy
+There are two common strategies associated with walking a directory tree: a ```depth-first seach``` and a ```breadth-first search```. A ```depth-first``` search traverses the sctructure from the root to an arbritary leaf and then navigates back up towards the root, traversing fully down any paths it skipped along the way. The search depth is the distance from the root to the current node. For performance reasons, some processes have a max search depth that is used to limit how many levels deep the search goes before stopping.
+Alternatively, a ```breadth-first``` search starts at the root and processes all elements of each particular depth, or distance from the root, before proceeding to the next depth level. The results are ordered by depth, with all nodes at depth 1 read before all nodes at depth 2 , and so on. 
+
+For the exam, you don't have to understand the details of each search strategy that Java employs; you just need to be aware that the Stream API uses depth-first searching with a default maximum depth of Integer.MAX_VALUE.
+
+**Depth-First Search vs. Breadth-First Search**
+In practice, each search strategy has its own advantages and disadvantages. For example, depth-first searches tend to require less memory, since breadth-first searches require mantaining all of the nodes on a particular level in memory in order to generate the next level.
+
+On the other hand, breadth-first searches work better when the nodes for which you are searching is likely near the roor, since depth-first searches can go many levels down a completely useless path before visiting all of the children of the root. 
+
+If you are interested in understanding search strategies in greater detail, there are numerous algorithm books and articles on the subject, including a detailed descripotion of each search strategy on Wikipedia.
+
 ## Walking a Directory
+As present in CHapter 4, Java 8 includes a new Stream API for performing complex operations in s single line of code using funtional programming and lambda expressions. The first newly added NIO.2 stream based nmethod that we will cover is one used to traverse a directory. The Files.walk(path) method returns a Stream<Path> object that traverses the directory in a depth-first, lazy manner.
+By lazy we mean the set of elements is built anbd rad while the directory is being traversed. For example, until a specific subdirectory is reached, its child elemements are not loaded. This performance enhancement allows the process to be run on directories with a large number of descendants in a reasonable manner. 
+  
+Note: keep in  mind that when you create a Stream<Path> object using Files.walk(), the contents of the directory have not yet been traversed. 
+  
+The Following is an example of using a stream to walk a directory structure:
+
+```
+Path path = Paths.get("/bigcats");
+
+try{
+  Files.walk(path)
+    .filter(p -> p.toString().endsWith(".java"))
+    .forEach(SYstem.out::println);
+}catch(IOException e){
+  // Handle file I/O exception
+}
+
+```
+
+This example interates over a directory and outputs all of the files that end with a java extension. You can see that the method also throws a somewhat expected IOEXception, as there could be a problem reading the underlying file system. Sample output for this method would be similar tp the following:
+
+```
+/bigcats/version1/backup/Lion.java
+/bigcats/version1/Lion.java
+/bigcats/version/Tiger.java
+/bigcats/Lion.java
+```
+
+If you are familiar with a FileVisitor interface pattern, which was required for version 7of the OCP exam, you migh have noticed that we did in one line what we would normally require an entire class definition to do so. By default the method iterates p to Integer.MAX_VALUE directories depp, although there is an overloaded version of walk(Path, int) that takes a maximim directory depth integer values as the second parameter. A value of 0 indicates the current path record itself. In the previous example, you would need to specify a value of at least 1 to print any child record. In practice, you may want to set a lkimit to prevent your application from searching too deeply on a lrge directory structure and taking too much time.
+
+**Why is Integer.MAX_VALUE the Depth Limit**
+Java used an integer value for its maximum depth because most file systems do not support path values deeper that what can be stopped in an int. In other words, using Integer.MAX_VALUE is effectively like using an infinite value, since you would be hard pressed to find a situation where this limit is exceeded. 
+
+You see that the Stream<Path> object returned by the walk() method visits every descedant path, with the filter beign applied as each path is encountered. In the next section, you will see that there is a more useful method for filtering files available in the NIO.2 API.
+ 
 ## Avoiding Circular Paths
+Unlike out earlier NIO.2 method, the walk() method will not traverse symbolic links by default. Following symbolic links could result in a directory tree that includes other, seemingly unrelated directories in the search. For example, a symbolic link to the root directory in a subdirectory means that every file in the file system may be traversed.
+
+Worse yet, symbolic links could lead to a cycle. A cycle is an infinite circular dependency in which an entry in a directory is an ancestor of the directory. For exampl, imagine that we had a directory /birds/robin that contains a symbolic link called/birds/robin/allBirds that pointen to /birds. Trying to traverse the /birds/robin directory would result in an infinite loop since each time the allBirds subdirectory was reached, we would go back to the parent path. 
+
+If you have a situation where you need to change the default behaviour and traverse symbolic links, NIO.2 offers the FOLLOW_LINKS option as a vararg to the walk() method. It ios recoommended to specify an approparite depth limit when this option is used. Also, be aware that when this option is used, the walk() method will track the path it has visited, throwing a FileSystemLoopException if a cycle is detected.
+
 ## Searching a directory
+
 ## Listing Directory Contents
 ## Printing File Contents
 
