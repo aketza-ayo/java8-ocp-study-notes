@@ -1062,3 +1062,5 @@ The first line does not compile because the filter operation cannot be applied t
 We conclude this chapter with the table below which shows a comparison between some of the legacy java.io.File methods described in Chapter 8 and the new NIO.2 methods described in this chapter. In this table, file refers to an instance of java.io.FIle class, while path refers to an instance of a NIO.2 Path interface.
 
 ![Comparison of legacy File and NIO.2 methods](img/legacyFileAndNIO2methods.png)
+
+Bear in mind that a number of methods and features are available in NIO.2 API that are not available in the legacy API, such as support for symbolic links, setting a file ownder, and so on. As expected, the NIO.2 API is much more developed, much more powerful API that the legacy java.io.File class described in chapter 8.
