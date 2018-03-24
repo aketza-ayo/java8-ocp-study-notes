@@ -939,9 +939,123 @@ Worse yet, symbolic links could lead to a cycle. A cycle is an infinite circular
 
 If you have a situation where you need to change the default behaviour and traverse symbolic links, NIO.2 offers the FOLLOW_LINKS option as a vararg to the walk() method. It ios recoommended to specify an approparite depth limit when this option is used. Also, be aware that when this option is used, the walk() method will track the path it has visited, throwing a FileSystemLoopException if a cycle is detected.
 
-## Searching a directory
+## Searching a Directory
+In the previous example, we applied a filter to the Stream<Path> object to filter the results, although the NIO.2 provides a more direct method. The Files.find(Path, int, BiPredicate) method behaves in a similar manner as the Files.walk() method, except that it requires the depth value to be explicitly set along with a BiPredicate to filter the data. Like walk(), find() also supports the FOLLOW_LINK vararg option. 
+  
+As you might remember from Chapter 4, a BiPredicate is an interface that takes two generic objects and returns a boolean value of the form (T, U) -> boolean. In this case, the two object types are Path and BasicFileAttributes, which you saw earlier in the chapter. In this manner, the NIO.2 automatically loads the BasicFileAttributes object for you, allowing you to write complex lambda expresions that have direct access to this object. We illustrate this with the following example:
+
+```
+Path path = Paths.get("/bigcats");
+long dateFilter = 1420070400000L;
+
+try{
+  Stream<Path> stream = Files.find(path, 10, 
+                      (p,a) -> p.toString().endsWith(".java") && a.lastModifiedTIme().toMillies() > dateFilter);
+  stream.forEach(System.out::println);                   
+}catch(IOException e){
+  //Hanfle file I/O exception ...
+}
+
+```
+In this example is similar to our previous FIles.walk() example in that it will search a directory for files that end with .java extension. It is more advanced, though, in that it applies a last-modified tiome filtering using BasicFileAttributes object. Finally, it sets the directory depth limit for search to 10, as opposed to relying on the default Integer.MAX_VALUE values that the Files.walk() method uses.
 
 ## Listing Directory Contents
+You may remember in Chapter 8 that we presented the method listFiles() that operated on java.io.File instance and returned a list of File objects representing the contents of the directory that are direct children of the parent. Although you could use the Files.walk() method with a maximum depth limit of 1 to perform this same task, the NIO.2 API includes a new stream method, Files.list(Path), that does this for you.
+
+Consider the following code snippet, assuming that the current workling directory is /zoo:
+
+```
+try{
+  Path path = Paths.get("ducks");
+  Files.list(path)
+    .filter(p -> !FIles.isDirectory(p))
+    .map(p -> p.toAbsolutePath())
+    .forEach(System.out::println);
+
+}catch(IOException e){
+  // Handle file I/O exception... 
+}
+
+```
+
+The code snippet iterates over a directory , outputting the full path of the files that it contains. Depending on the contents of the file system, the outputs might look somthing like the following :
+
+```
+/zoo/ducks/food.txt
+/zoo/ducks/food-backup.txt
+/zoo/ducks/weight.txt
+```
+
+Contrast this method with the Files.walk() method, which traverses all subdirectories. For the exam, you should be aware that Files.list() searches one level deep and is analogous to java.io.File.listFiles() except that it relies on streams.
+
 ## Printing File Contents
+Earlier in the chapter, we presented Files.readAllLines() and commented that using it to read very large file could result in an OutputOfMemoryError problem. Luckily, the NIO.2 API in Java 8 now includes a Files.lines(Path) method that returns a Stream<String> object and does not suffer from this same issue. The contents of the file are read and processed lazily, which means that only a small portion of the file is stored in memory at any given time.
+  
+We now present Files.lines(), which is equivalent to previous Files.readAllLines() sample code:
+
+```java
+Path path = Paths.get("/fish/sharks.log");
+try{
+  Files.lines(path).forEach(System.out::println);
+}catch(IOException e){
+  //Handle file I/O exception...
+}
+
+```
+The first thing you may notice is that this example is alot shorter, accomplishing in a single line what it took multiple lines earlier. It is also more performant on alrge files, since it does not require the entire file to be read and store in memory. Taking thisngs one step further, we can leverage other stream methods for a more powerful example:
+
+```
+Path path = Paths.get("/fish/sharks.log");
+
+try{
+  System.out.println(Files.lines(path)
+    .filter(s -> s.startsWith("WARN "))
+    .map(s -> s.substring(5))
+    .collect(COllectors.toList());
+    
+}catch(){
+  // Handle file I/O exception...
+}
+
+```
+
+This sample code now searches for lines in the file that start with WARN, outputting everyting after it to a single list that is printend to the user. You can see that lambda expressions coupled with NIO.2 allow us to perform complex file operations concisenly. Assuming that the input file sharks.log is as follows,
+
+```
+INFO  Server starting
+DEBUG  Processes available = 10
+WARN  No database could be detected
+DEBUG  Processes available reset to 0
+WARN  Performing manual recovery 
+INFO  Server automatically started
+```
+
+Then the sample output would be the following:
+
+```
+[No database could be detected, Performing manula recovery]
+```
+
+**Files.readAllLines() vs. Files.lines()**
+For the exam, you should be familiar with both readAllLines() and lines() and with which one returns a list and which one returns a Stream. This is even more difficult since the forEach() method can be called on both Stream and Collection objects. For example, both of the following lines compile and run wothout issue:
+
+```
+Files.readAllLines(Paths.get("birds.txt")).forEach(System.out::println);
+
+Files.lines(Paths.get("birds.txt")).forEach(System.out::println);
+```
+
+The first code snippet reads the entire file into memory and then performs a print operation on the resulting object. The second code snippet reads the lines lazily and prints them as they are beign read. The advantage of the second code snippet is that it does not require the entire file to be stored in memory as it is being read.
+
+You should also be aware of when they are mixing incompatible types on the exam. For example, can you determine which of the following two lines compile?
+
+```
+Files.readAllLines(path).filter(s -> s.length() > 2).forEach(System.out::println);
+
+Files.lines(path).filter(s -> s.length() > 2).forEach(System.out::println);
+
+```
+
+The first line does not compile because the filter operation cannot be applied to a Colection without first converting it to a Stream using the stream() method.
 
 # Comparing Legacy File and NIO.2 Methods
