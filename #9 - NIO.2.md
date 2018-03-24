@@ -792,6 +792,11 @@ If you need to read multiple attributes of a file or a directory at a time, the 
 Tha's not to say that the single mehod calls we just finished discussing do not have their applications. If you only need to read exactly one file attribute, then there is little or no performance difference. The also tend to be more convenient to use given their concise nature.
 
 ### Understanding Views
+To request a view, you need to provide both a path to the file or a directory whose information you want to read, as well as a class object, which tells the NIO.2 API method which type of view you would like returned. The Files API includes two sets of methods of analogous classes for accessing view information. The first method, Files.readAttributes(), returns a read only view of the files attributes. The second method, Files.getFileAttributeView(), returns the underlying attribute view, and it provides a direct resource for modifying file information. Both of these methods can throw a checked IOException, such as when the view class type is unsupported. For example, trying to read windows-based attributes within a linux file system may throw an UnsupportedOperationException. 
+
+Table below lists the common used attributes and view classes: note that the first row is required knowledge for the exam. The DOS and POSIX classes are useful for reading and modifying operating system-specific properties. They also both inherit from their respective attribute and view classes. For example, PosixFileAttributes inherits from BasicFileAttributeView, meaning that all of the operations available on the parent class are available in the respective subclasses.
+
+![The attributes and view classes](img/attributesAndViewClasses.png)
 
 ### Reading Attributes
 #### BasicFileAttributes
