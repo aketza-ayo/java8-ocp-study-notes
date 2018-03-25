@@ -1067,4 +1067,18 @@ Bear in mind that a number of methods and features are available in NIO.2 API th
 
 # Review Questions
 
+Complete the questions after 40 min. It takes a lot of practice to learn the use of the library and how to interact with the NIO.2 API methods and lambda expression. 
+
 ![Test chapter nine](img/testChapterNine.png)
+
+- The normalize() method like most of the methods in the Path interface, does not modify the Path object but instead returns a new Path objetc
+- isDirectory() method by default follows links. Files.deleteIfexists() method throws an exception if the directory had any content.
+- setTime() method is available only on BasicFileAttributeView 
+- The subpath(int, int) method does not include the root of the file
+- The resolve() method does not normalize any path symbols. And calling resolve() with an absolute path as param returns the same absolute path  
+- Files.readAllLines() reads the entire file into memory and the return type is List<String> which it can be converted to a stream with a stream method.
+- NOFOLLOW_LINKS option means  that if the source is a symbolic link the link itself and not the target will be copied at runtime. ATOMIC_MOVE means that any process monitoring the file system will not see an incomplete file during the move.
+- Files.listFiles() method retrieves the member of the current directory without traversing any subdirectories. Files.walk() and Files.find() recursively traverse a directory tree rather than a list of contents of the current directory.
+- Advantages using NIO.2
+- Advantages of NIO.2 over legacy File
+- The normalize() method does not convert a relative path into an absolute path
