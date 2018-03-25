@@ -835,7 +835,7 @@ Let's start off with a review of the characteristics of the different types. Mak
 
 ![Java Collection Framework types](img/colectionTypes.png)
 
-![Colection attributes](img/colectionAttribute.png)
+![Colection attributes](img/colectionAttributes.png)
 
 Next, the exam expects you to know which data structures allow nulls. Most do allow nulls, so we discuss only the exceptions. The data structures that involve sorting do not allow nulls. Makes sence because we cannot compare null to String. This means that TreeSet cannot contain null elements. It also means that TreeMap cannot contain null keys. Null values are OK.
 Next comes ArrayDeque. You can't put null in an ArrayDeque because methods like poll() use null as a special return value to indicate that the collection is empty. Finally, Hashtable doen't allow null keys or values. There is no particular reason for this. It's just old and was written that way. In handy list form, all data structures allow nulls except these:
