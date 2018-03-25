@@ -1064,3 +1064,7 @@ We conclude this chapter with the table below which shows a comparison between s
 ![Comparison of legacy File and NIO.2 methods](img/legacyFileAndNIO2methods.png)
 
 Bear in mind that a number of methods and features are available in NIO.2 API that are not available in the legacy API, such as support for symbolic links, setting a file ownder, and so on. As expected, the NIO.2 API is much more developed, much more powerful API that the legacy java.io.File class described in chapter 8.
+
+# Review Questions
+
+![Test chapter nine](img/testChapterNine.png)
