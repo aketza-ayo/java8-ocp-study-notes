@@ -488,13 +488,13 @@ Can you figure out why the following do or don't compile?
 ```
 Line 6 creates creates an ArrayList that can hold instances of class A. It uses an unbounded wildcard. Any generic can be referenced from an unbounded wildcard, making this OK. 
 
-Line 7 is OK it uses a upper-bounded wildcard. You could have List<A>, List<B>, List<C>.
+Line 7 is OK it uses a upper-bounded wildcard. You could have ```List<A>, List<B>, List<C>```.
   
 Line 8 is also OK. This time is a lower-bounded wildcard. The lowest to can reference is A.
 
-Line 9 has upper bounded wildcard that allows List<B> and List<C>. Since you have List<A> it does not compile.
+Line 9 has upper bounded wildcard that allows ```List<B>``` and ```List<C>```. Since you have ```List<A>``` it does not compile.
   
-Line 10, has a lower-bounded wildcard, which allows a reference to List<A>, List<B> or ArrayList<Object>
+Line 10, has a lower-bounded wildcard, which allows a reference to ```List<A>, List<B> or ArrayList<Object>```
 
 Finally, line 11 allows a reference to any generic type since it is unbounded wildcard. The problem is that you need to know what that wildcard will be when instantiating the ArrayList. 
 
