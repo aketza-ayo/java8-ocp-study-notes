@@ -23,7 +23,8 @@ February 24 - March 3     | Read Chapter 8                                  | Ar
 March 3                   | Answer Chapter 8 Review Questions               | 1 hr to complete the questions + 30 min revision
 March 4 - March 10        | Read Chapter 10                                 | 6-7 hours to read and take notes.
 March 11                  | Answer Chapter 10 Review Questions              | 30 min to answer probably this was the easiest chapter in the book.
-March 17 - April 15        | Read Chapter 9                                 |
-April 15                  | Answer Chapter 9 Review Questions              |
+March 17 - March 24       | Read Chapter 9                                 | Around 10 hours to read and take notes.
+March 25                  | Answer Chapter 9 Review Questions              | 40 minutes to complete the test
+March 30                  | Assessment test from the book                  |  
 April 21 - May 3          | Take practice exams and mock exams              |
 **May 4**                 | **Exam day**
