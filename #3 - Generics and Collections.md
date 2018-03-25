@@ -529,7 +529,7 @@ Now this is extra tricky:
 
 ```
 
-method3() does not compile <B extends A> says that you want to use B as type param for this method and that it has to extend A. The trick is that B is also the name of a class. Within the scope of the method, B can represent classes A, B or C because all extend A class. Since B no longer refers to B class in the method, you cannot instantiate it.
+method3() does not compile ```<B extends A>``` says that you want to use B as type param for this method and that it has to extend A. The trick is that B is also the name of a class. Within the scope of the method, B can represent classes A, B or C because all extend A class. Since B no longer refers to B class in the method, you cannot instantiate it.
   
 Generics bounds are very tricky. Come back tomorrow when you have a fresh mind and re-read.
   
