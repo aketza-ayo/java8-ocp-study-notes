@@ -282,7 +282,7 @@ public class Turkey implemets AutoClosable{
   }
   
   public static void main(String[] args){
-    try(Turkey t = new Turkey()){         //DOES NOT COMPILE
+    try(Turkey t = new Turkey()){         //This is ok now
       System.out.println("put turkeys in");
     }
   }
