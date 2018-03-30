@@ -3,7 +3,7 @@ There are some interesting study tips in the Appendix B of the Book and one of t
 
 I am starting the book on my christmas holiday and hoping to take the exam at some point in 2018. Which day I don't know, let's see what the plan says. As the book says... "Rome wasn't buit in one day". In fairness, I expect this plan to grow and change as time goes by. I am not going to commit to any exam day shown in the plan just because it is according to the plan. Luckly, this is not work, ish. Although it should give me an approximation.
 
-Date Estimated      |                       Task                                         | Actuals
+Date Estimated      |                       Task                                         | Description
 --------------------|--------------------------------------------------------------------|--------
 December 20 - December 26 | Read Introduction, Appendix B, and Chapter 1    | Took me 10 hours to read and take notes
 December 27               | Answer Chapter 1 Review Questions               | 30 min to answer + another 30 min to revise
