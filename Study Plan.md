@@ -26,7 +26,7 @@ March 11                  | Answer Chapter 10 Review Questions              | 30
 March 17 - March 24       | Read Chapter 9                                 | Around 10 hours to read and take notes.
 March 25                  | Answer Chapter 9 Review Questions              | 40 minutes to complete the test
 March 30                  | Assessment test from the book                  | I did the test without time limit. I didn't want to rush so that I could take time to understand every single question in detail. I got 55% and after reviewing the answers all of them make sense.
-March 31                  | Enthuware: Foundation Test - Q40                |
+March 31                  | Enthuware: Foundation Test - Q40                | Passed the foundation test with 68%. A lot of the questions where on Nested Classes
 April 1 - 2               | Enthuware: Test 1 - Q85                         |
 April 7 - 8               | Enthuware: Test 2 - Q85                         |
 April 14 - 15             | Enthuware: Test 3 - Q87                         |
