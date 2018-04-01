@@ -228,11 +228,11 @@ Fortunately, the writers of the Java added submit() methods to the ExecutorServi
 
 **Method Name**                  | **Description**
 ---------------------------------|---------------
-void execute(Runnable command)           | Executes a Runnable task at some point in the future.  
-Future<?> submit(Runnable task)          | Executes a Runnable task at some point in the future and returns a Future representing tha task.
-<\T>Future<T> submit(Callable<\T> task)   | Executes a Callable task at some point in the future and returns a Future representing the pending results of the task.
-<\T>List<Future<T>> invokeAll(Collection<? extends Callable<\T> tasks>) throws InterrupedException | Executes the given tasks, synchronoulsy returning the results of all tasks as a Collection or Future objects, in the same order they were in the original collection.
-<\T>T invokeAny(Collection<? extends Callable<\T>> tasks) throws InterruptedException, ExecutionException | Executes the given tasks, synchronoulsy returning the result of one of finished tasks, cancelling any unfished tasks.
+```void execute(Runnable command)```           | Executes a Runnable task at some point in the future.  
+```Future<?> submit(Runnable task)```          | Executes a Runnable task at some point in the future and returns a Future representing tha task.
+```<T>Future<T> submit(Callable<T> task)```   | Executes a Callable task at some point in the future and returns a Future representing the pending results of the task.
+```<T>List<Future<T>> invokeAll(Collection<? extends Callable<T> tasks>) throws InterrupedException``` | Executes the given tasks, synchronoulsy returning the results of all tasks as a Collection or Future objects, in the same order they were in the original collection.
+```<T>T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException``` | Executes the given tasks, synchronoulsy returning the result of one of finished tasks, cancelling any unfished tasks.
 
 In practice using the submit() method is quite similar to using the execute() method, except that the submit() method return a Future object that can be used to determine whether or not the task has completed execution. Don't worry if you haven't seen Future or Callable before we will discuss them in detail shortly. We use and prefer the submit() method in the majority of the cases and it this chapter we will use submit() as a result. For the exam you need to be familiar with both execute() and submit(), but in your own code we recommend submit() over execute() whenver possible.
 
